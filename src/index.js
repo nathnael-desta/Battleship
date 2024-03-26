@@ -1,18 +1,33 @@
-import _ from "lodash";
-import printMe from "./print.js";
+import {createSquares, myShips, createShips, getTile, insertAt, insert} from "./board";
 
- function component() {  
-   const element = document.createElement("div");
-  const btn = document.createElement("button");
+import("./style.css");
 
-   element.innerHTML = _.join(["Hello", "webpack"], " ");
+const playerTiles = document.querySelector(".player .tiles");
+const opponentTiles = document.querySelector(".opponent .tiles");
+const individualships = document.querySelectorAll(".ship");
 
-    btn.innerHTML = "Click me and check the console!";
-  btn.onclick = printMe;
+individualships.forEach((ship) => {
+    ship.addEventListener('dragstart', () => {
+        ship.classList.add('dragging');
+    })
 
-  element.appendChild(btn);
+    ship.addEventListener('dragend', () => {
+        ship.classList.remove('dragging');
+    })
+})
 
-   return element;
- }
 
- document.body.appendChild(component());
+createSquares(playerTiles);
+createSquares(opponentTiles);
+
+insert("I", 9, "quad_horizontal", myShips, playerTiles);
+
+
+
+
+
+
+
+
+
+

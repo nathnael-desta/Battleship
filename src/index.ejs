@@ -1,11 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Battleship</title>
 </head>
+
 <body>
-    <div class="check">working</div>
+    <div class="main">
+        <div class="players">
+            <div class="player board">
+                <div class="name"><span>Player</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <title>refresh</title>
+                        <path
+                            d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+                    </svg>
+                </div>
+                <div class="squares">
+                    <div class="letters">
+                        <div class="empty"></div>
+                        <div class="letter a">A</div>
+                        <div class="letter b">B</div>
+                        <div class="letter c">C</div>
+                        <div class="letter d">D</div>
+                        <div class="letter e">E</div>
+                        <div class="letter f">F</div>
+                        <div class="letter g">G</div>
+                        <div class="letter h">H</div>
+                        <div class="letter i">I</div>
+                        <div class="letter j">J</div>
+                    </div>
+                    <div class="bottom">
+                        <div class="numbers">
+                            <div class="number one">1</div>
+                            <div class="number two">2</div>
+                            <div class="number three">3</div>
+                            <div class="number four">4</div>
+                            <div class="number five">5</div>
+                            <div class="number six">6</div>
+                            <div class="number seven">7</div>
+                            <div class="number eight">8</div>
+                            <div class="number nine">9</div>
+                            <div class="number ten">10</div>
+                        </div>
+                        <div class="tiles">
+                        </div>
+                    </div>
+                    <!-- <div class="empty"></div>
+                    <div class="letter a">A</div>
+                    <div class="letter b">B</div>
+                    <div class="letter c">C</div>
+                    <div class="letter d">D</div>
+                    <div class="letter e">E</div>
+                    <div class="letter f">F</div>
+                    <div class="letter g">G</div>
+                    <div class="letter h">H</div>
+                    <div class="letter i">I</div>
+                    <div class="letter j">J</div>
+                    <div class="number one">1</div>
+                    <div class="tile" id="p_1"></div>
+                    <div class="tile" id="p_2"></div>
+                    <div class="tile" id="p_3"></div>
+                    <div class="tile" id="p_4"></div>
+                    <div class="tile" id="p_5"></div>
+                    <div class="tile" id="p_6"></div>
+                    <div class="tile" id="p_7"></div>
+                    <div class="tile" id="p_8"></div>
+                    <div class="tile" id="p_9"></div>
+                    <div class="double_vertical">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                    </div>
+                    <div class="number two">2</div>
+                    <div class="tile" id="p_11"></div>
+                    <div class="tile" id="p_12"></div>
+                    <div class="tile" id="p_13"></div>
+                    <div class="tile" id="p_14"></div>
+                    <div class="tile" id="p_15"></div>
+                    <div class="single_vertical">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="tile" id="p_17"></div>
+                    <div class="tile" id="p_18"></div>
+                    <div class="tile" id="p_19"></div>
+                    
+                    <div class="number three">3</div>
+                    <div class="tile" id="p_21"></div>
+                    <div class="tile" id="p_22"></div>
+                    <div class="tile" id="p_23"></div>
+                    <div class="double_horizontal">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                    </div>
+                    
+                    <div class="tile" id="p_26"></div>
+                    <div class="tile" id="p_27"></div>
+                    <div class="tile" id="p_28"></div>
+                    <div class="tile" id="p_29"></div>
+                    <div class="tile" id="p_30"></div>
+                    <div class="number four">4</div>
+                    <div class="tile" id="p_31"></div>
+                    <div class="tile" id="p_32"></div>
+                    <div class="tile" id="p_33"></div>
+                    <div class="tile" id="p_34"></div>
+                    <div class="tile" id="p_35"></div>
+                    <div class="tile" id="p_36"></div>
+                    <div class="tile" id="p_37"></div>
+                    <div class="single_horizontal">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="tile" id="p_39"></div>
+                    <div class="tile" id="p_40"></div>
+                    <div class="number five">5</div>
+                    <div class="tile" id="p_41"></div>
+                    <div class="tile" id="p_42"></div>
+                    <div class="tile" id="p_43"></div>
+                    <div class="tile" id="p_44"></div>
+                    <div class="tile" id="p_45"></div>
+                    <div class="tile" id="p_46"></div>
+                    <div class="tile" id="p_47"></div>
+                    <div class="tile" id="p_48"></div>
+                    <div class="tile" id="p_49"></div>
+                    <div class="tile" id="p_50"></div>
+                    <div class="number six">6</div>
+                    <div class="tile" id="p_51"></div>
+                    <div class="quad_horizontal">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                    </div>
+                    <div class="tile" id="p_56"></div>
+                    <div class="tile" id="p_57"></div>
+                    <div class="single_horizontal">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="tile" id="p_59"></div>
+                    <div class="tile" id="p_60"></div>
+                    <div class="number seven">7</div>
+                    <div class="tile" id="p_61"></div>
+                    <div class="tile" id="p_62"></div>
+                    <div class="tile" id="p_63"></div>
+                    <div class="tile" id="p_64"></div>
+                    <div class="tile" id="p_65"></div>
+                    <div class="tile" id="p_66"></div>
+                    <div class="tri_vertical">
+                        <div class="circle"></div>
+                                <div class="circle"></div>
+                                <div class="circle"></div>
+                    </div>
+                    <div class="tile" id="p_68"></div>
+                    <div class="tile" id="p_69"></div>
+                    <div class="quad_vertical">
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                        <div class="circle"></div>
+                    </div>
+                    <div class="number eight">8</div>
+                    <div class="tile" id="p_71"></div>
+                    <div class="tri_horizontal">
+                        <div class="circle"></div>
+                                <div class="circle"></div>
+                                <div class="circle"></div>
+                    </div>
+                    <div class="tile" id="p_75"></div>
+                    <div class="tile" id="p_76"></div>
+                    
+                    <div class="tile" id="p_78"></div>
+                    <div class="tile" id="p_79"></div>
+                    
+                    <div class="number nine">9</div>
+                    <div class="tile" id="p_81"></div>
+                    <div class="tile" id="p_82"></div>
+                    <div class="tile" id="p_83"></div>
+                    <div class="tile" id="p_84"></div>
+                    <div class="tile" id="p_85"></div>
+                    <div class="tile" id="p_86"></div>
+                    
+                    <div class="tile" id="p_88"></div>
+                    <div class="tile" id="p_89"></div>
+                    
+                    <div class="number ten">10</div>
+                    <div class="tile" id="p_91"></div>
+                    <div class="tile" id="p_92"></div>
+                    <div class="tile" id="p_93"></div>
+                    <div class="tile" id="p_94"></div>
+                    <div class="tile" id="p_95"></div>
+                    <div class="tile" id="p_96"></div>
+                    <div class="tile" id="p_97"></div>
+                    <div class="tile" id="p_98"></div>
+                    <div class="tile" id="p_99"></div>
+                    
+                     -->
+                </div>
+                <div class="ships">
+                    <div class="distroyers">
+                        <div class="destroyer ship"  draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="battleships">
+                        <div class="battleship ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                        <div class="battleship ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="freighters">
+                        <div class="freighter ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                        <div class="freighter ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                        <div class="freighter ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="boats">
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="opponent board">
+                <div class="name" id="op_name"><span>Opponent</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <title>refresh</title>
+                        <path
+                            d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+                    </svg>
+                </div>
+                <div class="squares">
+                    <div class="letters">
+                        <div class="empty"></div>
+                        <div class="letter a">A</div>
+                        <div class="letter b">B</div>
+                        <div class="letter c">C</div>
+                        <div class="letter d">D</div>
+                        <div class="letter e">E</div>
+                        <div class="letter f">F</div>
+                        <div class="letter g">G</div>
+                        <div class="letter h">H</div>
+                        <div class="letter i">I</div>
+                        <div class="letter j">J</div>
+                    </div>
+                    <div class="bottom">
+                        <div class="numbers">
+                            <div class="number one">1</div>
+                            <div class="number two">2</div>
+                            <div class="number three">3</div>
+                            <div class="number four">4</div>
+                            <div class="number five">5</div>
+                            <div class="number six">6</div>
+                            <div class="number seven">7</div>
+                            <div class="number eight">8</div>
+                            <div class="number nine">9</div>
+                            <div class="number ten">10</div>
+                        </div>
+                        <div class="tiles">
+                        </div>
+                    </div>
+                    
+
+
+                    <!-- <div class="empty"></div>
+                    <div class="letter a">A</div>
+                    <div class="letter b">B</div>
+                    <div class="letter c">C</div>
+                    <div class="letter d">D</div>
+                    <div class="letter e">E</div>
+                    <div class="letter f">F</div>
+                    <div class="letter g">G</div>
+                    <div class="letter h">H</div>
+                    <div class="letter i">I</div>
+                    <div class="letter j">J</div>
+                    <div class="number one">1</div>
+                    <div class="tile" id="c_1"></div>
+                    <div class="tile" id="c_2"></div>
+                    <div class="tile" id="c_3"></div>
+                    <div class="tile" id="c_4"></div>
+                    <div class="tile" id="c_5"></div>
+                    <div class="tile" id="c_6"></div>
+                    <div class="tile" id="c_7"></div>
+                    <div class="tile" id="c_8"></div>
+                    <div class="tile" id="c_9"></div>
+                    <div class="tile" id="c_10"></div>
+                    <div class="number two">2</div>
+                    <div class="tile" id="c_11"></div>
+                    <div class="tile" id="c_12"></div>
+                    <div class="tile" id="c_13"></div>
+                    <div class="tile" id="c_14"></div>
+                    <div class="tile" id="c_15"></div>
+                    <div class="tile" id="c_16"></div>
+                    <div class="tile" id="c_17"></div>
+                    <div class="tile" id="c_18"></div>
+                    <div class="tile" id="c_19"></div>
+                    <div class="tile" id="c_20"></div>
+                    <div class="number three">3</div>
+                    <div class="tile" id="c_21"></div>
+                    <div class="tile" id="c_22"></div>
+                    <div class="tile" id="c_23"></div>
+                    <div class="tile" id="c_24"></div>
+                    <div class="tile" id="c_25"></div>
+                    <div class="tile" id="c_26"></div>
+                    <div class="tile" id="c_27"></div>
+                    <div class="tile" id="c_28"></div>
+                    <div class="tile" id="c_29"></div>
+                    <div class="tile" id="c_30"></div>
+                    <div class="number four">4</div>
+                    <div class="tile" id="c_31"></div>
+                    <div class="tile" id="c_32"></div>
+                    <div class="tile" id="c_33"></div>
+                    <div class="tile" id="c_34"></div>
+                    <div class="tile" id="c_35"></div>
+                    <div class="tile" id="c_36"></div>
+                    <div class="tile" id="c_37"></div>
+                    <div class="tile" id="c_38"></div>
+                    <div class="tile" id="c_39"></div>
+                    <div class="tile" id="c_40"></div>
+                    <div class="number five">5</div>
+                    <div class="tile" id="c_41"></div>
+                    <div class="tile" id="c_42"></div>
+                    <div class="tile" id="c_43"></div>
+                    <div class="tile" id="c_44"></div>
+                    <div class="tile" id="c_45"></div>
+                    <div class="tile" id="c_46"></div>
+                    <div class="tile" id="c_47"></div>
+                    <div class="tile" id="c_48"></div>
+                    <div class="tile" id="c_49"></div>
+                    <div class="tile" id="c_50"></div>
+                    <div class="number six">6</div>
+                    <div class="tile" id="c_51"></div>
+                    <div class="tile" id="c_52"></div>
+                    <div class="tile" id="c_53"></div>
+                    <div class="tile" id="c_54"></div>
+                    <div class="tile" id="c_55"></div>
+                    <div class="tile" id="c_56"></div>
+                    <div class="tile" id="c_57"></div>
+                    <div class="tile" id="c_58"></div>
+                    <div class="tile" id="c_59"></div>
+                    <div class="tile" id="c_60"></div>
+                    <div class="number seven">7</div>
+                    <div class="tile" id="c_61"></div>
+                    <div class="tile" id="c_62"></div>
+                    <div class="tile" id="c_63"></div>
+                    <div class="tile" id="c_64"></div>
+                    <div class="tile" id="c_65"></div>
+                    <div class="tile" id="c_66"></div>
+                    <div class="tile" id="c_67"></div>
+                    <div class="tile" id="c_68"></div>
+                    <div class="tile" id="c_69"></div>
+                    <div class="tile" id="c_70"></div>
+                    <div class="number eight">8</div>
+                    <div class="tile" id="c_71"></div>
+                    <div class="tile" id="c_72"></div>
+                    <div class="tile" id="c_73"></div>
+                    <div class="tile" id="c_74"></div>
+                    <div class="tile" id="c_75"></div>
+                    <div class="tile" id="c_76"></div>
+                    <div class="tile" id="c_77"></div>
+                    <div class="tile" id="c_78"></div>
+                    <div class="tile" id="c_79"></div>
+                    <div class="tile" id="c_80"></div>
+                    <div class="number nine">9</div>
+                    <div class="tile" id="c_81"></div>
+                    <div class="tile" id="c_82"></div>
+                    <div class="tile" id="c_83"></div>
+                    <div class="tile" id="c_84"></div>
+                    <div class="tile" id="c_85"></div>
+                    <div class="tile" id="c_86"></div>
+                    <div class="tile" id="c_87"></div>
+                    <div class="tile" id="c_88"></div>
+                    <div class="tile" id="c_89"></div>
+                    <div class="tile" id="c_90"></div>
+                    <div class="number ten">10</div>
+                    <div class="tile" id="c_91"></div>
+                    <div class="tile" id="c_92"></div>
+                    <div class="tile" id="c_93"></div>
+                    <div class="tile" id="c_94"></div>
+                    <div class="tile" id="c_95"></div>
+                    <div class="tile" id="c_96"></div>
+                    <div class="tile" id="c_97"></div>
+                    <div class="tile" id="c_98"></div>
+                    <div class="tile" id="c_99"></div>
+                    <div class="tile" id="c_100"></div> -->
+                </div>
+                <div class="ships">
+                    <div class="distroyers">
+                        <div class="destroyer ship"  draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="battleships">
+                        <div class="battleship ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                        <div class="battleship ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="freighters">
+                        <div class="freighter ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                        <div class="freighter ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                        <div class="freighter ship" draggable="true">
+                            <div class="circle"></div>
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="boats">
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="boat ship" draggable="true">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 </body>
+
 </html>
