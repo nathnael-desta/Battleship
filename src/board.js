@@ -1,4 +1,4 @@
-export function createSquares(tiles, numbers = [101], pieceSquare = 101, piece) {
+export function createSquares(tiles, numbers = [101], pieceSquare = 101, piece = null) {
     let count = 0;
     console.log(numbers)
     for(let i = 0; i < 10; i += 1) {
@@ -6,6 +6,8 @@ export function createSquares(tiles, numbers = [101], pieceSquare = 101, piece) 
         const tile = document.createElement("div");
         tile.classList.add("tile");
         tile.id = `${i}${j}`;
+        console.log(count)
+        console.log(tiles)
         if (count === pieceSquare) {
             const newShip = createShips(piece);
              tiles.appendChild(newShip);
@@ -185,4 +187,19 @@ export function createSquares(tiles, numbers = [101], pieceSquare = 101, piece) 
     deleteBoard(tiles)
     console.log(numbers)
     createSquares(tiles, numbers,pieceSquare, piece);
+  }
+
+  export function getDragElement(container,x,y) {
+    const draggableElements = [...container.querySelectorAll('.tile')];
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const yOffset = y - box.top - box.height / 2;
+    const xOffset = x - box.left - box.width / 2;
+    const offset = Math.sqrt((yOffset * yOffset) + (xOffset * xOffset));
+    // console.log(offset);
+    if (offset < closest.offset) {
+      return { offset, element: child };
+    }
+    return closest;
+  }, { offset: Number.POSITIVE_INFINITY }).element;
   }
