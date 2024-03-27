@@ -1,26 +1,39 @@
-export function createSquares(tiles, numbers = [101], pieceSquare = 101, piece = null) {
+export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], piece = null) {
     let count = 0;
-
     for(let i = 0; i < 10; i += 1) {
       for (let j = 0; j < 10; j += 1) {
         const tile = document.createElement("div");
         tile.classList.add("tile");
         tile.id = `${i}${j}`;
 
-        if (count === pieceSquare) {
-            const newShip = createShips(piece);
+        if (pieceSquare.indexOf(count) !== -1) {
+            const newShip = createShips(piece[pieceSquare.indexOf(count)]);
              tiles.appendChild(newShip);
              count += 1; 
              continue;
         }
-        if (numbers.indexOf(count) !== -1) {
-            count += 1;
-            continue;
+        // if (numbers.indexOf(count) !== -1) {
+        //     count += 1;
+        //     continue;
+        // }
+        if (checkForNumber(count, numbers)) {
+          count += 1;
+          continue;
         }
         count += 1;
         tiles.appendChild(tile);
       }
     }
+  }
+
+  function checkForNumber(value, array) {
+    return array.reduce((isTrue,nums) => {
+      if (nums.indexOf(value) === -1) {
+        return isTrue || false
+      } 
+        return true
+      
+    }, false)
   }
 
   function deleteBoard(tiles) {
@@ -191,6 +204,10 @@ export function createSquares(tiles, numbers = [101], pieceSquare = 101, piece =
     return result;
   }
 
+  const numbers = [];
+  const pieceSquare = []
+  const piece = [];
+
   export function insert(col, row, ship, myShips, tiles) {
     const circle = JSON.parse(ship.dataset.circle);
     const { shift, alignment } = circle;
@@ -205,14 +222,23 @@ export function createSquares(tiles, numbers = [101], pieceSquare = 101, piece =
 
     const insertObj = insertAt(col, row, ship, myShips);
     const deleteSquares = insertObj.del;
-    const numbers = [];
-    const pieceSquare = getNumberFromTile(insertObj.start[0], insertObj.start[1])
+    // const numbers = [];
+    pieceSquare.push(getNumberFromTile(insertObj.start[0], insertObj.start[1]))
 
-    const piece = ship.classList[2];
-    
+    piece.push(ship.classList[2]);
+    const currentNumbers = []
     deleteSquares.forEach((square) => {
-        numbers.push(getNumberFromTile(square[0], square[1]))
+        currentNumbers.push(getNumberFromTile(square[0], square[1]))
     })
+    numbers.push(currentNumbers);
+    deleteBoard(tiles)
+    createSquares(tiles, numbers,pieceSquare, piece);
+  }
+
+  export function undo(tiles) {
+    numbers.pop();
+    pieceSquare.pop();
+    piece.pop();
     deleteBoard(tiles)
     createSquares(tiles, numbers,pieceSquare, piece);
   }

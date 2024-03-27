@@ -603,3 +603,8 @@
 .dragging {
     opacity: 0.3;
 }
+
+.rotate {
+    background-color: red;
+    rotate: 90deg;
+}

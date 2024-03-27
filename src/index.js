@@ -1,4 +1,4 @@
-import {createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle} from "./board";
+import {createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo} from "./board";
 
 import("./style.css");
 
@@ -16,6 +16,12 @@ individualships.forEach((ship) => {
         ship.classList.add("dragging");
         const datavalue = whichCircle(ship, e.clientX, e.clientY);
         ship.dataset.circle = JSON.stringify(datavalue);
+        ship.addEventListener("keydown", (e) => {
+            if (e.key === "r") {
+                ship.classList.toggle("rotate");
+            }
+        })
+
     })
 
     ship.addEventListener("dragend", (e) => {
@@ -29,6 +35,23 @@ individualships.forEach((ship) => {
         ship.classList.remove("dragging");
     })
 })
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "z") {
+        undo(playerTiles);
+    }
+})
+
+// document.addEventListener('keydown', (e) => {
+//     if (e.key === "r") {
+//         individualships.forEach((ship) => {
+//             if (ship.classList.contains('dragging')) {
+//                 ship.classList.toggle("rotate")
+//             }
+//         })
+//     }
+// })
+
 
 
 
