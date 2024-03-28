@@ -21,7 +21,9 @@ individualships.forEach((ship) => {
             
         }
         ship.classList.add("dragging");
-        const datavalue = whichCircle(ship, e.clientX, e.clientY);
+        const shipName = ship.classList[2];
+        const box = ship.getBoundingClientRect();
+        const datavalue = whichCircle(shipName, e.clientX, e.clientY, box);
         ship.dataset.circle = JSON.stringify(datavalue);
 
     })
@@ -39,7 +41,9 @@ individualships.forEach((ship) => {
         tileDivs.forEach((div) => {
             if (!div.classList.contains("tile")) {
                 div.addEventListener("click", (event) => {
-                    rotate(event.clientX, event.clientY);
+                    const shipName = div.classList[0];
+                    const box = div.getBoundingClientRect();
+                    rotate(shipName, event.clientX, event.clientY, box);
                 })
             }
         })
