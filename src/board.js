@@ -170,9 +170,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
       return `${numToLetters[col]}${parseInt(row) + 1}`;
   }
 
-  export function insertAt(col, row, ship, myShips) {
-    const piece = ship.classList[2];
-    console.log(piece)
+  export function insertAt(col, row, piece, myShips) {
     if (col < "A" || col > "J" || row < 0 || row > 10 || myShips == null || myShips[piece] == null) {
       return "incorrect input";
     }
@@ -220,7 +218,8 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
       }
     }
 
-    const insertObj = insertAt(col, row, ship, myShips);
+    const myPiece = ship.classList[2];
+    const insertObj = insertAt(col, row, myPiece, myShips);
     const deleteSquares = insertObj.del;
     // const numbers = [];
     pieceSquare.push(getNumberFromTile(insertObj.start[0], insertObj.start[1]))
@@ -262,7 +261,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
     const firstHorizontalCircle = box.left + (box.width / 2);
     const secondHorizontalCircle = box.left + 2 * (box.width / 3); 
     const thirdHorizontalCircle = box.left + 3 * (box.width / 3); 
-    console.log("this is x", x, "first circle", firstHorizontalCircle, "second circle", secondHorizontalCircle, "third circle", thirdHorizontalCircle);
+    // console.log("this is x", x, "first circle", firstHorizontalCircle, "second circle", secondHorizontalCircle, "third circle", thirdHorizontalCircle);
 
     if (ship.classList[2] === "single_vertical" || ship.classList[2] === "single_horizontal") {
       return {
@@ -337,6 +336,23 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
       shift: 1000,
       alignment: "horizontal"
     };
-    
+  }
 
+  export function rotate() {
+    const myPiece = piece[piece.length - 1];
+    let [first, second] = myPiece.split("_");
+    second = second === "horizontal" ? "vertical" : "horizontal";
+    const flipped = [first, second].join("_");
+
+    let [row, col] = `${formatToTwoDigits(pieceSquare[pieceSquare.length - 1])}`.split("");
+    const tile = getTileFromNumber(row, col);
+    col = tile[0];
+    row = parseInt(tile.slice(1));
+    const insertObj = insertAt(col, row, flipped, myShips);
+    const deleteSquares = insertObj.del;
+    console.log(insertObj)
+  }
+
+  function formatToTwoDigits(number) {
+    return number.toString().padStart(2, "0");
   }
