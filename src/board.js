@@ -10,6 +10,11 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
             const newShip = createShips(piece[pieceSquare.indexOf(count)]);
              tiles.appendChild(newShip);
              count += 1; 
+             const colrow = {
+              col : j,
+              row : i,
+             } 
+          newShip.dataset.tile = JSON.stringify(colrow);
              continue;
         }
         // if (numbers.indexOf(count) !== -1) {
@@ -153,20 +158,20 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
       return parseInt(`${row - 1}${lettersToNum[col]}`);
   }
 
-  export function getTileFromNumber(row, col) {
-    const numToLetters = {
-        "0" : "A",
-        "1" : "B",
-        "2" : "C",
-        "3" : "D",
-        "4" : "E",
-        "5" : "F",
-        "6" : "G",
-        "7" : "H",
-        "8" : "I",
-        "9" : "J",
-      }
+  export const numToLetters = {
+    "0" : "A",
+    "1" : "B",
+    "2" : "C",
+    "3" : "D",
+    "4" : "E",
+    "5" : "F",
+    "6" : "G",
+    "7" : "H",
+    "8" : "I",
+    "9" : "J",
+  }
 
+  export function getTileFromNumber(row, col) {
       return `${numToLetters[col]}${parseInt(row) + 1}`;
   }
 
@@ -206,9 +211,10 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
   const pieceSquare = []
   const piece = [];
 
-  export function insert(col, row, ship, myShips, tiles) {
+  export function insert(col, row, ship, myShips, tiles, myPiece) {
     const circle = JSON.parse(ship.dataset.circle);
-    const { shift, alignment } = circle;
+    if (myPiece.split("_")[1] !== "vertical") {
+      const { shift, alignment } = circle;
     if (alignment === "horizontal") {
       for (let i = 0; i < shift; i += 1) {
         if (col === "A") {
@@ -217,14 +223,14 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
         col = String.fromCharCode(col.charCodeAt(0) - 1);
       }
     }
-
-    const myPiece = ship.classList[2];
+    }
+    
     const insertObj = insertAt(col, row, myPiece, myShips);
     const deleteSquares = insertObj.del;
     // const numbers = [];
     pieceSquare.push(getNumberFromTile(insertObj.start[0], insertObj.start[1]))
 
-    piece.push(ship.classList[2]);
+    piece.push(myPiece);
     const currentNumbers = []
     deleteSquares.forEach((square) => {
         currentNumbers.push(getNumberFromTile(square[0], square[1]))
@@ -257,12 +263,14 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
   }
 
   export function whichCircle(ship, x, y, box) {
+    
     const firstHorizontalCircle = box.left + (box.width / 2);
     const secondHorizontalCircle = box.left + 2 * (box.width / 3); 
     const thirdHorizontalCircle = box.left + 3 * (box.width / 3); 
     const firstVerticalCircle = box.top + (box.height / 2);
     const secondVerticalCircle = box.top + 2 * (box.height / 3); 
     const thirdVerticalCircle = box.top + 3 * (box.height / 3); 
+    // console.log(ship, x , y , box)
     // console.log("this is x", x, "first circle", firstHorizontalCircle, "second circle", secondHorizontalCircle, "third circle", thirdHorizontalCircle);
 
     if (ship === "single_horizontal") {
@@ -406,27 +414,47 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
   }
 
   export function rotate(shipName, x, y, box) {
-    const myPiece = piece[piece.length - 1];
-    let [first, second] = myPiece.split("_");
-    second = second === "horizontal" ? "vertical" : "horizontal";
-    const flipped = [first, second].join("_");
+    console.log(numbers, pieceSquare, piece)
 
-    let myCircle = whichCircle(shipName, x, y, box);
 
-    let [row, col] = `${formatToTwoDigits(pieceSquare[pieceSquare.length - 1])}`.split("");
-    col = `${parseInt(col) + myCircle.shift}`;
-    const tile = getTileFromNumber(row, col);
-    col = tile[0];
-    row = parseInt(tile.slice(1));
-    const insertObj = insertAt(col, row, flipped, myShips);
-    const deleteSquares = insertObj.del;
+    // const myPiece = piece[piece.length - 1];
+    // let [first, second] = myPiece.split("_");
+    // second = second === "horizontal" ? "vertical" : "horizontal";
+    // const flipped = [first, second].join("_");
 
-    console.log(shipName, x, y, box);
-    console.log(myCircle.shift, myCircle.alignment, tile);
+    // let myCircle = whichCircle(shipName, x, y, box);
+
+    // let [row, col] = `${formatToTwoDigits(pieceSquare[pieceSquare.length - 1])}`.split("");
+    // col = `${parseInt(col) + myCircle.shift}`;
+    // const tile = getTileFromNumber(row, col);
+    // col = tile[0];
+    // row = parseInt(tile.slice(1));
+    // const insertObj = insertAt(col, row, flipped, myShips);
+    // const deleteSquares = insertObj.del;
+
+    // console.log(shipName, x, y, box);
+    // console.log(myCircle.shift, myCircle.alignment, tile);
   
     
   }
 
   function formatToTwoDigits(number) {
     return number.toString().padStart(2, "0");
+  }
+
+  export function finalTile(col, row, circleData) {
+    const {shift, alignment} = circleData;
+    if (alignment === "horizontal") {
+      for (let i = 0; i < shift; i += 1) {
+        if (col === "J") {
+          break;
+        }
+        col = String.fromCharCode(col.charCodeAt(0) + 1);
+      }
+      return {
+        finalCol: col,
+        finalRow: row
+      }
+    }
+
   }

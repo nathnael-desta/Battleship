@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { insertAt, getTile } from './board.js';
+import { insertAt, getTile, finalTile } from './board.js';
 
 
 describe('insertion tests', () => {
@@ -114,6 +114,33 @@ describe('insertion tests', () => {
                 del: [["G", 10], ["H", 10], ["I", 10], ["J",10],],
                 insert: "qh",
                 start: ["G", 10],
+            }
+        )
+    })
+
+
+    test("final tile", () => {
+        const circleData1 = {
+            shift: 1,
+            alignment: "horizontal" 
+          };
+
+          const circleData2 = {
+            shift: 2,
+            alignment: "horizontal" 
+          };
+
+        expect(finalTile("E", 4, circleData1 )).toEqual(
+            {
+                col: "F",
+                row: 4
+            }
+        )
+
+        expect(finalTile("H", 10, circleData2 )).toEqual(
+            {
+                col: "J",
+                row: 10
             }
         )
     })
