@@ -1,4 +1,4 @@
-export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], piece = null) {
+export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], piece = null, occupiedSquares) {
   let count = 0;
   for (let i = 0; i < 10; i += 1) {
     for (let j = 0; j < 10; j += 1) {
@@ -6,7 +6,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
       tile.classList.add("tile");
       tile.id = `${i}${j}`;
 
-      if (pieceSquare.indexOf(count) !== -1) {
+      if (pieceSquare.indexOf(count) !== -1 ) {
         const newShip = createShips(piece[pieceSquare.indexOf(count)]);
         tiles.appendChild(newShip);
         count += 1;
@@ -22,7 +22,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
       //     continue;
       // }
       if (checkForNumber(count, numbers)) {
-        count += 1;
+        count += 1;checkForNumber
         continue;
       }
       count += 1;
@@ -215,6 +215,7 @@ export function insertAt(col, row, piece, myShips) {
 const numbers = [];
 const pieceSquare = []
 const piece = [];
+const occupiedSquares = [];
 
 export function insert(col, row, ship, myShips, tiles, myPiece) {
   const circle = JSON.parse(ship.dataset.circle);
@@ -242,13 +243,17 @@ export function insert(col, row, ship, myShips, tiles, myPiece) {
   })
   numbers.push(currentNumbers);
   deleteBoard(tiles)
-  createSquares(tiles, numbers, pieceSquare, piece);
+  const {count, position} = occupies(piece)
+  const shipOccupies= occupies(myPiece, pieceSquare[pieceSquare.length - 1]);
+  createSquares(tiles, numbers, pieceSquare, piece, occupiedSquares);
+  occupiedSquares.push(shipOccupies)
 }
 
 export function undo(tiles) {
   numbers.pop();
   pieceSquare.pop();
   piece.pop();
+  occupiedSquares.pop();
   deleteBoard(tiles)
   createSquares(tiles, numbers, pieceSquare, piece);
 }
@@ -275,9 +280,6 @@ export function whichCircle(ship, x, y, box) {
   const firstVerticalCircle = box.top + (box.height / 2);
   const secondVerticalCircle = box.top + 2 * (box.height / 3);
   const thirdVerticalCircle = box.top + 3 * (box.height / 3);
-  // console.log(ship, x , y , box)
-  // console.log("this is x", x, "first circle", firstHorizontalCircle, "second circle", secondHorizontalCircle, "third circle", thirdHorizontalCircle);
-  console.log(ship)
   if (ship === "single_horizontal") {
     return {
       shift: 0,
@@ -450,7 +452,6 @@ function formatToTwoDigits(number) {
 
 export function finalTile(col, row, circleData) {
   const { shift, alignment } = circleData;
-  console.log(shift, alignment)
   if (alignment === "horizontal") {
     for (let i = 0; i < shift; i += 1) {
       if (col === "J") {
@@ -500,4 +501,74 @@ export function flippable() {
       }
     })
 
+}
+
+export function occupies(myPiece, pieceSquare) {
+  const firstNumber = `${pieceSquare}`.split("")[0];
+  const secondNumber = `${pieceSquare}`.split("")[1];
+  let result = [];
+  let status = {};
+  if (myPiece === "single_horizontal") {
+     status = {
+      count: 1,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (myPiece === "single_vertical") {
+     status = {
+      count: 1,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (myPiece === "double_horizontal") {
+     status = {
+      count: 2,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (myPiece === "double_vertical") {
+     status = {
+      count: 2,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (myPiece === "tri_horizontal") {
+     status = {
+      count: 3,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (myPiece === "tri_vertical") {
+     status = {
+      count: 3,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (myPiece === "quad_horizontal") {
+     status = {
+      count: 4,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (myPiece === "quad_vertical") {
+     status = {
+      count: 4,
+      position: myPiece.split("_")[1]
+    }
+  }
+  if (Object.keys(status).length === 0) {
+    return "invalid piece name"
+  }
+
+  if (status.position === "horizontal") {
+    for (let i = 0; i < status.count; i++) {
+      result.push(`${firstNumber}${parseInt(secondNumber) + i}`)
+    }
+  } else {
+    for (let i = 0; i < status.count; i++) {
+      result.push(`${parseInt(firstNumber) + i}${secondNumber}`)
+    }
+  }
+
+  return result;
 }

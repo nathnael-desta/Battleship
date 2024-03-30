@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { insertAt, getTile, finalTile } from './board.js';
+import { insertAt, getTile, finalTile, occupies } from './board.js';
 
 
 describe('insertion tests', () => {
@@ -132,16 +132,30 @@ describe('insertion tests', () => {
 
         expect(finalTile("E", 4, circleData1 )).toEqual(
             {
-                col: "F",
-                row: 4
+                finalCol: "F",
+                finalRow: 4
             }
         )
 
         expect(finalTile("H", 10, circleData2 )).toEqual(
             {
-                col: "J",
-                row: 10
+                finalCol: "J",
+                finalRow: 10
             }
+        )
+    })
+
+    test("occupies", () => {
+        const piece1 = "tri_vertical";
+        const piece2 = "quad_horizontal";
+        const pieceSquare1 = 40;
+        const pieceSquare2 = 40;
+        expect(occupies(piece1, pieceSquare1)).toEqual(
+            ["40", "50", "60"]
+        )
+
+        expect(occupies(piece2, pieceSquare2)).toEqual(
+            ["40", "41", "42", "43"]
         )
     })
 })
