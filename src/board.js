@@ -1,220 +1,225 @@
 export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], piece = null) {
-    let count = 0;
-    for(let i = 0; i < 10; i += 1) {
-      for (let j = 0; j < 10; j += 1) {
-        const tile = document.createElement("div");
-        tile.classList.add("tile");
-        tile.id = `${i}${j}`;
+  let count = 0;
+  for (let i = 0; i < 10; i += 1) {
+    for (let j = 0; j < 10; j += 1) {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
+      tile.id = `${i}${j}`;
 
-        if (pieceSquare.indexOf(count) !== -1) {
-            const newShip = createShips(piece[pieceSquare.indexOf(count)]);
-             tiles.appendChild(newShip);
-             count += 1; 
-             const colrow = {
-              col : j,
-              row : i,
-             } 
-          newShip.dataset.tile = JSON.stringify(colrow);
-             continue;
-        }
-        // if (numbers.indexOf(count) !== -1) {
-        //     count += 1;
-        //     continue;
-        // }
-        if (checkForNumber(count, numbers)) {
-          count += 1;
-          continue;
-        }
+      if (pieceSquare.indexOf(count) !== -1) {
+        const newShip = createShips(piece[pieceSquare.indexOf(count)]);
+        tiles.appendChild(newShip);
         count += 1;
-        tiles.appendChild(tile);
-      }
-    }
-  }
-
-  function checkForNumber(value, array) {
-    return array.reduce((isTrue,nums) => {
-      if (nums.indexOf(value) === -1) {
-        return isTrue || false
-      } 
-        return true
-      
-    }, false)
-  }
-
-  function deleteBoard(tiles) {
-    while(tiles.firstChild) {
-        tiles.removeChild(tiles.firstChild)
-    }
-  }
-
-  export function createShips(shipName) {
-    // const circle = document.createElement("div");
-    // circle.classList.add("circle");
-    if (shipName === "single_vertical") {
-      const singleVertical = document.createElement("div");
-      singleVertical.classList.add("single_vertical");
-      for (let i = 0; i < 1; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        singleVertical.appendChild(circle);
-      }
-      return singleVertical;
-    } if (shipName === "single_horizontal") {
-      const singleHorizontal = document.createElement("div");
-      
-      singleHorizontal.classList.add("single_horizontal");
-      for (let i = 0; i < 1; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        singleHorizontal.appendChild(circle);
-      }
-      return singleHorizontal;
-    } if (shipName === "double_vertical") {
-      const doubleVertical = document.createElement("div");
-      doubleVertical.classList.add("double_vertical");
-      for (let i = 0; i < 2; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        doubleVertical.appendChild(circle);
-      }
-      return doubleVertical;
-    } if (shipName === "double_horizontal") {
-      const doubleHorizontal = document.createElement("div");
-      doubleHorizontal.classList.add("double_horizontal");
-      for (let i = 0; i < 2; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        doubleHorizontal.appendChild(circle);
-      }
-      return doubleHorizontal;  
-    } if (shipName === "tri_horizontal") {
-      const triHorizontal = document.createElement("div");
-      triHorizontal.classList.add("tri_horizontal");
-      for (let i = 0; i < 3; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        triHorizontal.appendChild(circle);
-      }
-      return triHorizontal;  
-    } if (shipName === "tri_vertical") {
-      const triVertical = document.createElement("div");
-      triVertical.classList.add("tri_vertical");
-      for (let i = 0; i < 3; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        triVertical.appendChild(circle);
-      }
-      return triVertical;  
-    } if (shipName === "quad_horizontal") {
-      const quadHorizontal = document.createElement("div");
-      quadHorizontal.classList.add("quad_horizontal");
-      for (let i = 0; i < 4; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        quadHorizontal.appendChild(circle);
-      }
-      return quadHorizontal;  
-    } if (shipName === "quad_vertical") {
-      const quadVertical = document.createElement("div");
-      quadVertical.classList.add("quad_vertical");
-      for (let i = 0; i < 4; i++) {
-        const circle = document.createElement("div");
-        circle.classList.add("circle");
-        quadVertical.appendChild(circle);
-      }
-      return quadVertical;  
-    } 
-    return "Ship not found";
-  }
-
-  export const myShips = {
-    "single_vertical" : {name: "sv", alignment: "vertical", delete:1},
-    "single_horizontal" : {name: "sh", alignment: "horizontal", delete:1},
-    "double_vertical" : {name: "dv", alignment: "vertical", delete:2},
-    "double_horizontal" : {name: "dh", alignment: "horizontal", delete:2},
-    "tri_vertical" : {name: "tv", alignment: "vertical", delete:3},
-    "tri_horizontal" : {name: "th", alignment: "horizontal", delete:3},
-    "quad_vertical" : {name: "qv", alignment: "vertical", delete:4},
-    "quad_horizontal" : {name: "qh", alignment: "horizontal", delete:4},
-  }
-
-  export function getTile(tiles, col, row) {
-  }
-
-  function getNumberFromTile(col, row) {
-    const lettersToNum = {
-        "A" : 0,
-        "B" : 1,
-        "C" : 2,
-        "D" : 3,
-        "E" : 4,
-        "F" : 5,
-        "G" : 6,
-        "H" : 7,
-        "I" : 8,
-        "J" : 9,
-      }
-
-      return parseInt(`${row - 1}${lettersToNum[col]}`);
-  }
-
-  export const numToLetters = {
-    "0" : "A",
-    "1" : "B",
-    "2" : "C",
-    "3" : "D",
-    "4" : "E",
-    "5" : "F",
-    "6" : "G",
-    "7" : "H",
-    "8" : "I",
-    "9" : "J",
-  }
-
-  export function getTileFromNumber(row, col) {
-      return `${numToLetters[col]}${parseInt(row) + 1}`;
-  }
-
-  export function insertAt(col, row, piece, myShips) {
-    if (col < "A" || col > "J" || row < 0 || row > 10 || myShips == null || myShips[piece] == null) {
-      return "incorrect input";
-    }
-  
-    const result = {insert: myShips[piece].name};
-    const deletes = [];
-    const rerunDeletes = [];
-    const count = myShips[piece].delete;
-  
-    if(myShips[piece].alignment === "vertical") {
-      for (let i = 0; i < count; i += 1) {
-        if (row + i <= 10) {
-          deletes.push([col, row + i])
-        } else {
-          rerunDeletes.push([col, row + i - count])
+        const colrow = {
+          col: j,
+          row: i,
         }
-      } 
-    } else {
-      for (let i = 0; i < count; i += 1) {
-        if (String.fromCharCode(col.charCodeAt(0) + i) <= "J") {
-          deletes.push([String.fromCharCode(col.charCodeAt(0) + i), row])
-        } else {
-          rerunDeletes.push([String.fromCharCode(col.charCodeAt(0) + i - count), row])
-        }
+        newShip.dataset.tile = JSON.stringify(colrow);
+        continue;
       }
+      // if (numbers.indexOf(count) !== -1) {
+      //     count += 1;
+      //     continue;
+      // }
+      if (checkForNumber(count, numbers)) {
+        count += 1;
+        continue;
+      }
+      count += 1;
+      tiles.appendChild(tile);
     }
-    result.del = [...rerunDeletes, ...deletes];
-    [result.start] = result.del;
-    return result;
+  }
+  flippable();
+}
+
+function checkForNumber(value, array) {
+  return array.reduce((isTrue, nums) => {
+    if (nums.indexOf(value) === -1) {
+      return isTrue || false
+    }
+    return true
+
+  }, false)
+}
+
+function deleteBoard(tiles) {
+  while (tiles.firstChild) {
+    tiles.removeChild(tiles.firstChild)
+  }
+}
+
+export function createShips(shipName) {
+  // const circle = document.createElement("div");
+  // circle.classList.add("circle");
+  if (shipName === "single_vertical") {
+    const singleVertical = document.createElement("div");
+    singleVertical.classList.add("single_vertical");
+    for (let i = 0; i < 1; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      singleVertical.classList.add("flippable");
+      singleVertical.appendChild(circle);
+    }
+    return singleVertical;
+  } if (shipName === "single_horizontal") {
+    const singleHorizontal = document.createElement("div");
+
+    singleHorizontal.classList.add("single_horizontal");
+    for (let i = 0; i < 1; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      singleHorizontal.classList.add("flippable");
+      singleHorizontal.appendChild(circle);
+    }
+    return singleHorizontal;
+  } if (shipName === "double_vertical") {
+    const doubleVertical = document.createElement("div");
+    doubleVertical.classList.add("double_vertical");
+    for (let i = 0; i < 2; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      doubleVertical.classList.add("flippable");
+      doubleVertical.appendChild(circle);
+    }
+    return doubleVertical;
+  } if (shipName === "double_horizontal") {
+    const doubleHorizontal = document.createElement("div");
+    doubleHorizontal.classList.add("double_horizontal");
+    for (let i = 0; i < 2; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      singleVertical.classList.add("flippable");
+      doubleHorizontal.appendChild(circle);
+    }
+    return doubleHorizontal;
+  } if (shipName === "tri_horizontal") {
+    const triHorizontal = document.createElement("div");
+    triHorizontal.classList.add("tri_horizontal");
+    for (let i = 0; i < 3; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      triHorizontal.appendChild(circle);
+    }
+    return triHorizontal;
+  } if (shipName === "tri_vertical") {
+    const triVertical = document.createElement("div");
+    triVertical.classList.add("tri_vertical");
+    for (let i = 0; i < 3; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      triVertical.appendChild(circle);
+    }
+    return triVertical;
+  } if (shipName === "quad_horizontal") {
+    const quadHorizontal = document.createElement("div");
+    quadHorizontal.classList.add("quad_horizontal");
+    for (let i = 0; i < 4; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      quadHorizontal.appendChild(circle);
+    }
+    return quadHorizontal;
+  } if (shipName === "quad_vertical") {
+    const quadVertical = document.createElement("div");
+    quadVertical.classList.add("quad_vertical");
+    for (let i = 0; i < 4; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("circle");
+      quadVertical.appendChild(circle);
+    }
+    return quadVertical;
+  }
+  return "Ship not found";
+}
+
+export const myShips = {
+  "single_vertical": { name: "sv", alignment: "vertical", delete: 1 },
+  "single_horizontal": { name: "sh", alignment: "horizontal", delete: 1 },
+  "double_vertical": { name: "dv", alignment: "vertical", delete: 2 },
+  "double_horizontal": { name: "dh", alignment: "horizontal", delete: 2 },
+  "tri_vertical": { name: "tv", alignment: "vertical", delete: 3 },
+  "tri_horizontal": { name: "th", alignment: "horizontal", delete: 3 },
+  "quad_vertical": { name: "qv", alignment: "vertical", delete: 4 },
+  "quad_horizontal": { name: "qh", alignment: "horizontal", delete: 4 },
+}
+
+export function getTile(tiles, col, row) {
+}
+
+function getNumberFromTile(col, row) {
+  const lettersToNum = {
+    "A": 0,
+    "B": 1,
+    "C": 2,
+    "D": 3,
+    "E": 4,
+    "F": 5,
+    "G": 6,
+    "H": 7,
+    "I": 8,
+    "J": 9,
   }
 
-  const numbers = [];
-  const pieceSquare = []
-  const piece = [];
+  return parseInt(`${row - 1}${lettersToNum[col]}`);
+}
 
-  export function insert(col, row, ship, myShips, tiles, myPiece) {
-    const circle = JSON.parse(ship.dataset.circle);
-    if (myPiece.split("_")[1] !== "vertical") {
-      const { shift, alignment } = circle;
+export const numToLetters = {
+  "0": "A",
+  "1": "B",
+  "2": "C",
+  "3": "D",
+  "4": "E",
+  "5": "F",
+  "6": "G",
+  "7": "H",
+  "8": "I",
+  "9": "J",
+}
+
+export function getTileFromNumber(row, col) {
+  return `${numToLetters[col]}${parseInt(row) + 1}`;
+}
+
+export function insertAt(col, row, piece, myShips) {
+  if (col < "A" || col > "J" || row < 0 || row > 10 || myShips == null || myShips[piece] == null) {
+    return "incorrect input";
+  }
+
+  const result = { insert: myShips[piece].name };
+  const deletes = [];
+  const rerunDeletes = [];
+  const count = myShips[piece].delete;
+
+  if (myShips[piece].alignment === "vertical") {
+    for (let i = 0; i < count; i += 1) {
+      if (row + i <= 10) {
+        deletes.push([col, row + i])
+      } else {
+        rerunDeletes.push([col, row + i - count])
+      }
+    }
+  } else {
+    for (let i = 0; i < count; i += 1) {
+      if (String.fromCharCode(col.charCodeAt(0) + i) <= "J") {
+        deletes.push([String.fromCharCode(col.charCodeAt(0) + i), row])
+      } else {
+        rerunDeletes.push([String.fromCharCode(col.charCodeAt(0) + i - count), row])
+      }
+    }
+  }
+  result.del = [...rerunDeletes, ...deletes];
+  [result.start] = result.del;
+  return result;
+}
+
+const numbers = [];
+const pieceSquare = []
+const piece = [];
+
+export function insert(col, row, ship, myShips, tiles, myPiece) {
+  const circle = JSON.parse(ship.dataset.circle);
+  if (myPiece.split("_")[1] !== "vertical") {
+    const { shift, alignment } = circle;
     if (alignment === "horizontal") {
       for (let i = 0; i < shift; i += 1) {
         if (col === "A") {
@@ -223,33 +228,33 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
         col = String.fromCharCode(col.charCodeAt(0) - 1);
       }
     }
-    }
-    
-    const insertObj = insertAt(col, row, myPiece, myShips);
-    const deleteSquares = insertObj.del;
-    // const numbers = [];
-    pieceSquare.push(getNumberFromTile(insertObj.start[0], insertObj.start[1]))
-
-    piece.push(myPiece);
-    const currentNumbers = []
-    deleteSquares.forEach((square) => {
-        currentNumbers.push(getNumberFromTile(square[0], square[1]))
-    })
-    numbers.push(currentNumbers);
-    deleteBoard(tiles)
-    createSquares(tiles, numbers,pieceSquare, piece);
   }
 
-  export function undo(tiles) {
-    numbers.pop();
-    pieceSquare.pop();
-    piece.pop();
-    deleteBoard(tiles)
-    createSquares(tiles, numbers,pieceSquare, piece);
-  }
+  const insertObj = insertAt(col, row, myPiece, myShips);
+  const deleteSquares = insertObj.del;
+  // const numbers = [];
+  pieceSquare.push(getNumberFromTile(insertObj.start[0], insertObj.start[1]))
 
-  export function getDragElement(container,x,y) {
-    const draggableElements = [...container.querySelectorAll(".tile")];
+  piece.push(myPiece);
+  const currentNumbers = []
+  deleteSquares.forEach((square) => {
+    currentNumbers.push(getNumberFromTile(square[0], square[1]))
+  })
+  numbers.push(currentNumbers);
+  deleteBoard(tiles)
+  createSquares(tiles, numbers, pieceSquare, piece);
+}
+
+export function undo(tiles) {
+  numbers.pop();
+  pieceSquare.pop();
+  piece.pop();
+  deleteBoard(tiles)
+  createSquares(tiles, numbers, pieceSquare, piece);
+}
+
+export function getDragElement(container, x, y) {
+  const draggableElements = [...container.querySelectorAll(".tile")];
   return draggableElements.reduce((closest, child) => {
     const box = child.getBoundingClientRect();
     const yOffset = y - box.top - box.height / 2;
@@ -260,201 +265,239 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
     }
     return closest;
   }, { offset: Number.POSITIVE_INFINITY });
-  }
+}
 
-  export function whichCircle(ship, x, y, box) {
-    
-    const firstHorizontalCircle = box.left + (box.width / 2);
-    const secondHorizontalCircle = box.left + 2 * (box.width / 3); 
-    const thirdHorizontalCircle = box.left + 3 * (box.width / 3); 
-    const firstVerticalCircle = box.top + (box.height / 2);
-    const secondVerticalCircle = box.top + 2 * (box.height / 3); 
-    const thirdVerticalCircle = box.top + 3 * (box.height / 3); 
-    // console.log(ship, x , y , box)
-    // console.log("this is x", x, "first circle", firstHorizontalCircle, "second circle", secondHorizontalCircle, "third circle", thirdHorizontalCircle);
+export function whichCircle(ship, x, y, box) {
 
-    if (ship === "single_horizontal") {
-      return {
-        shift: 0,
-        alignment: "horizontal" 
-      };
-    } 
-
-    if (ship === "double_horizontal") {
-      if (x <= firstHorizontalCircle) {
-        return {
-          shift: 0,
-          alignment: "horizontal" 
-        };
-      } 
-        return {
-          shift: 1,
-          alignment: "horizontal"
-        };  
-    }
-
-    if (ship === "tri_horizontal") {
-      if (x <= firstHorizontalCircle - 16) {
-        return {
-          shift: 0,
-          alignment: "horizontal" 
-        };
-      } 
-
-      if (x <= secondHorizontalCircle - 5) {
-        return {
-          shift: 1,
-          alignment: "horizontal" 
-        };
-      } 
-        return {
-          shift: 2,
-          alignment: "horizontal"
-        };
-    } 
-
-    if (ship === "quad_horizontal") {
-      if (x <= firstHorizontalCircle - 35 ) {
-        return {
-          shift: 0,
-          alignment: "horizontal" 
-        };
-      } 
-
-      if (x <= secondHorizontalCircle -25 ) {
-        return {
-          shift: 1,
-          alignment: "horizontal" 
-        };
-      }
-      
-      if (x <= thirdHorizontalCircle - 40) {
-        return {
-          shift: 2,
-          alignment: "horizontal" 
-        };
-      }
-        return {
-          shift: 3,
-          alignment: "horizontal"
-        };
-    } 
-
-    if (ship === "single_vertical") {
-      return {
-        shift: 0,
-        alignment: "vertical" 
-      };
-    }
-
-    if (ship === "double_vertical") {
-      if (y <= firstVerticalCircle) {
-        return {
-          shift: 0,
-          alignment: "vertical" 
-        };
-      } 
-        return {
-          shift: 1,
-          alignment: "vertical"
-        };  
-    }
-
-    if (ship === "tri_vertical") {
-      if (x <= firstVerticalCircle - 16) {
-        return {
-          shift: 0,
-          alignment: "vertical" 
-        };
-      } 
-
-      if (x <= secondVerticalCircle - 5) {
-        return {
-          shift: 1,
-          alignment: "vertical" 
-        };
-      } 
-        return {
-          shift: 2,
-          alignment: "vertical"
-        };
-    }
-
-    if (ship === "quad_vertical") {
-      if (x <= firstVerticalCircle - 35 ) {
-        return {
-          shift: 0,
-          alignment: "vertical" 
-        };
-      } 
-
-      if (x <= secondVerticalCircle -25 ) {
-        return {
-          shift: 1,
-          alignment: "vertical" 
-        };
-      }
-      
-      if (x <= thirdVerticalCircle - 40) {
-        return {
-          shift: 2,
-          alignment: "vertical" 
-        };
-      }
-        return {
-          shift: 3,
-          alignment: "vertical"
-        };
-    } 
-
+  const firstHorizontalCircle = box.left + (box.width / 2);
+  const secondHorizontalCircle = box.left + 2 * (box.width / 3);
+  const thirdHorizontalCircle = box.left + 3 * (box.width / 3);
+  const firstVerticalCircle = box.top + (box.height / 2);
+  const secondVerticalCircle = box.top + 2 * (box.height / 3);
+  const thirdVerticalCircle = box.top + 3 * (box.height / 3);
+  // console.log(ship, x , y , box)
+  // console.log("this is x", x, "first circle", firstHorizontalCircle, "second circle", secondHorizontalCircle, "third circle", thirdHorizontalCircle);
+  console.log(ship)
+  if (ship === "single_horizontal") {
     return {
-      shift: 1000,
+      shift: 0,
       alignment: "horizontal"
     };
   }
 
-  export function rotate(shipName, x, y, box) {
-    console.log(numbers, pieceSquare, piece)
-
-
-    // const myPiece = piece[piece.length - 1];
-    // let [first, second] = myPiece.split("_");
-    // second = second === "horizontal" ? "vertical" : "horizontal";
-    // const flipped = [first, second].join("_");
-
-    // let myCircle = whichCircle(shipName, x, y, box);
-
-    // let [row, col] = `${formatToTwoDigits(pieceSquare[pieceSquare.length - 1])}`.split("");
-    // col = `${parseInt(col) + myCircle.shift}`;
-    // const tile = getTileFromNumber(row, col);
-    // col = tile[0];
-    // row = parseInt(tile.slice(1));
-    // const insertObj = insertAt(col, row, flipped, myShips);
-    // const deleteSquares = insertObj.del;
-
-    // console.log(shipName, x, y, box);
-    // console.log(myCircle.shift, myCircle.alignment, tile);
-  
-    
-  }
-
-  function formatToTwoDigits(number) {
-    return number.toString().padStart(2, "0");
-  }
-
-  export function finalTile(col, row, circleData) {
-    const {shift, alignment} = circleData;
-    if (alignment === "horizontal") {
-      for (let i = 0; i < shift; i += 1) {
-        if (col === "J") {
-          break;
-        }
-        col = String.fromCharCode(col.charCodeAt(0) + 1);
-      }
+  if (ship === "double_horizontal") {
+    if (x <= firstHorizontalCircle) {
       return {
-        finalCol: col,
-        finalRow: row
-      }
+        shift: 0,
+        alignment: "horizontal"
+      };
+    }
+    return {
+      shift: 1,
+      alignment: "horizontal"
+    };
+  }
+
+  if (ship === "tri_horizontal") {
+    if (x <= firstHorizontalCircle - 16) {
+      return {
+        shift: 0,
+        alignment: "horizontal"
+      };
     }
 
+    if (x <= secondHorizontalCircle - 5) {
+      return {
+        shift: 1,
+        alignment: "horizontal"
+      };
+    }
+    return {
+      shift: 2,
+      alignment: "horizontal"
+    };
   }
+
+  if (ship === "quad_horizontal") {
+    if (x <= firstHorizontalCircle - 35) {
+      return {
+        shift: 0,
+        alignment: "horizontal"
+      };
+    }
+
+    if (x <= secondHorizontalCircle - 25) {
+      return {
+        shift: 1,
+        alignment: "horizontal"
+      };
+    }
+
+    if (x <= thirdHorizontalCircle - 40) {
+      return {
+        shift: 2,
+        alignment: "horizontal"
+      };
+    }
+    return {
+      shift: 3,
+      alignment: "horizontal"
+    };
+  }
+
+  if (ship === "single_vertical") {
+    return {
+      shift: 0,
+      alignment: "vertical"
+    };
+  }
+
+  if (ship === "double_vertical") {
+    if (y <= firstVerticalCircle) {
+      return {
+        shift: 0,
+        alignment: "vertical"
+      };
+    }
+    return {
+      shift: 1,
+      alignment: "vertical"
+    };
+  }
+
+  if (ship === "tri_vertical") {
+    console.log(y, firstVerticalCircle)
+    if (y <= firstVerticalCircle - 16) {
+      return {
+        shift: 0,
+        alignment: "vertical"
+      };
+    }
+
+    if (y <= secondVerticalCircle - 5) {
+      return {
+        shift: 1,
+        alignment: "vertical"
+      };
+    }
+    return {
+      shift: 2,
+      alignment: "vertical"
+    };
+  }
+
+  if (ship === "quad_vertical") {
+    if (y <= firstVerticalCircle - 35) {
+      return {
+        shift: 0,
+        alignment: "vertical"
+      };
+    }
+
+    if (y <= secondVerticalCircle - 25) {
+      return {
+        shift: 1,
+        alignment: "vertical"
+      };
+    }
+
+    if (y <= thirdVerticalCircle - 40) {
+      return {
+        shift: 2,
+        alignment: "vertical"
+      };
+    }
+    return {
+      shift: 3,
+      alignment: "vertical"
+    };
+  }
+
+  return {
+    shift: 1000,
+    alignment: "horizontal"
+  };
+}
+
+export function rotate(shipName, x, y, box) {
+  console.log(numbers, pieceSquare, piece)
+
+
+  // const myPiece = piece[piece.length - 1];
+  // let [first, second] = myPiece.split("_");
+  // second = second === "horizontal" ? "vertical" : "horizontal";
+  // const flipped = [first, second].join("_");
+
+  // let myCircle = whichCircle(shipName, x, y, box);
+
+  // let [row, col] = `${formatToTwoDigits(pieceSquare[pieceSquare.length - 1])}`.split("");
+  // col = `${parseInt(col) + myCircle.shift}`;
+  // const tile = getTileFromNumber(row, col);
+  // col = tile[0];
+  // row = parseInt(tile.slice(1));
+  // const insertObj = insertAt(col, row, flipped, myShips);
+  // const deleteSquares = insertObj.del;
+
+  // console.log(shipName, x, y, box);
+  // console.log(myCircle.shift, myCircle.alignment, tile);
+
+
+}
+
+function formatToTwoDigits(number) {
+  return number.toString().padStart(2, "0");
+}
+
+export function finalTile(col, row, circleData) {
+  const { shift, alignment } = circleData;
+  console.log(shift, alignment)
+  if (alignment === "horizontal") {
+    for (let i = 0; i < shift; i += 1) {
+      if (col === "J") {
+        break;
+      }
+      col = String.fromCharCode(col.charCodeAt(0) + 1);
+    }
+    return {
+      finalCol: col,
+      finalRow: row
+    }
+  } 
+    for (let i = 0; i < shift; i += 1) {
+      if (row === 10) {
+        break;
+      }
+      row += 1;
+    }
+    return {
+      finalCol: col,
+      finalRow: row
+    }
+  
+
+}
+
+export function flippable() {
+
+    const tileDivs = document.querySelectorAll(".tiles > div");
+    const playerTiles = document.querySelector(".player .tiles");
+    tileDivs.forEach((div) => {
+      if (!div.classList.contains("tile")) {
+        div.addEventListener("click", (event) => {
+          const divTile = JSON.parse(div.dataset.tile);
+          const myCol = numToLetters[`${divTile.col}`];
+          const shipName = div.classList[0];
+          const box = div.getBoundingClientRect();
+
+          undo(playerTiles)
+          const datavalue = whichCircle(shipName, event.clientX, event.clientY, box);
+          div.dataset.circle = JSON.stringify(datavalue);
+          const { finalCol, finalRow } = finalTile(myCol, divTile.row + 1, datavalue);
+          const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
+
+          insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
+        })
+      }
+    })
+
+}

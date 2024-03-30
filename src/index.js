@@ -1,5 +1,5 @@
 import json5 from "json5";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable } from "./board";
 
 import("./style.css");
 
@@ -38,45 +38,41 @@ individualships.forEach((ship) => {
         const row = parseInt(tile.slice(1));
         const myPiece = ship.classList[2];
         insert(col, row, ship, myShips, playerTiles, myPiece);
-        setTimeout(() => {
-            tileDivs = document.querySelectorAll(".tiles > div");
-        tileDivs.forEach((div) => {
+        // flippable();
+        // setTimeout(() => {
+        //     tileDivs = document.querySelectorAll(".tiles > div");
+        // tileDivs.forEach((div) => {
+        //     if (!div.classList.contains("tile")) {
+        //         div.addEventListener("click", (event) => {
+        //             const divTile = JSON.parse(div.dataset.tile);
+        //             const myCol = numToLetters[`${divTile.col}`];
+        //             const shipName = div.classList[0];
+        //             const box = div.getBoundingClientRect();
 
-            if (!div.classList.contains("tile")) {
-                div.addEventListener("click", (event) => {
-                    const divTile = JSON.parse(div.dataset.tile);
-                    const myCol = numToLetters[`${divTile.col}`];
-                    const shipName = div.classList[0];
-                    const box = div.getBoundingClientRect();
-
-                    undo(playerTiles)
-                    const datavalue = whichCircle(shipName, event.clientX, event.clientY, box);
-                    div.dataset.circle = JSON.stringify(datavalue);
-                    const { finalCol, finalRow } = finalTile(myCol, divTile.row + 1, datavalue);
-                    const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
-                    console.log('finalpiecename', finalPieceName)
-                    insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
-                })
-            }
-        })
-        }, 1000)
+        //             undo(playerTiles)
+        //             const datavalue = whichCircle(shipName, event.clientX, event.clientY, box);
+        //             div.dataset.circle = JSON.stringify(datavalue);
+        //             const { finalCol, finalRow } = finalTile(myCol, divTile.row + 1, datavalue);
+        //             const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
+        //             console.log('finalpiecename', finalPieceName)
+        //             insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
+        //             tileDivs = document.querySelectorAll(".tiles > div");
+        //         })
+        //     }
+        // })
+        // }, 1000)
         ship.classList.remove("dragging");
-
-        
-
-
     })
 })
-
-
-
-
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "z") {
         undo(playerTiles);
     }
 })
+
+
+
 
 // document.addEventListener('keydown', (e) => {
 //     if (e.key === "r") {
