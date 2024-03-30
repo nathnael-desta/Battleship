@@ -1,4 +1,12 @@
+const numbers = [];
+const pieceSquare = []
+const piece = [];
+const occupiedSquares = [];
+const okToDraw = [];
+
+
 export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], piece = null, occupiedSquares) {
+  let insertionSuccessful = true;
   let count = 0;
   for (let i = 0; i < 10; i += 1) {
     for (let j = 0; j < 10; j += 1) {
@@ -6,8 +14,12 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
       tile.classList.add("tile");
       tile.id = `${i}${j}`;
 
-      if (pieceSquare.indexOf(count) !== -1 ) {
-        const newShip = createShips(piece[pieceSquare.indexOf(count)]);
+
+      if (pieceSquare.indexOf(count) !== -1) {
+        console.log("count", count, occupiedSquares)
+        if (okToDraw.indexOf(count) !== -1 || !checkForNumber(`${count}`, occupiedSquares)) {
+          okToDraw.push(count);
+          const newShip = createShips(piece[pieceSquare.indexOf(count)]);
         tiles.appendChild(newShip);
         count += 1;
         const colrow = {
@@ -16,13 +28,18 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
         }
         newShip.dataset.tile = JSON.stringify(colrow);
         continue;
+        }
+        insertionSuccessful = false;
+        numbers.pop();
+        pieceSquare.pop();
+        piece.pop();
       }
       // if (numbers.indexOf(count) !== -1) {
       //     count += 1;
       //     continue;
       // }
       if (checkForNumber(count, numbers)) {
-        count += 1;checkForNumber
+        count += 1;
         continue;
       }
       count += 1;
@@ -30,6 +47,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
     }
   }
   flippable();
+  return insertionSuccessful;
 }
 
 function checkForNumber(value, array) {
@@ -88,7 +106,7 @@ export function createShips(shipName) {
     for (let i = 0; i < 2; i++) {
       const circle = document.createElement("div");
       circle.classList.add("circle");
-      singleVertical.classList.add("flippable");
+      doubleHorizontal.classList.add("flippable");
       doubleHorizontal.appendChild(circle);
     }
     return doubleHorizontal;
@@ -212,10 +230,7 @@ export function insertAt(col, row, piece, myShips) {
   return result;
 }
 
-const numbers = [];
-const pieceSquare = []
-const piece = [];
-const occupiedSquares = [];
+
 
 export function insert(col, row, ship, myShips, tiles, myPiece) {
   const circle = JSON.parse(ship.dataset.circle);
@@ -245,8 +260,10 @@ export function insert(col, row, ship, myShips, tiles, myPiece) {
   deleteBoard(tiles)
   const {count, position} = occupies(piece)
   const shipOccupies= occupies(myPiece, pieceSquare[pieceSquare.length - 1]);
-  createSquares(tiles, numbers, pieceSquare, piece, occupiedSquares);
-  occupiedSquares.push(shipOccupies)
+  const isInsertionSuccessful = createSquares(tiles, numbers, pieceSquare, piece, occupiedSquares);
+  if (isInsertionSuccessful) {
+    occupiedSquares.push(shipOccupies); 
+  }
 }
 
 export function undo(tiles) {
@@ -254,6 +271,7 @@ export function undo(tiles) {
   pieceSquare.pop();
   piece.pop();
   occupiedSquares.pop();
+  okToDraw.pop();
   deleteBoard(tiles)
   createSquares(tiles, numbers, pieceSquare, piece);
 }
