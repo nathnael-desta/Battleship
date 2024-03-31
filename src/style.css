@@ -25,6 +25,12 @@
     font-weight: 600;
     font-style: normal;
 }
+@font-face {
+    font-family: myMedium;
+    src: url("./Assets/static/Inter-Medium.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+}
 
 @font-face {
     font-family: myLight;
@@ -89,6 +95,8 @@
                 justify-content: space-between;
                 align-items: center;
                 padding: 0 10px;
+                font-family: myMedium;
+                
                 
 
                 svg {
@@ -138,6 +146,9 @@
                         align-content: start;
                         gap: 6px;
                         padding-left: 9px;
+                        height: min-content;
+
+                        width: min-content;
                     }
                 }
 
@@ -600,7 +611,7 @@
     height: 108px;
 }
 
-.dragging {
+.draged {
     opacity: 0.3;
 }
 

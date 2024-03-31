@@ -1,3 +1,5 @@
+import { split } from "lodash";
+
 const numbers = [];
 const pieceSquare = []
 const piece = [];
@@ -16,9 +18,11 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
 
 
       if (pieceSquare.indexOf(count) !== -1) {
-        console.log("count", count, occupiedSquares)
         if (okToDraw.indexOf(count) !== -1 || !checkForNumber(`${count}`, occupiedSquares)) {
-          okToDraw.push(count);
+          // okToDraw.push(count);
+          if (okToDraw.indexOf(count) === -1) {
+            okToDraw.push(count);
+          }
           const newShip = createShips(piece[pieceSquare.indexOf(count)]);
         tiles.appendChild(newShip);
         count += 1;
@@ -264,6 +268,7 @@ export function insert(col, row, ship, myShips, tiles, myPiece) {
   if (isInsertionSuccessful) {
     occupiedSquares.push(shipOccupies); 
   }
+
 }
 
 export function undo(tiles) {
@@ -386,7 +391,7 @@ export function whichCircle(ship, x, y, box) {
   }
 
   if (ship === "tri_vertical") {
-    console.log(y, firstVerticalCircle)
+
     if (y <= firstVerticalCircle - 16) {
       return {
         shift: 0,
@@ -440,7 +445,7 @@ export function whichCircle(ship, x, y, box) {
 }
 
 export function rotate(shipName, x, y, box) {
-  console.log(numbers, pieceSquare, piece)
+
 
 
   // const myPiece = piece[piece.length - 1];
@@ -458,8 +463,7 @@ export function rotate(shipName, x, y, box) {
   // const insertObj = insertAt(col, row, flipped, myShips);
   // const deleteSquares = insertObj.del;
 
-  // console.log(shipName, x, y, box);
-  // console.log(myCircle.shift, myCircle.alignment, tile);
+
 
 
 }
@@ -508,23 +512,30 @@ export function flippable() {
           const shipName = div.classList[0];
           const box = div.getBoundingClientRect();
 
-          undo(playerTiles)
           const datavalue = whichCircle(shipName, event.clientX, event.clientY, box);
           div.dataset.circle = JSON.stringify(datavalue);
           const { finalCol, finalRow } = finalTile(myCol, divTile.row + 1, datavalue);
           const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
+          if (shipName.split("_")[1] === "horizontal") {
+            if (!checkIfFlipIsOk(finalCol, finalRow, occupiedSquares, shipName)) {
+              return;
+            }
+          }
+
+          removeDiv(finalCol, finalRow, numbers, piece, pieceSquare, occupiedSquares, okToDraw);
+          deleteBoard(playerTiles)
+          createSquares(playerTiles, numbers, pieceSquare, piece);
 
           insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
         })
       }
     })
-
 }
 
 export function occupies(myPiece, pieceSquare) {
   const firstNumber = `${pieceSquare}`.split("")[0];
   const secondNumber = `${pieceSquare}`.split("")[1];
-  let result = [];
+  const result = [];
   let status = {};
   if (myPiece === "single_horizontal") {
      status = {
@@ -589,4 +600,82 @@ export function occupies(myPiece, pieceSquare) {
   }
 
   return result;
+}
+
+
+export function removeDiv(col, row, numbers, piece, pieceSquare, occupiedSquares, okToDraw) {
+  const tile = parseInt(getNumberFromTile(col, row), 10);
+  let index = -1;
+  for (let i = 0; i < numbers.length; i++) {
+    if (numbers[i].indexOf(tile) !== -1) {
+      index = i;
+    }
+  }
+  // const newNumbers = [...numbers];
+  // const newPiece = [...piece];
+  // const newPieceSquare = [...pieceSquare];
+  // const newOccupiedSquares = [...occupiedSquares];
+  // const newOkToDraw = [...okToDraw];
+  if (index !== -1) {
+    numbers.splice(index, 1);
+    piece.splice(index, 1);
+    pieceSquare.splice(index, 1);
+    occupiedSquares.splice(index, 1);
+    okToDraw.splice(index, 1);
+  }
+  return {
+    numbers ,
+    piece ,
+    pieceSquare ,
+    occupiedSquares ,
+    okToDraw
+  }
+}
+
+export function checkIfFlipIsOk(col, row, occupiedSquares, shipName) {
+  const tile = getNumberFromTile(col, row);
+  occupiedSquares.forEach((array, index) => {
+    if (array.indexOf(`${tile}`) !== -1) {
+        occupiedSquares.splice(index, 1)
+    }
+  }) 
+  
+  let [tilerow, tilecol] = `${tile}`.split("");
+  let result = true;
+  const first = shipName.split("_")[0];
+
+  const count = first === "single" ? 1 : first === "double" ? 2 : first === "tri" ? 3 : first === "quad" ? 4 : "undefied";
+
+  const deletes = [];
+  const rerunDeletes = [];
+
+  for (let i = 0; i < count; i += 1) {
+    if (row + i <= 10) {
+      deletes.push(`${parseInt(tilerow, 10) + i}${tilecol}`)
+    } else {
+      rerunDeletes.push(`${parseInt(tilerow, 10) + i - count}${tilecol}`)
+    }
+  }
+
+
+  const verticalTiles = [...rerunDeletes, ...deletes];
+
+
+
+  verticalTiles.forEach(vtile => {
+    for (let i = 0; i < occupiedSquares.length; i++) {
+      if (occupiedSquares[i].indexOf(vtile) !== -1) {
+        result = false;
+      }
+    }
+  })
+  
+  return result;
+}
+
+export function placedShipDimmer(placedShips) {
+  placedShips.forEach((ship) => {
+    ship.classList.add('draged');
+    ship.setAttribute("draggable", false);
+  })
 }

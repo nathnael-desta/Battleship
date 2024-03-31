@@ -1,5 +1,5 @@
 import json5 from "json5";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer } from "./board";
 
 import("./style.css");
 
@@ -12,17 +12,20 @@ let tileDivs = document.querySelectorAll(".tiles > div");
 createSquares(playerTiles);
 createSquares(opponentTiles);
 
-
+const placedShips = [];
 individualships.forEach((ship) => {
-
     ship.addEventListener("dragstart", (e) => {
+        
+        if (ship.classList.contains('draged')) {
+            return;
+        }
         if (e.key === "r") {
             e.preventDefault();
             e.stopPropagation();
             ship.classList.toggle("rotate");
 
         }
-        ship.classList.add("dragging");
+        ship.classList.add("draged");
         const shipName = ship.classList[2];
         const box = ship.getBoundingClientRect();
         const datavalue = whichCircle(shipName, e.clientX, e.clientY, box);
@@ -30,6 +33,16 @@ individualships.forEach((ship) => {
     })
 
     ship.addEventListener("dragend", (e) => {
+        ship.classList.remove("draged");
+        const rect = playerTiles.getBoundingClientRect();
+        const x = e.clientX;
+        const y = e.clientY;
+        placedShips.push(ship);
+        if (!(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)) {
+            placedShips.pop();
+            return;
+          }
+        placedShipDimmer(placedShips);
         const dragObj = getDragElement(playerTiles, e.clientX, e.clientY);
         const removeElement = dragObj.element;
         const nums = removeElement.id.split("");
@@ -61,15 +74,21 @@ individualships.forEach((ship) => {
         //     }
         // })
         // }, 1000)
-        ship.classList.remove("dragging");
+        
     })
 })
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "z") {
         undo(playerTiles);
+        const nowPlaceable = placedShips.pop();
+        nowPlaceable.classList.remove('draged');
+        nowPlaceable.setAttribute("draggable", true)
+
+        placedShipDimmer(placedShips);
     }
 })
+
 
 
 
