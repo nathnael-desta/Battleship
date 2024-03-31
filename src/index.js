@@ -5,6 +5,7 @@ import("./style.css");
 
 const playerTiles = document.querySelector(".player .tiles");
 const opponentTiles = document.querySelector(".opponent .tiles");
+const shipsPlayer = document.querySelectorAll(".player .ship")
 const individualships = document.querySelectorAll(".ship");
 let tileDivs = document.querySelectorAll(".tiles > div");
 
@@ -13,7 +14,7 @@ createSquares(playerTiles);
 createSquares(opponentTiles);
 
 const placedShips = [];
-individualships.forEach((ship) => {
+shipsPlayer.forEach((ship) => {
     ship.addEventListener("dragstart", (e) => {
         
         if (ship.classList.contains('draged')) {
@@ -33,7 +34,7 @@ individualships.forEach((ship) => {
     })
 
     ship.addEventListener("dragend", (e) => {
-        ship.classList.remove("draged");
+        ship.classList.remove("draged")
         const rect = playerTiles.getBoundingClientRect();
         const x = e.clientX;
         const y = e.clientY;
