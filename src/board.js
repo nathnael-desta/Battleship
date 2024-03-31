@@ -18,20 +18,21 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
 
 
       if (pieceSquare.indexOf(count) !== -1) {
+        // console.log("the count", count, "occupied Squres", occupiedSquares, "value", checkForNumber(`${count}`, occupiedSquares), "oktodraw", okToDraw, "piece square", pieceSquare)
         if (okToDraw.indexOf(count) !== -1 || !checkForNumber(`${count}`, occupiedSquares)) {
           // okToDraw.push(count);
           if (okToDraw.indexOf(count) === -1) {
             okToDraw.push(count);
           }
           const newShip = createShips(piece[pieceSquare.indexOf(count)]);
-        tiles.appendChild(newShip);
-        count += 1;
-        const colrow = {
-          col: j,
-          row: i,
-        }
-        newShip.dataset.tile = JSON.stringify(colrow);
-        continue;
+          tiles.appendChild(newShip);
+          count += 1;
+          const colrow = {
+            col: j,
+            row: i,
+          }
+          newShip.dataset.tile = JSON.stringify(colrow);
+          continue;
         }
         insertionSuccessful = false;
         numbers.pop();
@@ -51,7 +52,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
     }
   }
   flippable();
-  console.log("insertion check",insertionSuccessful)
+  console.log("insertion check", insertionSuccessful)
   return insertionSuccessful;
 }
 
@@ -261,13 +262,26 @@ export function insert(col, row, ship, myShips, tiles, myPiece) {
   deleteSquares.forEach((square) => {
     currentNumbers.push(getNumberFromTile(square[0], square[1]))
   })
+  
+  const { count, position } = occupies(piece)
+  const shipOccupies = occupies(myPiece, pieceSquare[pieceSquare.length - 1]);
+  console.log("numbers", numbers, "ship occupies", shipOccupies);
+  const isInsertOKToInsert = shipOccupies.reduce((acc, square) => {
+    if (checkForNumber(parseInt(square, 10), numbers)) {
+      return false;
+    }
+    return acc && true
+  }, true);
+  if (!isInsertOKToInsert) {
+    const unfortunateShip = placedShips.pop();
+    unfortunateShip.classList.remove("draged");
+    return;
+  }
+  deleteBoard(tiles);
   numbers.push(currentNumbers);
-  deleteBoard(tiles)
-  const {count, position} = occupies(piece)
-  const shipOccupies= occupies(myPiece, pieceSquare[pieceSquare.length - 1]);
   const isInsertionSuccessful = createSquares(tiles, numbers, pieceSquare, piece, occupiedSquares);
   if (isInsertionSuccessful) {
-    occupiedSquares.push(shipOccupies); 
+    occupiedSquares.push(shipOccupies);
   } else {
     const unfortunateShip = placedShips.pop();
     unfortunateShip.classList.remove("draged");
@@ -287,11 +301,11 @@ export function undo(tiles) {
       placedShips.splice(index, 1);
       ship.classList.remove("draged");
       ship.setAttribute("draggable", true);
-      return ship 
+      return ship
     }
     return accumulator || null
   }, null);
-  
+
   placedShipDimmer();
   deleteBoard(tiles)
   createSquares(tiles, numbers, pieceSquare, piece);
@@ -501,52 +515,51 @@ export function finalTile(col, row, circleData) {
       finalCol: col,
       finalRow: row
     }
-  } 
-    for (let i = 0; i < shift; i += 1) {
-      if (row === 10) {
-        break;
-      }
-      row += 1;
+  }
+  for (let i = 0; i < shift; i += 1) {
+    if (row === 10) {
+      break;
     }
-    return {
-      finalCol: col,
-      finalRow: row
-    }
-  
+    row += 1;
+  }
+  return {
+    finalCol: col,
+    finalRow: row
+  }
+
 
 }
 
 export function flippable() {
+  const tileDivs = document.querySelectorAll(".tiles > div");
+  const playerTiles = document.querySelector(".player .tiles");
+  tileDivs.forEach((div) => {
+    if (!div.classList.contains("tile")) {
+      div.addEventListener("click", (event) => {
+        const divTile = JSON.parse(div.dataset.tile);
+        const myCol = numToLetters[`${divTile.col}`];
+        const shipName = div.classList[0];
+        const box = div.getBoundingClientRect();
 
-    const tileDivs = document.querySelectorAll(".tiles > div");
-    const playerTiles = document.querySelector(".player .tiles");
-    tileDivs.forEach((div) => {
-      if (!div.classList.contains("tile")) {
-        div.addEventListener("click", (event) => {
-          const divTile = JSON.parse(div.dataset.tile);
-          const myCol = numToLetters[`${divTile.col}`];
-          const shipName = div.classList[0];
-          const box = div.getBoundingClientRect();
-
-          const datavalue = whichCircle(shipName, event.clientX, event.clientY, box);
-          div.dataset.circle = JSON.stringify(datavalue);
-          const { finalCol, finalRow } = finalTile(myCol, divTile.row + 1, datavalue);
-          const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
-          if (shipName.split("_")[1] === "horizontal") {
-            if (!checkIfFlipIsOk(finalCol, finalRow, occupiedSquares, shipName)) {
-              return null;
-            }
+        const datavalue = whichCircle(shipName, event.clientX, event.clientY, box);
+        div.dataset.circle = JSON.stringify(datavalue);
+        const { finalCol, finalRow } = finalTile(myCol, divTile.row + 1, datavalue);
+        const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
+        if (shipName.split("_")[1] === "horizontal") {
+          if (!checkIfFlipIsOk(finalCol, finalRow, occupiedSquares, shipName)) {
+            return null;
           }
+        }
 
-          removeDiv(finalCol, finalRow, numbers, piece, pieceSquare, occupiedSquares, okToDraw);
-          deleteBoard(playerTiles)
-          createSquares(playerTiles, numbers, pieceSquare, piece);
+        removeDiv(finalCol, finalRow, numbers, piece, pieceSquare, occupiedSquares, okToDraw);
+        deleteBoard(playerTiles)
+        createSquares(playerTiles, numbers, pieceSquare, piece);
 
-          insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
-          return "working"
-        })
-      }
-    })
+        insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
+        return "working"
+      })
+    }
+  })
 }
 
 export function occupies(myPiece, pieceSquare) {
@@ -555,49 +568,49 @@ export function occupies(myPiece, pieceSquare) {
   const result = [];
   let status = {};
   if (myPiece === "single_horizontal") {
-     status = {
+    status = {
       count: 1,
       position: myPiece.split("_")[1]
     }
   }
   if (myPiece === "single_vertical") {
-     status = {
+    status = {
       count: 1,
       position: myPiece.split("_")[1]
     }
   }
   if (myPiece === "double_horizontal") {
-     status = {
+    status = {
       count: 2,
       position: myPiece.split("_")[1]
     }
   }
   if (myPiece === "double_vertical") {
-     status = {
+    status = {
       count: 2,
       position: myPiece.split("_")[1]
     }
   }
   if (myPiece === "tri_horizontal") {
-     status = {
+    status = {
       count: 3,
       position: myPiece.split("_")[1]
     }
   }
   if (myPiece === "tri_vertical") {
-     status = {
+    status = {
       count: 3,
       position: myPiece.split("_")[1]
     }
   }
   if (myPiece === "quad_horizontal") {
-     status = {
+    status = {
       count: 4,
       position: myPiece.split("_")[1]
     }
   }
   if (myPiece === "quad_vertical") {
-     status = {
+    status = {
       count: 4,
       position: myPiece.split("_")[1]
     }
@@ -641,10 +654,10 @@ export function removeDiv(col, row, numbers, piece, pieceSquare, occupiedSquares
     okToDraw.splice(index, 1);
   }
   return {
-    numbers ,
-    piece ,
-    pieceSquare ,
-    occupiedSquares ,
+    numbers,
+    piece,
+    pieceSquare,
+    occupiedSquares,
     okToDraw
   }
 }
@@ -653,10 +666,10 @@ export function checkIfFlipIsOk(col, row, occupiedSquares, shipName) {
   const tile = getNumberFromTile(col, row);
   occupiedSquares.forEach((array, index) => {
     if (array.indexOf(`${tile}`) !== -1) {
-        occupiedSquares.splice(index, 1)
+      occupiedSquares.splice(index, 1)
     }
-  }) 
-  
+  })
+
   let [tilerow, tilecol] = `${tile}`.split("");
   let result = true;
   const first = shipName.split("_")[0];
@@ -686,12 +699,12 @@ export function checkIfFlipIsOk(col, row, occupiedSquares, shipName) {
       }
     }
   })
-  
+
   return result;
 }
 
 export function placedShipDimmer() {
-  
+
   placedShips.forEach((ship) => {
     ship.classList.add('draged');
     ship.setAttribute("draggable", false);
