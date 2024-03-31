@@ -51,6 +51,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
     }
   }
   flippable();
+  console.log("insertion check",insertionSuccessful)
   return insertionSuccessful;
 }
 
@@ -267,6 +268,9 @@ export function insert(col, row, ship, myShips, tiles, myPiece) {
   const isInsertionSuccessful = createSquares(tiles, numbers, pieceSquare, piece, occupiedSquares);
   if (isInsertionSuccessful) {
     occupiedSquares.push(shipOccupies); 
+  } else {
+    const unfortunateShip = placedShips.pop();
+    unfortunateShip.classList.remove("draged");
   }
 
 }
@@ -530,7 +534,7 @@ export function flippable() {
           const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
           if (shipName.split("_")[1] === "horizontal") {
             if (!checkIfFlipIsOk(finalCol, finalRow, occupiedSquares, shipName)) {
-              return;
+              return null;
             }
           }
 
@@ -539,6 +543,7 @@ export function flippable() {
           createSquares(playerTiles, numbers, pieceSquare, piece);
 
           insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
+          return "working"
         })
       }
     })
