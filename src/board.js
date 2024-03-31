@@ -5,7 +5,7 @@ const pieceSquare = []
 const piece = [];
 const occupiedSquares = [];
 const okToDraw = [];
-
+export const placedShips = [];
 
 export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], piece = null, occupiedSquares) {
   let insertionSuccessful = true;
@@ -272,11 +272,23 @@ export function insert(col, row, ship, myShips, tiles, myPiece) {
 }
 
 export function undo(tiles) {
-  numbers.pop();
-  pieceSquare.pop();
-  piece.pop();
-  occupiedSquares.pop();
-  okToDraw.pop();
+  numbers.pop()
+  pieceSquare.pop()
+  const popped = piece.pop()
+  occupiedSquares.pop()
+  okToDraw.pop()
+  placedShips.reduce((accumulator, ship, index) => {
+    const typeOfShip = ship.classList[2].split("_")[0];
+    if (typeOfShip === popped.split("_")[0]) {
+      placedShips.splice(index, 1);
+      ship.classList.remove("draged");
+      ship.setAttribute("draggable", true);
+      return ship 
+    }
+    return accumulator || null
+  }, null);
+  
+  placedShipDimmer();
   deleteBoard(tiles)
   createSquares(tiles, numbers, pieceSquare, piece);
 }
@@ -673,7 +685,8 @@ export function checkIfFlipIsOk(col, row, occupiedSquares, shipName) {
   return result;
 }
 
-export function placedShipDimmer(placedShips) {
+export function placedShipDimmer() {
+  
   placedShips.forEach((ship) => {
     ship.classList.add('draged');
     ship.setAttribute("draggable", false);

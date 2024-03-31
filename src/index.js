@@ -1,5 +1,5 @@
 import json5 from "json5";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips } from "./board";
 
 import("./style.css");
 
@@ -13,7 +13,6 @@ let tileDivs = document.querySelectorAll(".tiles > div");
 createSquares(playerTiles);
 createSquares(opponentTiles);
 
-const placedShips = [];
 shipsPlayer.forEach((ship) => {
     ship.addEventListener("dragstart", (e) => {
         
@@ -82,11 +81,6 @@ shipsPlayer.forEach((ship) => {
 document.addEventListener("keydown", (e) => {
     if (e.key === "z") {
         undo(playerTiles);
-        const nowPlaceable = placedShips.pop();
-        nowPlaceable.classList.remove('draged');
-        nowPlaceable.setAttribute("draggable", true)
-
-        placedShipDimmer(placedShips);
     }
 })
 
