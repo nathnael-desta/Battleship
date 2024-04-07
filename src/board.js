@@ -1,11 +1,10 @@
-import { split } from "lodash";
-
 const numbers = [];
 const pieceSquare = []
 const piece = [];
 const occupiedSquares = [];
 const okToDraw = [];
 export const placedShips = [];
+
 
 export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], piece = null, occupiedSquares) {
   let insertionSuccessful = true;
@@ -670,12 +669,10 @@ export function checkIfFlipIsOk(col, row, occupiedSquares, shipName) {
     }
   })
 
-  let [tilerow, tilecol] = `${tile}`.split("");
+  const [tilerow, tilecol] = `${tile}`.split("");
   let result = true;
   const first = shipName.split("_")[0];
-
   const count = first === "single" ? 1 : first === "double" ? 2 : first === "tri" ? 3 : first === "quad" ? 4 : "undefied";
-
   const deletes = [];
   const rerunDeletes = [];
 
@@ -706,7 +703,186 @@ export function checkIfFlipIsOk(col, row, occupiedSquares, shipName) {
 export function placedShipDimmer() {
 
   placedShips.forEach((ship) => {
-    ship.classList.add('draged');
+    ship.classList.add("draged");
     ship.setAttribute("draggable", false);
   })
 }
+
+const shipNames = ["single_horizontal", "single_vertical", "double_horizontal", "double_vertical", "tri_horizontal", "tri_vertical", "quad_horizontal", "quad_vertical"];
+
+
+export function automaticallyCreateShipsArray() {
+  const myArray = [];
+  for (let i = 0; i < 10; i += 1) {
+    for (let j = 0; j < 10; j += 1) {
+      myArray.push(`${i}${j}`)
+    }
+  }
+
+  
+
+
+  // for (let shipName of shipNames) {
+    
+  // }
+  return myArray;
+}
+const lettersToNum = {
+  "A": 0,
+  "B": 1,
+  "C": 2,
+  "D": 3,
+  "E": 4,
+  "F": 5,
+  "G": 6,
+  "H": 7,
+  "I": 8,
+  "J": 9,
+}
+
+export function insertInsideArray(obj, board){
+  const myBoard = [...board];
+  const {del, insert, start} = obj;
+  const actualName = {
+    "sv": "single_vertical",
+    "sh": "single_horizontal",
+    "dv": "double_vertical",
+    "dh": "double_horizontal",
+    "tv": "tri_vertical",
+    "th": "tri_horizontal",
+    "qv": "quad_vertical",
+    "qh": "quad_horizontal"
+  };
+  const shipName = actualName[insert];
+  const [startCol, startRow] = start;
+  const placementSquare = `${startRow - 1}${lettersToNum[startCol]}`;
+  del.shift();
+  const deletedSquares = [];
+  
+  for (let i = 0; i < del.length; i += 1) {
+    let [col, row] = del[i]
+    deletedSquares.push(`${row - 1}${lettersToNum[col]}`)
+  }
+  console.log('-------------------------------')
+  console.log('start', start)
+  console.log('del', del)
+  console.log('-------------------------------')
+  myBoard[parseInt(placementSquare, 10)] = shipName;
+  for (let i = 0; i < deletedSquares.length; i += 1) {
+    myBoard[parseInt(deletedSquares[i], 10)] = "-";
+  }
+  return myBoard
+}
+
+export function checkIfInsertable(placementSquare, shipName, board) {
+  const myBoard = [...board];
+  let [row, col] = placementSquare.split("");
+  row = parseInt(row) + 1;
+  col = numToLetters[col];
+  const {del, insert, start} = insertAt(col, row, shipName, myShips);
+  if (parseInt(getNumberFromTile(...start), 10) !== parseInt(placementSquare, 10)) {
+    return false;
+  }  
+  // console.log("placementSquare", placementSquare,"del", del, "insert", insert, "start", start);
+  if (shipName === "single_vertical" || shipName === "single_horizontal") {
+    if(Number.isNaN(parseInt(myBoard[parseInt(placementSquare, 10)], 10))) {
+      return false;
+    }
+    return true;
+  }
+  if(Number.isNaN(parseInt(myBoard[parseInt(placementSquare, 10)], 10))) {
+    return false;
+  }
+  for (let i = 0; i < del.length; i += 1) {
+    if(Number.isNaN(parseInt(myBoard[getNumberFromTile(...del[i])], 10))) {
+      return false;
+    }
+  }
+  return true
+}
+
+export function addableSquares(shipName, board) {
+  const addableBoard = [];
+  for (let i = 0; i < board.length; i += 1) {
+    if (!Number.isNaN(parseInt(board[i], 10))) {
+      if (checkIfInsertable(board[i], shipName, board)) {
+        addableBoard.push(board[i]);
+      }
+    }
+    
+  }
+  return addableBoard;
+}
+
+const board = [
+  "00", "01", "02", "03", "04", "05", "06", "07", "08",
+  "09", "10", "11", "12", "13", "14", "15", "16", "17",
+  "18", "19", "20", "21", "22", "23", "24", "25", "26",
+  "27", "28", "29", "30", "31", "32", "33", "34", "35",
+  "36", "37", "38", "39", "40", "41", "42", "43", "44",
+  "45", "46", "47", "48", "49", "50", "51", "52", "53",
+  "54", "55", "56", "57", "58", "59", "60", "61", "62",
+  "63", "64", "65", "66", "67", "68", "69", "70", "71",
+  "72", "73", "74", "75", "76", "77", "78", "79", "80",
+  "81", "82", "83", "84", "85", "86", "87", "88", "89",
+  "90", "91", "92", "93", "94", "95", "96", "97", "98",
+  "99"
+];
+
+function addShip(col, row, shipName, myBoard) {
+  return insertInsideArray(insertAt(col, row, shipName, myShips), myBoard)
+}
+
+function getRandomized(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function finalBoard(board) {
+  let myBoard = [...board];
+  const quad = ["quad_vertical", "quad_horizontal"];
+  const tri = ["tri_vertical", "tri_horizontal"];
+  const double = ["double_vertical", "double_horizontal"];
+  const single = ["single_vertical", "single_horizontal"];
+  const ships = [quad, tri, tri, double, double, double, single, single, single, single];
+
+  let shipName;
+  let addableBoard; 
+  let col;
+  let row;
+  for (let i = 0; i < ships.length; i += 1) {
+    shipName = getRandomized(ships[i]);
+    addableBoard = addableSquares(shipName, myBoard);
+    [row, col] = getRandomized(addableBoard).split("");
+    col = numToLetters[col];
+    row = parseInt(row, 10) + 1;
+    console.log('addableplaces', addableBoard)
+    myBoard = addShip(col, row, shipName, myBoard);
+  }
+  return myBoard
+}
+
+export function selfCreateBoard(tiles) {
+  deleteBoard(tiles);
+  const myBoard = finalBoard(board);
+  console.log(myBoard)
+  for (let i = 0; i < myBoard.length; i += 1) {
+    if (!Number.isNaN(parseInt(myBoard[i], 10))) {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
+      tile.id = `${myBoard[i]}`;
+      tiles.appendChild(tile);
+    } else if (myBoard[i] !== "-") {
+      const newShip = createShips(myBoard[i]);
+      tiles.appendChild(newShip);
+    }
+  }  
+}
+
+
+
+
+
+
+// console.log(automaticallyCreateShipsArray())
+// // console.log(insertAt("A", 1, "", myShips))
+// console.log(getNumberFromTile("J", 7))

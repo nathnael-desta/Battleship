@@ -147,7 +147,6 @@
                         gap: 6px;
                         padding-left: 9px;
                         height: min-content;
-
                         width: min-content;
                     }
                 }
@@ -524,7 +523,6 @@
                     display: flex;
                     flex-direction: column;
                     gap: 15px;
-
 
                     .freighter {
                         width: 76px;
