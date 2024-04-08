@@ -8,8 +8,11 @@ const opponentTiles = document.querySelector(".opponent .tiles");
 const shipsPlayer = document.querySelectorAll(".player .ship")
 const individualships = document.querySelectorAll(".ship");
 const selfCreate = document.querySelector(".playerRefresh");
+const opponentCreate = document.querySelector(".opponentRefresh");
 const tileDivs = document.querySelectorAll(".tiles > div");
-
+let circles;
+let tiles;
+let ships;
 
 createSquares(playerTiles);
 createSquares(opponentTiles);
@@ -52,30 +55,6 @@ shipsPlayer.forEach((ship) => {
         const row = parseInt(tile.slice(1));
         const myPiece = ship.classList[2];
         insert(col, row, ship, myShips, playerTiles, myPiece);
-        // flippable();
-        // setTimeout(() => {
-        //     tileDivs = document.querySelectorAll(".tiles > div");
-        // tileDivs.forEach((div) => {
-        //     if (!div.classList.contains("tile")) {
-        //         div.addEventListener("click", (event) => {
-        //             const divTile = JSON.parse(div.dataset.tile);
-        //             const myCol = numToLetters[`${divTile.col}`];
-        //             const shipName = div.classList[0];
-        //             const box = div.getBoundingClientRect();
-
-        //             undo(playerTiles)
-        //             const datavalue = whichCircle(shipName, event.clientX, event.clientY, box);
-        //             div.dataset.circle = JSON.stringify(datavalue);
-        //             const { finalCol, finalRow } = finalTile(myCol, divTile.row + 1, datavalue);
-        //             const finalPieceName = div.classList[0].split("_")[1] === "horizontal" ? `${div.classList[0].split("_")[0]}_vertical` : `${div.classList[0].split("_")[0]}_horizontal`;
-        //             console.log('finalpiecename', finalPieceName)
-        //             insert(finalCol, finalRow, div, myShips, playerTiles, finalPieceName);
-        //             tileDivs = document.querySelectorAll(".tiles > div");
-        //         })
-        //     }
-        // })
-        // }, 1000)
-        
     })
 })
 
@@ -89,9 +68,32 @@ document.addEventListener("keydown", (e) => {
 
 
 selfCreate.addEventListener("click", () => {
-    selfCreateBoard(playerTiles)
+    selfCreateBoard(playerTiles);
+    tiles = document.querySelectorAll(".player .tile");
+    tiles.forEach((tile) => {
+        tile.addEventListener("click", () => {
+            tile.classList.add("miss");
+        })
+    })
+
+    ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
+    ships.forEach((ship) => {
+        ship.addEventListener("click", (e) => {
+            const {shift} = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
+            const circle = [...ship.children][shift];
+            circle.classList.add("crossed");
+        })
+    })
+
 });
 
+opponentCreate.addEventListener("click", () => {
+    selfCreateBoard(opponentTiles)
+})
+
+function refresh(divs, func) {
+   
+}
 
 
 

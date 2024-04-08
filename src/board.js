@@ -17,7 +17,6 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
 
 
       if (pieceSquare.indexOf(count) !== -1) {
-        // console.log("the count", count, "occupied Squres", occupiedSquares, "value", checkForNumber(`${count}`, occupiedSquares), "oktodraw", okToDraw, "piece square", pieceSquare)
         if (okToDraw.indexOf(count) !== -1 || !checkForNumber(`${count}`, occupiedSquares)) {
           // okToDraw.push(count);
           if (okToDraw.indexOf(count) === -1) {
@@ -51,7 +50,6 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
     }
   }
   flippable();
-  console.log("insertion check", insertionSuccessful)
   return insertionSuccessful;
 }
 
@@ -264,7 +262,6 @@ export function insert(col, row, ship, myShips, tiles, myPiece) {
   
   const { count, position } = occupies(piece)
   const shipOccupies = occupies(myPiece, pieceSquare[pieceSquare.length - 1]);
-  console.log("numbers", numbers, "ship occupies", shipOccupies);
   const isInsertOKToInsert = shipOccupies.reduce((acc, square) => {
     if (checkForNumber(parseInt(square, 10), numbers)) {
       return false;
@@ -763,10 +760,7 @@ export function insertInsideArray(obj, board){
     let [col, row] = del[i]
     deletedSquares.push(`${row - 1}${lettersToNum[col]}`)
   }
-  console.log('-------------------------------')
-  console.log('start', start)
-  console.log('del', del)
-  console.log('-------------------------------')
+
   myBoard[parseInt(placementSquare, 10)] = shipName;
   for (let i = 0; i < deletedSquares.length; i += 1) {
     myBoard[parseInt(deletedSquares[i], 10)] = "-";
@@ -783,7 +777,6 @@ export function checkIfInsertable(placementSquare, shipName, board) {
   if (parseInt(getNumberFromTile(...start), 10) !== parseInt(placementSquare, 10)) {
     return false;
   }  
-  // console.log("placementSquare", placementSquare,"del", del, "insert", insert, "start", start);
   if (shipName === "single_vertical" || shipName === "single_horizontal") {
     if(Number.isNaN(parseInt(myBoard[parseInt(placementSquare, 10)], 10))) {
       return false;
@@ -855,7 +848,6 @@ function finalBoard(board) {
     [row, col] = getRandomized(addableBoard).split("");
     col = numToLetters[col];
     row = parseInt(row, 10) + 1;
-    console.log('addableplaces', addableBoard)
     myBoard = addShip(col, row, shipName, myBoard);
   }
   return myBoard
@@ -864,7 +856,6 @@ function finalBoard(board) {
 export function selfCreateBoard(tiles) {
   deleteBoard(tiles);
   const myBoard = finalBoard(board);
-  console.log(myBoard)
   for (let i = 0; i < myBoard.length; i += 1) {
     if (!Number.isNaN(parseInt(myBoard[i], 10))) {
       const tile = document.createElement("div");
@@ -882,7 +873,3 @@ export function selfCreateBoard(tiles) {
 
 
 
-
-// console.log(automaticallyCreateShipsArray())
-// // console.log(insertAt("A", 1, "", myShips))
-// console.log(getNumberFromTile("J", 7))
