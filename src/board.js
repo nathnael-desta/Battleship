@@ -757,7 +757,7 @@ export function insertInsideArray(obj, board){
   const deletedSquares = [];
   
   for (let i = 0; i < del.length; i += 1) {
-    let [col, row] = del[i]
+    const [col, row] = del[i]
     deletedSquares.push(`${row - 1}${lettersToNum[col]}`)
   }
 
@@ -855,18 +855,126 @@ function finalBoard(board) {
 
 export function selfCreateBoard(tiles) {
   deleteBoard(tiles);
+  const createdBoard = []
   const myBoard = finalBoard(board);
   for (let i = 0; i < myBoard.length; i += 1) {
     if (!Number.isNaN(parseInt(myBoard[i], 10))) {
       const tile = document.createElement("div");
       tile.classList.add("tile");
       tile.id = `${myBoard[i]}`;
+      createdBoard.push(tile);
       tiles.appendChild(tile);
     } else if (myBoard[i] !== "-") {
       const newShip = createShips(myBoard[i]);
+      createdBoard.push(newShip);
       tiles.appendChild(newShip);
     }
   }  
+  return createdBoard
+}
+
+function getBoxCornersAndEdges(box, shipName) {
+  if (shipName === "single_horizontal" || shipName === "single_vertical" || shipName === "tile") {
+    return [
+      [box.top, box.left], 
+      [box.top, box.right], 
+      [box.bottom, box.right], 
+      [box.bottom, box.left]
+    ];
+  }
+  if (shipName === "double_horizontal") {
+    return [
+      [box.top, box.left], 
+      [box.top, box.left + (box.width / 2)],
+      [box.top, box.right], 
+      [box.bottom, box.right], 
+      [box.bottom, box.left + (box.width / 2)],
+      [box.bottom, box.left]
+    ];
+  }
+  if(shipName === "tri_horizontal") {
+    return [
+    [box.top, box.left], 
+    [box.top, box.left + (box.width / 3)], [box.top, box.left + 2 * (box.width / 3)],
+    [box.top, box.right], 
+    [box.bottom, box.right], 
+    [box.bottom, box.left + (box.width / 3)], [box.bottom, box.left + 2 * (box.width / 3)],  
+    [box.bottom, box.left]
+  ]
+  }
+  if (shipName === "quad_horizontal") {
+    return [
+      [box.top, box.left],
+      [box.top, box.left + (box.width / 4)], [box.top, box.left + 2 * (box.width / 4)], [box.top, box.left + 3 * (box.width / 4)],
+      [box.top, box.right],
+      [box.bottom, box.right],
+      [box.bottom, box.left + (box.width / 4)], [box.bottom, box.left + 2 * (box.width / 4)], [box.bottom, box.left + 3 * (box.width / 4)],
+      [box.bottom, box.left]
+    ]
+  }
+  if (shipName === "double_vertical") {
+    return [
+      [box.top, box.left],
+      [box.top, box.right],
+      [box.top + (box.height / 2), box.right],
+      [box.bottom, box.right],
+      [box.bottom, box.left],
+      [box.top + (box.height / 2), box.left],
+    ]
+  }
+  if (shipName === "tri_vertical") {
+    return [
+      [box.top, box.left],
+      [box.top, box.right],
+      [box.top + (box.height / 3), box.right], [box.top + 2 * (box.height / 3), box.right],
+      [box.bottom, box.right],
+      [box.bottom, box.left],
+      [box.top + (box.height / 3), box.left], [box.top + 2 * (box.height / 3), box.left],
+    ]
+  }
+  if (shipName === "quad_vertical") {
+    return [
+      [box.top, box.left],
+      [box.top, box.right],
+      [box.top + (box.height / 4), box.right], [box.top + 2 * (box.height / 4), box.right], [box.top + 3 * (box.height / 4), box.right], 
+      [box.bottom, box.right],
+      [box.bottom, box.left],
+      [box.top + (box.height / 4), box.left], [box.top + 2 * (box.height / 4), box.left], [box.top + 3 * (box.height / 4), box.left], 
+    ]
+  }
+  return "invalid input";
+}
+
+function minimumDistance(box1, box2) {
+  
+}
+
+export function getSurroundingDivs(box, shipName, user) {
+  const boxCorners = getBoxCornersAndEdges(box, shipName);
+  const tiles = document.querySelectorAll(`.${user} .tile`);
+  tiles.forEach((tile) => {
+    const tileCorners = getBoxCornersAndEdges(tile.getBoundingClientRect(), "tile");
+    const tileDistance = tileCorners.reduce((acc1, p1) => {
+      const minDistanceFromCorner = boxCorners.reduce((acc2, p2) => {
+        const distance = Math.sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]));
+        if (distance < acc2) {
+          return distance;
+        }
+        return acc2;
+      }, Number.POSITIVE_INFINITY)
+
+      if (minDistanceFromCorner < acc1) {
+        return minDistanceFromCorner;
+      }
+      return acc1;
+    }, Number.POSITIVE_INFINITY)
+
+    if(tileDistance < 30) {
+      tile.classList.add("miss");
+    }
+  })
+  
+  
 }
 
 

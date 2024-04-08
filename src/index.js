@@ -1,5 +1,5 @@
 import json5 from "json5";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs } from "./board";
 
 import("./style.css");
 
@@ -13,6 +13,8 @@ const tileDivs = document.querySelectorAll(".tiles > div");
 let circles;
 let tiles;
 let ships;
+let tilesOp;
+let shipsOp;
 
 createSquares(playerTiles);
 createSquares(opponentTiles);
@@ -82,13 +84,52 @@ selfCreate.addEventListener("click", () => {
             const {shift} = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
             const circle = [...ship.children][shift];
             circle.classList.add("crossed");
+
+            const allCrossedOut = [...ship.children].reduce((acc, child) => {
+                if (!child.classList.contains("crossed")) {
+                    return false
+                }
+                return acc && true;
+            }, true);
+            if (allCrossedOut) {
+                getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "player");
+            }
         })
     })
 
 });
 
 opponentCreate.addEventListener("click", () => {
-    selfCreateBoard(opponentTiles)
+    const createdBoard = selfCreateBoard(opponentTiles);
+    console.log(createdBoard)
+    tilesOp = document.querySelectorAll(".opponent .tile");
+    tilesOp.forEach((tile) => {
+        tile.addEventListener("click", () => {
+            tile.classList.add("miss");
+        })
+    });
+
+    shipsOp = document.querySelectorAll(".opponent .tiles > div:not(.tile)");
+    shipsOp.forEach((ship) => {
+        ship.addEventListener("click", (e) => {
+
+            const {shift} = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
+            const circle = [...ship.children][shift];
+            circle.classList.add("crossed");
+            console.log(...ship.children)
+
+            const allCrossedOut = [...ship.children].reduce((acc, child) => {
+                if (!child.classList.contains("crossed")) {
+                    return false
+                }
+                return acc && true;
+            }, true);
+            if (allCrossedOut) {
+                getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "opponent");
+            }
+        })
+    })
+
 })
 
 function refresh(divs, func) {
