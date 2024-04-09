@@ -1,5 +1,5 @@
 import json5 from "json5";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding } from "./board";
 
 import("./style.css");
 
@@ -99,37 +99,88 @@ selfCreate.addEventListener("click", () => {
 
 });
 
+
 opponentCreate.addEventListener("click", () => {
-    const createdBoard = selfCreateBoard(opponentTiles);
-    console.log(createdBoard)
+    const {createdBoard, boardArray} = opponentCreateBoard(opponentTiles);
+    console.log(createdBoard, boardArray)
     tilesOp = document.querySelectorAll(".opponent .tile");
+    
+    // shipsOp = document.querySelectorAll(".opponent .tiles > div:not(.tile)");
+    // shipsOp.forEach((ship) => {
+    //     ship.addEventListener("click", (e) => {
+    //         const {shift} = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
+    //         const circle = [...ship.children][shift];
+    //         circle.classList.add("crossed");
+
+
+    //         const allCrossedOut = [...ship.children].reduce((acc, child) => {
+    //             if (!child.classList.contains("crossed")) {
+    //                 return false
+    //             }
+    //             return acc && true;
+    //         }, true);
+    //         if (allCrossedOut) {
+    //             getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "opponent");
+    //         }
+    //     })
+    // })
+
+    const clickedShips = [];
+
     tilesOp.forEach((tile) => {
         tile.addEventListener("click", () => {
-            tile.classList.add("miss");
+            if (tile.classList.contains("onlyTile")) {
+                tile.classList.add("miss");
+            } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
+                tile.classList.add("crossedTile");
+                if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
+                    clickedShips.push(tile.classList[1].slice(0, -1));
+                }
+            } else {
+                tile.classList.add("crossedTile");
+                if (clickedShips.indexOf(tile.classList[1]) === -1) {
+                    clickedShips.push(tile.classList[1]);
+                }
+            }
+
+            if (clickedShips.length !== 0) {
+                clickedShips.forEach((ship) => {
+                    console.log("clickedShips", clickedShips, console.log())
+                    const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
+
+        
+                    const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
+                        if (!shipTile.classList.contains("crossedTile")) {
+                            return false
+                        }
+                        return acc && true
+                    }, true)
+                    if (allHaveBeenClicked) {
+                        let newShip;
+                        shipTiles.forEach((shipTile) => {
+                            if (shipTile.classList.contains(`${ship}`)) {
+                                newShip = createShips(ship.split("X")[0]);
+                                [...newShip.children].forEach((circle) => {
+                                    circle.classList.add("crossed");
+                                })
+                                shipTile.parentElement.insertBefore(newShip, shipTile);
+                                shipTile.parentElement.removeChild(shipTile);
+                            } else {
+                                shipTile.parentElement.removeChild(shipTile);
+                            }
+                        })
+                        getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
+                        clickedShips.splice(clickedShips.indexOf(ship), 1);
+                        console.log("second showing of clickedShips", clickedShips)
+                        
+                    }
+                })
+
+            }
         })
     });
 
-    shipsOp = document.querySelectorAll(".opponent .tiles > div:not(.tile)");
-    shipsOp.forEach((ship) => {
-        ship.addEventListener("click", (e) => {
-
-            const {shift} = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
-            const circle = [...ship.children][shift];
-            circle.classList.add("crossed");
-            console.log(...ship.children)
-
-            const allCrossedOut = [...ship.children].reduce((acc, child) => {
-                if (!child.classList.contains("crossed")) {
-                    return false
-                }
-                return acc && true;
-            }, true);
-            if (allCrossedOut) {
-                getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "opponent");
-            }
-        })
-    })
-
+    
 })
 
 function refresh(divs, func) {

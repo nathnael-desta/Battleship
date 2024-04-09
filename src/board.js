@@ -737,8 +737,53 @@ const lettersToNum = {
   "J": 9,
 }
 
+export function checkSurrounding(board) {
+  let myBoard = [...board];
+  myBoard = myBoard.map((tile) => {
+    if (!Number.isNaN(parseInt(tile, 10))) {
+      let [row, col] = tile.split("");
+      row = parseInt(row, 10);
+      col = parseInt(col, 10);
+      // console.log("******************************************************",myBoard[parseInt(`${row - 1}${col}`, 10)], Number.isNaN(parseInt(myBoard[parseInt(`${row - 1}${col}`, 10)], 10)))
+      // if (Number.isNaN(myBoard[parseInt(`${row - 1}${col}`, 10)])) {
+      //   console.log("******************************************************", myBoard[parseInt(`${row - 1}${col}`, 10)])
+      // }
+      
+      if (row > 0) {
+        if (Number.isNaN(parseInt(myBoard[parseInt(`${row - 1}${col}`, 10)], 10)) ) {
+          console.log("_______________________________________________________________", tile)
+          return "-";
+        }
+      }
+      if (row < 9) {
+        if (Number.isNaN(parseInt(myBoard[parseInt(`${row + 1}${col}`, 10)], 10)) ) {
+          console.log("_______________________________________________________________", tile)
+          return "-";
+        }
+      }
+      if (col > 0) {
+        if (Number.isNaN(parseInt(myBoard[parseInt(`${row}${col - 1}`, 10)], 10)) ) {
+          console.log("______________________________________________________________", tile)
+          return "-";
+        }
+      }
+      if (col < 9) {
+        if (Number.isNaN(parseInt(myBoard[parseInt(`${row}${col + 1}`, 10)], 10)) ) {
+          console.log("_____________________________________________________________", tile)
+          return "-";
+        }
+      }
+      return tile;
+    }
+    return tile;
+  })
+  return myBoard;
+}
+
+let count = 0;
 export function insertInsideArray(obj, board){
   const myBoard = [...board];
+  console.log(".........myBoard", board)
   const {del, insert, start} = obj;
   const actualName = {
     "sv": "single_vertical",
@@ -761,11 +806,13 @@ export function insertInsideArray(obj, board){
     deletedSquares.push(`${row - 1}${lettersToNum[col]}`)
   }
 
-  myBoard[parseInt(placementSquare, 10)] = shipName;
+  myBoard[parseInt(placementSquare, 10)] = `${shipName}X${count}`;
   for (let i = 0; i < deletedSquares.length; i += 1) {
-    myBoard[parseInt(deletedSquares[i], 10)] = "-";
+    myBoard[parseInt(deletedSquares[i], 10)] = `${shipName}X${count}-`;
   }
-  return myBoard
+  count += 1;
+  // myBoard = checkSurrounding(myBoard);
+  return myBoard;
 }
 
 export function checkIfInsertable(placementSquare, shipName, board) {
@@ -827,7 +874,15 @@ function addShip(col, row, shipName, myBoard) {
 }
 
 function getRandomized(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+  let copy = [...arr]
+  copy = copy.map((tile) => {
+    if (Number.isNaN(parseInt(tile, 10))) {
+      return;
+    }
+    return tile;
+
+  })
+  return copy[Math.floor(Math.random() * copy.length)];
 }
 
 function finalBoard(board) {
@@ -861,16 +916,59 @@ export function selfCreateBoard(tiles) {
     if (!Number.isNaN(parseInt(myBoard[i], 10))) {
       const tile = document.createElement("div");
       tile.classList.add("tile");
+      tile.classList.add("onlyTile");
       tile.id = `${myBoard[i]}`;
       createdBoard.push(tile);
       tiles.appendChild(tile);
-    } else if (myBoard[i] !== "-") {
-      const newShip = createShips(myBoard[i]);
+    } else if (myBoard[i].split("")[myBoard[i].split("").length - 1] !== "-") {
+      const newShip = createShips(myBoard[i].split("X")[0]);
       createdBoard.push(newShip);
       tiles.appendChild(newShip);
     }
   }  
   return createdBoard
+}
+
+export function opponentCreateBoard(tiles) {
+  deleteBoard(tiles);
+  const createdBoard = []
+  const boardArray = finalBoard(board);
+  // for (let i = 0; i < boardArray.length; i += 1) {
+  //   if (!Number.isNaN(parseInt(boardArray[i], 10))) {
+  //     const tile = document.createElement("div");
+  //     tile.classList.add("tile");
+  //     tile.id = `${boardArray[i]}`;
+  //     createdBoard.push(tile);
+  //   } else if (boardArray[i] !== "-") {
+  //     const newShip = createShips(boardArray[i]);
+  //     createdBoard.push(newShip);
+  //   }
+  // }  
+  // return {createdBoard, boardArray}
+
+  for (let i = 0; i < boardArray.length; i += 1) {
+    if (!Number.isNaN(parseInt(boardArray[i], 10))) {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
+      tile.classList.add("onlyTile");
+      tile.id = `${boardArray[i]}`;
+      createdBoard.push(tile);
+      tiles.appendChild(tile);
+    } else if (boardArray[i].split("")[boardArray[i].split("").length - 1] !== "-") { 
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
+      tile.classList.add(`${boardArray[i]}`);
+      createdBoard.push(tile);
+      tiles.appendChild(tile);
+    } else {
+      const tile = document.createElement("div");
+      tile.classList.add("tile");
+      tile.classList.add(boardArray[i]);
+      createdBoard.push(tile);
+      tiles.appendChild(tile);
+    }
+  }
+  return {createdBoard, boardArray};
 }
 
 function getBoxCornersAndEdges(box, shipName) {
@@ -951,7 +1049,7 @@ function minimumDistance(box1, box2) {
 
 export function getSurroundingDivs(box, shipName, user) {
   const boxCorners = getBoxCornersAndEdges(box, shipName);
-  const tiles = document.querySelectorAll(`.${user} .tile`);
+  const tiles = document.querySelectorAll(`.${user} .onlyTile`);
   tiles.forEach((tile) => {
     const tileCorners = getBoxCornersAndEdges(tile.getBoundingClientRect(), "tile");
     const tileDistance = tileCorners.reduce((acc1, p1) => {
@@ -973,8 +1071,6 @@ export function getSurroundingDivs(box, shipName, user) {
       tile.classList.add("miss");
     }
   })
-  
-  
 }
 
 

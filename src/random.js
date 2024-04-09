@@ -29,3 +29,4 @@ const qhBoard = [
 
 
 console.log(Number.isNaN(parseInt(qhBoard["96"], 10)));
+console.log(qhBoard.indexOf('h'));
