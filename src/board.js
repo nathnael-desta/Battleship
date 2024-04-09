@@ -783,7 +783,6 @@ export function checkSurrounding(board) {
 let count = 0;
 export function insertInsideArray(obj, board){
   const myBoard = [...board];
-  console.log(".........myBoard", board)
   const {del, insert, start} = obj;
   const actualName = {
     "sv": "single_vertical",
@@ -885,6 +884,11 @@ function getRandomized(arr) {
   return copy[Math.floor(Math.random() * copy.length)];
 }
 
+function getMyRandom(arr) {
+  let copy = [...arr];
+  return copy[Math.floor(Math.random() * copy.length)];
+}
+
 function finalBoard(board) {
   let myBoard = [...board];
   const quad = ["quad_vertical", "quad_horizontal"];
@@ -898,7 +902,8 @@ function finalBoard(board) {
   let col;
   let row;
   for (let i = 0; i < ships.length; i += 1) {
-    shipName = getRandomized(ships[i]);
+    shipName = getMyRandom(ships[i]);
+    console.log("...............................................", shipName)
     addableBoard = addableSquares(shipName, myBoard);
     [row, col] = getRandomized(addableBoard).split("");
     col = numToLetters[col];
