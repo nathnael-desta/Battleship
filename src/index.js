@@ -1,4 +1,5 @@
 import json5 from "json5";
+import { pick } from "lodash";
 import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding } from "./board";
 
 import("./style.css");
@@ -21,7 +22,7 @@ createSquares(opponentTiles);
 
 shipsPlayer.forEach((ship) => {
     ship.addEventListener("dragstart", (e) => {
-        
+
         if (ship.classList.contains("draged")) {
             return;
         }
@@ -47,7 +48,7 @@ shipsPlayer.forEach((ship) => {
         if (!(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)) {
             placedShips.pop();
             return;
-          }
+        }
         placedShipDimmer(placedShips);
         const dragObj = getDragElement(playerTiles, e.clientX, e.clientY);
         const removeElement = dragObj.element;
@@ -70,6 +71,9 @@ document.addEventListener("keydown", (e) => {
 
 
 selfCreate.addEventListener("click", () => {
+    const dockedShips = [...document.querySelectorAll(".player .ship")];
+    const clickedShips = [];
+
     selfCreateBoard(playerTiles);
     tiles = document.querySelectorAll(".player .tile");
     tiles.forEach((tile) => {
@@ -81,7 +85,10 @@ selfCreate.addEventListener("click", () => {
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
     ships.forEach((ship) => {
         ship.addEventListener("click", (e) => {
-            const {shift} = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
+            if (clickedShips.indexOf(ship) === -1) {
+                clickedShips.push(ship);
+            }
+            const { shift } = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
             const circle = [...ship.children][shift];
             circle.classList.add("crossed");
 
@@ -93,6 +100,17 @@ selfCreate.addEventListener("click", () => {
             }, true);
             if (allCrossedOut) {
                 getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "player");
+                const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1)[0];
+                const shipName = `${theShip.classList[0].split("_")[0]}_horizontal`;
+                const pickedShip = dockedShips.reduce((acc, subShip) => {
+                    if (subShip.classList.contains(shipName) && acc === null) {
+                        [...subShip.children].forEach((theCircle) => {
+                            theCircle.classList.add("crossed");
+                        })
+                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                    }
+                    return acc || null;
+                }, null);
             }
         })
     })
@@ -101,10 +119,10 @@ selfCreate.addEventListener("click", () => {
 
 
 opponentCreate.addEventListener("click", () => {
-    const {createdBoard, boardArray} = opponentCreateBoard(opponentTiles);
+    const { createdBoard, boardArray } = opponentCreateBoard(opponentTiles);
     console.log(createdBoard, boardArray)
     tilesOp = document.querySelectorAll(".opponent .tile");
-    
+
     // shipsOp = document.querySelectorAll(".opponent .tiles > div:not(.tile)");
     // shipsOp.forEach((ship) => {
     //     ship.addEventListener("click", (e) => {
@@ -127,8 +145,12 @@ opponentCreate.addEventListener("click", () => {
 
     const clickedShips = [];
 
+    const dockedShips = [...document.querySelectorAll(".opponent .ship")];
+
+
     tilesOp.forEach((tile) => {
         tile.addEventListener("click", () => {
+            console.log("clickedShips", clickedShips,)
             if (tile.classList.contains("onlyTile")) {
                 tile.classList.add("miss");
             } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
@@ -145,10 +167,9 @@ opponentCreate.addEventListener("click", () => {
 
             if (clickedShips.length !== 0) {
                 clickedShips.forEach((ship) => {
-                    console.log("clickedShips", clickedShips, console.log())
                     const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
 
-        
+
                     const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
                         if (!shipTile.classList.contains("crossedTile")) {
                             return false
@@ -170,9 +191,18 @@ opponentCreate.addEventListener("click", () => {
                             }
                         })
                         getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
-                        clickedShips.splice(clickedShips.indexOf(ship), 1);
-                        console.log("second showing of clickedShips", clickedShips)
-                        
+                        const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
+                        const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
+                        const pickedShip = dockedShips.reduce((acc, subShip) => {
+                            if (subShip.classList.contains(shipName) && acc === null) {
+                                [...subShip.children].forEach((circle) => {
+                                    circle.classList.add("crossed");
+                                })
+                                return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                            }
+                            return acc || null;
+                        }, null);
+
                     }
                 })
 
@@ -180,11 +210,11 @@ opponentCreate.addEventListener("click", () => {
         })
     });
 
-    
+
 })
 
 function refresh(divs, func) {
-   
+
 }
 
 
