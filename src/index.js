@@ -222,7 +222,18 @@ opponentCreate.addEventListener("click", () => {
 
 })
 
+let tilesOverlayDivsCopy = tilesOverlayDivs;
+function clicker() {
+    if (tilesOverlayDivsCopy.length === 0) {
+        return;
+    }
+    const chosen = clickRandomTiles(tilesOverlayDivsCopy);
+    tilesOverlayDivsCopy = chosen.myTilesCopy;
+    chosen.chosenTile.click();
+    // console.log(chosen.chosenTile, tilesOverlayDivsCopy)    
+}
 
+button.addEventListener("click", clicker)
 
 tilesOverlayDivs.forEach((tile) => {
     tile.addEventListener("click", () => {
@@ -231,36 +242,19 @@ tilesOverlayDivs.forEach((tile) => {
             if (isPointInsideDiv(playerTile, box.x + box.width / 2, box.y + box.height / 2)) {
                 const xValue = box.x + box.width / 2;
                 const yValue = box.y + box.height / 2;
-                const clickEvent = new MouseEvent('click', {
+                const clickEvent = new MouseEvent("click", {
                     clientX: xValue,
                     clientY: yValue,
                     bubbles: true,
                   });
                 playerTile.dispatchEvent(clickEvent);
-
-
-                // if (playerTile.contains("tile")) {
-                //     playerTile.click();
-                // } else {
-                //     const [shift, alignment] = whichCircle(playerTile.classList[0], box.x + box.width / 2, box.y + box.height / 2, playerTile.getBoundingClientRect());
-                //     if (alignment === "horizontal") {
-                //         if (shift === 0) {
-                //             playerTile.click();
-                //         }
-                //         if (shift === 1) {
-
-                //         }
-                //     }
-                    
-                // }
-                
-
+                takeOutClickedTiles(tilesOverlayDivsCopy);
+                console.log(tilesOverlayDivsCopy)
                 console.log("tile", tile);
                 console.log("playerTile", playerTile);
             }
         })
     }, false)
-    // tile.click();
 })
 
 function isPointInsideDiv(div, x, y) {
@@ -283,19 +277,23 @@ function clickRandomTiles(tileContainer) {
     chosenTile,
     myTilesCopy
 
-}; // Just return the chosen tile
+};
 }
 
-
-let tilesOverlayDivsCopy = tilesOverlayDivs;
-function clicker() {
-    const chosen = clickRandomTiles(tilesOverlayDivsCopy);
-    tilesOverlayDivsCopy = chosen.myTilesCopy;
-    chosen.chosenTile.click();
-    // console.log(chosen.chosenTile, tilesOverlayDivsCopy)    
+function takeOutClickedTiles(overlayedTiles) {
+    overlayedTiles.forEach((tile) => {
+        const box = tile.getBoundingClientRect();
+        [...thePlayerTiles[0].children].forEach((playerTile) => {
+            if (isPointInsideDiv(playerTile, box.x + box.width / 2, box.y + box.height / 2)) {
+             if (playerTile.classList.contains("miss")) {
+                overlayedTiles.splice(overlayedTiles.indexOf(tile), 1);
+             }   
+            }
+    })
 }
+    )}
 
-button.addEventListener("click", clicker)
+
 
 function refresh(divs, func) {
 
