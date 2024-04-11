@@ -155,7 +155,6 @@
 
                     .tilesOverlay{
                         position: absolute;
-                        outline: 1px solid red;
                         top:0px;
                         bottom: 41px;
                         left: 61px;
@@ -169,7 +168,6 @@
 
                         div {
                             position: relative;
-                            outline: 1px solid green;
                             z-index: 0;
                         }
                     }

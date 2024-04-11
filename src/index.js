@@ -223,17 +223,27 @@ opponentCreate.addEventListener("click", () => {
 })
 
 let tilesOverlayDivsCopy = tilesOverlayDivs;
+
+const shipsThatHit = [];
+
 function clicker() {
     if (tilesOverlayDivsCopy.length === 0) {
         return;
     }
-    const chosen = clickRandomTiles(tilesOverlayDivsCopy);
+    let chosen = "";
+    if (shipsThatHit.length !== 0) {
+        chosen = {myTilesCopy: shipsThatHit.shouldClick.pop()};
+    } else {
+        chosen = clickRandomTiles(tilesOverlayDivsCopy);
+    }
+    
     tilesOverlayDivsCopy = chosen.myTilesCopy;
     chosen.chosenTile.click();
+    console.log(tilesOverlayDivsCopy)
     // console.log(chosen.chosenTile, tilesOverlayDivsCopy)    
 }
 
-button.addEventListener("click", clicker)
+button.addEventListener("click", clicker);
 
 tilesOverlayDivs.forEach((tile) => {
     tile.addEventListener("click", () => {
@@ -249,9 +259,33 @@ tilesOverlayDivs.forEach((tile) => {
                   });
                 playerTile.dispatchEvent(clickEvent);
                 takeOutClickedTiles(tilesOverlayDivsCopy);
-                console.log(tilesOverlayDivsCopy)
-                console.log("tile", tile);
-                console.log("playerTile", playerTile);
+
+                const isPlayerFullyClicked = [...playerTile.children].reduce((acc, circle) => {
+                    if (!circle.classList.contains("crossed")) {
+                        return false;
+                    }
+                    return acc && true;
+                }, true)
+
+
+                if (!playerTile.classList.contains("tile")) {
+                if(isPlayerFullyClicked) {
+                    shipsThatHit.pop();
+                } else if (shipsThatHit.indexOf(playerTile) === -1) {
+                        const [row, col] = tile.classList[0].split("").map((string) => parseInt(string, 10));
+                        shipsThatHit.push({
+                            ship: playerTile,
+                            shouldClick: [`${row}${col + 1}`, `${row}${col - 1}`],
+                            alignment: "horizontal",
+                            start: tile.classList[0]
+                        })
+                        console.log(shipsThatHit);
+                } 
+
+                
+            }
+                
+                    
             }
         })
     }, false)
@@ -276,7 +310,6 @@ function clickRandomTiles(tileContainer) {
   return {
     chosenTile,
     myTilesCopy
-
 };
 }
 
