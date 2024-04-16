@@ -751,25 +751,21 @@ export function checkSurrounding(board) {
       
       if (row > 0) {
         if (Number.isNaN(parseInt(myBoard[parseInt(`${row - 1}${col}`, 10)], 10)) ) {
-          console.log("_______________________________________________________________", tile)
           return "-";
         }
       }
       if (row < 9) {
         if (Number.isNaN(parseInt(myBoard[parseInt(`${row + 1}${col}`, 10)], 10)) ) {
-          console.log("_______________________________________________________________", tile)
           return "-";
         }
       }
       if (col > 0) {
         if (Number.isNaN(parseInt(myBoard[parseInt(`${row}${col - 1}`, 10)], 10)) ) {
-          console.log("______________________________________________________________", tile)
           return "-";
         }
       }
       if (col < 9) {
         if (Number.isNaN(parseInt(myBoard[parseInt(`${row}${col + 1}`, 10)], 10)) ) {
-          console.log("_____________________________________________________________", tile)
           return "-";
         }
       }
@@ -1081,4 +1077,103 @@ export function getSurroundingDivs(box, shipName, user) {
 
 
 
+
+
+export function shoot(tilesOverlay, playerBoard, randomNo) {
+  const myTilesOverlay = [...tilesOverlay];
+  for(let i = 0; i < myTilesOverlay.length; i += 1) {
+    if (myTilesOverlay[i] === randomNo) {
+      if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
+        myTilesOverlay[i] = "miss";
+      } else {
+        myTilesOverlay[i] = "hit";
+      }
+     
+    }
+  }
+  return myTilesOverlay;
+}
+
+export function checkIfShipIsDestroyed(tilesOverlay, playerBoard, shotTile) {
+ const [row, col] = shotTile.split("").map((value) => parseInt(value, 10));
+ 
+ let shipType = "";
+ let checkShip = "";
+
+
+ if (isNaN(playerBoard[`${row}${col}`])) {
+  shipType = playerBoard[`${row}${col}`].split(" ")[playerBoard[`${row}${col}`].split(" ").length - 1];
+ }
+ // --------------------------------------------------------------
+ else {
+  return false
+ }
+ const allTileNumbersWithThisShipAreHit = playerBoard.reduce((acc, tile, index) => {
+  if (isNaN(tile)) {
+    checkShip = tile.split(" ")[tile.split(" ").length - 1];
+    console.log("--------------", checkShip, "hitship", shipType)
+    if (checkShip === shipType) {
+      
+      if (index === parseInt(`${row}${col}`, 10)) {
+        return true;
+      }
+      if (tilesOverlay[index] === "hit") {
+        return acc;
+      } 
+      return false;
+    }
+  }
+  return acc && true;
+ }, true)
+ return allTileNumbersWithThisShipAreHit
+
+
+ // ---------------------------------------------------------
+
+//  console.log(playerBoard[parseInt(`${row - 1}${col}`, 10)], playerBoard[parseInt(`${row + 1}${col}`, 10)], isNaN("asdf"))
+//  if (row > 0) {
+//   let up = playerBoard[parseInt(`${row - 1}${col}`, 10)];
+//   if (isNaN(up)) {
+//     checkShip = up.split("")[up.split("").length - 1];
+//     if (checkShip === shipType) {
+//       return false;
+//     }
+//   }
+//  }
+
+//  if (row < 10) {
+//   let down = playerBoard[parseInt(`${row + 1}${col}`, 10)];
+//   if (isNaN(down)) {
+//     checkShip = down.split("")[down.split("").length - 1];
+//     if (checkShip === shipType) {
+//       return false;
+//     }
+//   }
+//  } 
+
+//  if (col > 0) {
+//   let left = playerBoard[parseInt(`${row}${col - 1}`, 10)]; 
+//   if (isNaN(left)) {
+//     checkShip = left.split("")[left.split("").length - 1];
+//     if (checkShip === shipType) {
+//       return false;
+//     }
+//   }
+//  }
+
+//  if (col < 10) {
+//   let right = playerBoard[parseInt(`${row}${col + 1}`, 10)];
+//   if (isNaN(right)) {
+//     checkShip = right.split("")[right.split("").length - 1];
+//     if (checkShip === shipType) {
+//       return false;
+//     }
+//   }
+//  }
+
+//  return true
+
+
+
+}
 
