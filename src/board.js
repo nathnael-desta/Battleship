@@ -1109,71 +1109,54 @@ export function checkIfShipIsDestroyed(tilesOverlay, playerBoard, shotTile) {
   }, true)
   return allTileNumbersWithThisShipAreHit
  
- 
-  // ---------------------------------------------------------
- 
- //  console.log(playerBoard[parseInt(`${row - 1}${col}`, 10)], playerBoard[parseInt(`${row + 1}${col}`, 10)], isNaN("asdf"))
- //  if (row > 0) {
- //   let up = playerBoard[parseInt(`${row - 1}${col}`, 10)];
- //   if (isNaN(up)) {
- //     checkShip = up.split("")[up.split("").length - 1];
- //     if (checkShip === shipType) {
- //       return false;
- //     }
- //   }
- //  }
- 
- //  if (row < 10) {
- //   let down = playerBoard[parseInt(`${row + 1}${col}`, 10)];
- //   if (isNaN(down)) {
- //     checkShip = down.split("")[down.split("").length - 1];
- //     if (checkShip === shipType) {
- //       return false;
- //     }
- //   }
- //  } 
- 
- //  if (col > 0) {
- //   let left = playerBoard[parseInt(`${row}${col - 1}`, 10)]; 
- //   if (isNaN(left)) {
- //     checkShip = left.split("")[left.split("").length - 1];
- //     if (checkShip === shipType) {
- //       return false;
- //     }
- //   }
- //  }
- 
- //  if (col < 10) {
- //   let right = playerBoard[parseInt(`${row}${col + 1}`, 10)];
- //   if (isNaN(right)) {
- //     checkShip = right.split("")[right.split("").length - 1];
- //     if (checkShip === shipType) {
- //       return false;
- //     }
- //   }
- //  }
- 
- //  return true
- 
  }
 
  export function getIndexOfFirstHit(tilesOverlay) {
   const myTilesOverlay = [...tilesOverlay]
   const firstTile = myTilesOverlay.reduce((acc, tile, index) => {
-    if (isNaN(tile) && tile.split(" ")[tile.split(" ").length - 1] !== "finished" && tile.split(" ")[tile.split(" ").length - 1] !== "checked") {
+    if (tile === "hit") {
       return {
         hitTile: `${index}`,
-        newTilesOverlay: myTilesOverlay.map((value, tileIndex) => {
-          if (tileIndex === index) {
-            return "hit checked"
-          }
-          return value
-        })
+        newTilesOverlay: myTilesOverlay
       }
     }
     return acc || null
   }, null)
   return firstTile || "all hit tiles have been finished";
+ }
+
+ export function getIndexOfNextLikelyTile(tilesOverlay) {
+  const {hitTile, newTilesOverlay} = getIndexOfFirstHit(tilesOverlay);
+  if (!isNaN(hitTile)) {
+    const [row, col] = hitTile.split("").map((value) => parseInt(value, 10));
+    if (row > 0) {
+      if (!isNaN(tilesOverlay[`${row - 1}${col}`])) {
+        return {tile: `${row - 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile}
+      }
+    }
+
+    if (row < 9) {
+      if (!isNaN(tilesOverlay[`${row + 1}${col}`])) {
+        return {tile: `${row + 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile}
+      }
+    }
+
+    if (col > 0) {
+      if (!isNaN(tilesOverlay[`${row}${col - 1}`])) {
+        return {tile: `${row}${col - 1}`, sentTileOverlay: newTilesOverlay, hitTile}
+      }
+    }
+
+    if (col < 9) {
+      if (!isNaN(tilesOverlay[`${row}${col + 1}`])) {
+        return {tile: `${row}${col + 1}`, sentTileOverlay: newTilesOverlay, hitTile}
+      }
+    }
+
+    return "can't find where to hit for some reason"
+  }
+
+  return "all hit tiles have been finished"
  }
 
  export function checkIfAllHitsFinished(tilesOverlay) {
@@ -1187,63 +1170,41 @@ export function checkIfShipIsDestroyed(tilesOverlay, playerBoard, shotTile) {
   }, true);
  }
 
- export function getIndexOfNextLikelyTile(tilesOverlay) {
-  const {hitTile, newTilesOverlay} = getIndexOfFirstHit(tilesOverlay);
-  if (!isNaN(hitTile)) {
-    const [row, col] = hitTile.split("").map((value) => parseInt(value, 10));
-    if (row > 0) {
-      if (!isNaN(tilesOverlay[`${row - 1}${col}`])) {
-        return {tile: `${row - 1}${col}`, sentTileOverlay: newTilesOverlay}
-      }
-    }
-
-    if (row < 9) {
-      if (!isNaN(tilesOverlay[`${row + 1}${col}`])) {
-        return {tile: `${row + 1}${col}`, sentTileOverlay: newTilesOverlay}
-      }
-    }
-
-    if (col > 0) {
-      if (!isNaN(tilesOverlay[`${row}${col - 1}`])) {
-        return {tile: `${row}${col - 1}`, sentTileOverlay: newTilesOverlay}
-      }
-    }
-
-    if (col < 9) {
-      if (!isNaN(tilesOverlay[`${row}${col + 1}`])) {
-        return {tile: `${row}${col + 1}`, sentTileOverlay: newTilesOverlay}
-      }
-    }
-
-    return "can't find where to hit for some reason"
-  }
-
-  return "all hit tiles have been finished"
- }
-
 export function shoot(tilesOverlay, playerBoard, randomNo) {
   let myTilesOverlay = [...tilesOverlay];
   let chosenTile = randomNo;
+  const {tile, sentTileOverlay, hitTile} = getIndexOfNextLikelyTile(tilesOverlay);  
   if (checkIfAllHitsFinished(myTilesOverlay)) {
     chosenTile = randomNo;
+    for(let i = 0; i < myTilesOverlay.length; i += 1) {
+      if (myTilesOverlay[i] === chosenTile) {
+        if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
+          myTilesOverlay[i] = "miss";
+        } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
+            myTilesOverlay[i] = "hit finished";
+        } else {
+          myTilesOverlay[i] = "hit";
+        }
+      }
+    }
   } else {
-    const {tile, sentTileOverlay} = getIndexOfNextLikelyTile(tilesOverlay);  
     chosenTile = tile;
     myTilesOverlay = sentTileOverlay;
-    console.log(chosenTile, myTilesOverlay, getIndexOfNextLikelyTile(tilesOverlay))
-  }
-  
-
-  for(let i = 0; i < myTilesOverlay.length; i += 1) {
-    if (myTilesOverlay[i] === chosenTile) {
-      if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
-        myTilesOverlay[i] = "miss";
-      } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
-          myTilesOverlay[i] = "hit finished";
-      } else {
-        myTilesOverlay[i] = "hit"
+    for(let i = 0; i < myTilesOverlay.length; i += 1) {
+      if (myTilesOverlay[i] === chosenTile) {
+        if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
+          myTilesOverlay[i] = "miss";
+        } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
+            myTilesOverlay[i] = "hit finished";
+        } else {
+          myTilesOverlay[i] = "hit";
+          myTilesOverlay[parseInt(hitTile, 10)] = "hit checked";
+        }
       }
     }
   }
+  
+
+  
   return myTilesOverlay;
 }
