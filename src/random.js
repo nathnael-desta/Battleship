@@ -31,4 +31,10 @@ const qhBoard = [
 // console.log(Number.isNaN(parseInt(qhBoard["96"], 10)));
 // console.log(qhBoard.indexOf('h'));
 
-console.log(Number.isNaN("asdf"))
+// console.log(Number.isNaN("asdf"))
+
+const arr =[1,2,3,4,5,6];
+// if (arr[6] === 7) {
+//   console.log(arr[6])
+//   console.log("asfdadsf")
+// }

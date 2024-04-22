@@ -1,6 +1,6 @@
 import json5 from "json5";
 import { pick } from "lodash";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished } from "./board";
 
 import("./style.css");
 
@@ -14,6 +14,8 @@ const tileDivs = document.querySelectorAll(".tiles > div");
 const tilesOverlayDivs = document.querySelectorAll(".tilesOverlay div");
 const thePlayerTiles = document.querySelectorAll(".player .tiles")
 const button = document.querySelector(".start_button");
+let playerBoard = null;
+let tilesOverlayDivsCopy = [...tilesOverlayDivs];
 
 let circles;
 let tiles;
@@ -78,12 +80,12 @@ selfCreate.addEventListener("click", () => {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
     const clickedShips = [];
 
-    selfCreateBoard(playerTiles);
+    playerBoard = selfCreateBoard(playerTiles);
+
     tiles = document.querySelectorAll(".player .tile");
     tiles.forEach((tile) => {
         tile.addEventListener("click", (event) => {
             tile.classList.add("miss");
-
             event.stopPropagation();
         }, false)
 
@@ -222,9 +224,57 @@ opponentCreate.addEventListener("click", () => {
 
 })
 
-let tilesOverlayDivsCopy = tilesOverlayDivs;
+
 
 const shipsThatHit = [];
+
+let tilesOverlayArray =
+    [
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+        "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+        "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+        "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
+        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+    ];
+
+
+
+button.addEventListener("click", computerClicker);
+
+function computerClicker() {
+    if (tilesOverlayDivsCopy.length === 0) {
+        return;
+    }
+    if (shipsThatHit.length !== 0) {
+        const { myTilesOverlay, tile } = shoot(tilesOverlayArray, playerBoard.boardArray, 0);
+        tilesOverlayArray = myTilesOverlay;
+        console.log("tile", tile, tilesOverlayDivsCopy);
+        const chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
+            if (tileOv.classList[0] === `${tile}`) {
+                return tilesOverlayDivsCopy.splice(index, 1)[0];
+            }
+            return acc;
+        }, null);
+        console.log("chosenTile", chosenTileDiv);
+        console.log("started thinking", myTilesOverlay, checkIfAllHitsFinished(tilesOverlayArray));
+        chosenTileDiv.click();
+
+    } else {
+        const { chosenTile, newTilesOverlay } = clickRandomTiles(tilesOverlayDivsCopy);
+        const myRandomNumber = chosenTile.classList[0];
+        const { myTilesOverlay, tile } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
+        tilesOverlayArray = myTilesOverlay;
+        console.log("randomlyGuessing", myTilesOverlay, checkIfAllHitsFinished(tilesOverlayArray))
+        chosenTile.click();
+        tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
+    }
+
+}
 
 function clicker() {
     if (tilesOverlayDivsCopy.length === 0) {
@@ -232,20 +282,33 @@ function clicker() {
     }
     let chosen = "";
     if (shipsThatHit.length !== 0) {
-        chosen = {myTilesCopy: shipsThatHit.shouldClick.pop()};
+        chosen = { myTilesCopy: shipsThatHit.shouldClick.pop() };
     } else {
         chosen = clickRandomTiles(tilesOverlayDivsCopy);
     }
-    
+
     tilesOverlayDivsCopy = chosen.myTilesCopy;
+    console.log("chosen tile lets go", chosen.chosenTile)
     chosen.chosenTile.click();
     console.log(tilesOverlayDivsCopy)
     // console.log(chosen.chosenTile, tilesOverlayDivsCopy)    
 }
 
-button.addEventListener("click", clicker);
+function clickRandomTiles(tileContainer) {
+    const myTilesCopy = [...tileContainer]; // Create a copy of the array
+    const index = Math.floor(Math.random() * myTilesCopy.length); // Use Math.random()
+    const chosenTile = myTilesCopy[index]; // Access the element directly
+    myTilesCopy.splice(index, 1);
+
+    return {
+        chosenTile,
+        myTilesCopy
+    };
+}
+
 
 tilesOverlayDivs.forEach((tile) => {
+    tilesOverlayDivsCopy = [...tilesOverlayDivsCopy]
     tile.addEventListener("click", () => {
         const box = tile.getBoundingClientRect();
         [...thePlayerTiles[0].children].forEach((playerTile) => {
@@ -256,8 +319,9 @@ tilesOverlayDivs.forEach((tile) => {
                     clientX: xValue,
                     clientY: yValue,
                     bubbles: true,
-                  });
+                });
                 playerTile.dispatchEvent(clickEvent);
+
                 takeOutClickedTiles(tilesOverlayDivsCopy);
 
                 const isPlayerFullyClicked = [...playerTile.children].reduce((acc, circle) => {
@@ -269,9 +333,9 @@ tilesOverlayDivs.forEach((tile) => {
 
 
                 if (!playerTile.classList.contains("tile")) {
-                if(isPlayerFullyClicked) {
-                    shipsThatHit.pop();
-                } else if (shipsThatHit.indexOf(playerTile) === -1) {
+                    if (isPlayerFullyClicked) {
+                        shipsThatHit.pop();
+                    } else if (shipsThatHit.indexOf(playerTile) === -1) {
                         const [row, col] = tile.classList[0].split("").map((string) => parseInt(string, 10));
                         shipsThatHit.push({
                             ship: playerTile,
@@ -280,12 +344,12 @@ tilesOverlayDivs.forEach((tile) => {
                             start: tile.classList[0]
                         })
                         console.log(shipsThatHit);
-                } 
+                    }
 
-                
-            }
-                
-                    
+
+                }
+
+
             }
         })
     }, false)
@@ -298,37 +362,38 @@ function isPointInsideDiv(div, x, y) {
         x <= rect.right &&
         y >= rect.top &&
         y <= rect.bottom
-      );
+    );
 }
 
-function clickRandomTiles(tileContainer) {
-    const myTilesCopy = [...tileContainer]; // Create a copy of the array
-  const index = Math.floor(Math.random() * myTilesCopy.length); // Use Math.random()
-  const chosenTile = myTilesCopy[index]; // Access the element directly
-  myTilesCopy.splice(index, 1);
 
-  return {
-    chosenTile,
-    myTilesCopy
-};
-}
 
 function takeOutClickedTiles(overlayedTiles) {
     overlayedTiles.forEach((tile) => {
         const box = tile.getBoundingClientRect();
         [...thePlayerTiles[0].children].forEach((playerTile) => {
             if (isPointInsideDiv(playerTile, box.x + box.width / 2, box.y + box.height / 2)) {
-             if (playerTile.classList.contains("miss")) {
-                overlayedTiles.splice(overlayedTiles.indexOf(tile), 1);
-             }   
+                if (playerTile.classList.contains("miss")) {
+                    // const index = [overlayedTiles].reduce((acc, tileOv, ind) => {
+                    //     if (tileOv.classList[0] === tile.classList[0]) {
+                    //         return ind
+                    //     }
+                    //     return acc
+                    // }, 1000)
+                    overlayedTiles.splice(overlayedTiles.indexOf(tile), 1);
+                }
             }
-    })
+        })
+    }
+    )
 }
-    )}
 
 
 
 function refresh(divs, func) {
+
+}
+
+function drawboard(playerBoard) {
 
 }
 
