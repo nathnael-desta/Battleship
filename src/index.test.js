@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile } from "./board.js";
+import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles } from "./board.js";
 
 
 describe("insertion tests", () => {
@@ -837,6 +837,80 @@ describe("insertion tests", () => {
       ["04", "05", "06", "14", "16", "24", "25" ,"26"]
     )
 
+    expect(getSurroundingTiles(missOverlay, createMiss, "05")).toEqual(
+      ["04", "06", "14", "16"]
+    )
+
+    expect(getSurroundingTiles(missOverlay, createMiss, "10")).toEqual(
+      ["00", "01", "11","20", "21"]
+    )
+
+    expect(getSurroundingTiles(missOverlay, createMiss, "59")).toEqual(
+      ["48", "49", "58", "68", "69"]
+    )
+
+    expect(getSurroundingTiles(missOverlay, createMiss, "99")).toEqual(
+      ["88", "89", "98"]
+    )
+
+    const createMiss1 = [
+      "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+      "10", "11", "12", "13", "14", "quad_horizontalX0", "- quad_horizontalX0", "- quad_horizontalX0", "- quad_horizontalX0", "19",
+      "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+      "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+      "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+      "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+      "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+      "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+      "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
+      "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+    ];
+
+    const createMiss2 = [
+      "00", "01", "02", "03", "04", "05", "miss", "07", "08", "09",
+      "10", "11", "12", "13", "14", "quad_horizontalX0", "- quad_horizontalX0", "- quad_horizontalX0", "- quad_horizontalX0", "19",
+      "20", "21", "22", "23", "24", "25", "miss", "27", "double_verticalX1", "29",
+      "30", "31", "32", "33", "34", "35", "36", "37", "- double_verticalX1", "39",
+      "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+      "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+      "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+      "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+      "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
+      "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+    ];
+
+    expect(getSurroundingTiles(missOverlay, createMiss1, "15")).toEqual([
+      "04",
+      "05",
+      "06",
+      "14",
+      "24",
+      "25",
+      "26",
+      "07",
+      "27",
+      "08",
+      "28",
+      "09",
+      "19",
+      "29",
+    ]);
+
+    expect(getSurroundingTiles(missOverlay, createMiss2, "15")).toEqual([
+      "04",
+      "05",
+      "14",
+      "24",
+      "25",
+      "07",
+      "27",
+      "08",
+      "09",
+      "19",
+      "29",
+    ]);
+
+
     expect(shoot(missOverlay, createMiss, "15")).toEqual(
       {myTilesOverlay: [
         "00", "01", "02", "03", "miss", "miss", "miss", "07", "08", "09",
@@ -887,6 +961,19 @@ describe("insertion tests", () => {
       }
     )
 
+    // const board0 =
+    //   ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+    //     "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+    //     "20", "single_horizontalX0", "22", "23", "24", "quad_verticalX1", "26", "27", "28", "29",
+    //     "30", "31", "32", "33", "34", "- quad_verticalX1", "36", "37", "38", "39",
+    //     "40", "41", "42", "43", "44", "- quad_verticalX1", "46", "47", "48", "49",
+    //     "50", "single_verticalX2", "52", "53", "54", "- quad_verticalX1", "56", "57", "58", "59",
+    //     "60", "single_verticalX3", "62", "63", "64", "65", "66", "67", "68", "69",
+    //     "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+    //     "80", "81", "82", "83", "quad_horizontalX4", "- quad_horizontalX4", "- quad_horizontalX4", "- quad_horizontalX4", "88", "89",
+    //     "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+    //   ];
+
     expect(shoot(tilesOverlay0, board0, "51")).toEqual(
       {
         myTilesOverlay: [
@@ -894,9 +981,9 @@ describe("insertion tests", () => {
           "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
           "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
           "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
-          "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
-          "50", "hit finished", "52", "53", "54", "55", "56", "57", "58", "59",
-          "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+          "miss", "miss", "miss", "43", "44", "45", "46", "47", "48", "49",
+          "miss", "hit finished", "miss", "53", "54", "55", "56", "57", "58", "59",
+          "miss", "61", "miss", "63", "64", "65", "66", "67", "68", "69",
           "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
           "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
           "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
@@ -1165,6 +1252,19 @@ describe("insertion tests", () => {
       "90", "91", "92", "93", "miss", "95", "96", "97", "98", "99"
     ];
 
+    // const board0 =
+    //   ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+    //     "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+    //     "20", "single_horizontalX0", "22", "23", "24", "quad_verticalX1", "26", "27", "28", "29",
+    //     "30", "31", "32", "33", "34", "- quad_verticalX1", "36", "37", "38", "39",
+    //     "40", "41", "42", "43", "44", "- quad_verticalX1", "46", "47", "48", "49",
+    //     "50", "single_verticalX2", "52", "53", "54", "- quad_verticalX1", "56", "57", "58", "59",
+    //     "60", "single_verticalX3", "62", "63", "64", "65", "66", "67", "68", "69",
+    //     "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+    //     "80", "81", "82", "83", "quad_horizontalX4", "- quad_horizontalX4", "- quad_horizontalX4", "- quad_horizontalX4", "88", "89",
+    //     "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+    //   ];
+
     expect(shoot(afterStartedGoingHorizontal, board0, "23")).toEqual(
       {
         myTilesOverlay: [
@@ -1175,9 +1275,9 @@ describe("insertion tests", () => {
           "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
           "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
           "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
-          "70", "71", "72", "73", "miss", "75", "76", "77", "78", "79",
-          "80", "81", "82", "miss", "hit checked", "hit checked", "hit checked", "hit finished", "88", "89",
-          "90", "91", "92", "93", "miss", "95", "96", "97", "98", "99"
+          "70", "71", "72", "miss", "miss", "miss", "miss", "miss", "miss", "79",
+          "80", "81", "82", "miss", "hit checked", "hit checked", "hit checked", "hit finished", "miss", "89",
+          "90", "91", "92", "miss", "miss", "miss", "miss", "miss", "miss", "99"
         ], tile: "87"
       }
     )
@@ -1255,16 +1355,29 @@ describe("insertion tests", () => {
       "90", "91", "92", "93", "miss", "95", "96", "97", "98", "99"
     ];
 
+    // const board0 =
+    //   ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+    //     "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+    //     "20", "single_horizontalX0", "22", "23", "24", "quad_verticalX1", "26", "27", "28", "29",
+    //     "30", "31", "32", "33", "34", "- quad_verticalX1", "36", "37", "38", "39",
+    //     "40", "41", "42", "43", "44", "- quad_verticalX1", "46", "47", "48", "49",
+    //     "50", "single_verticalX2", "52", "53", "54", "- quad_verticalX1", "56", "57", "58", "59",
+    //     "60", "single_verticalX3", "62", "63", "64", "65", "66", "67", "68", "69",
+    //     "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+    //     "80", "81", "82", "83", "quad_horizontalX4", "- quad_horizontalX4", "- quad_horizontalX4", "- quad_horizontalX4", "88", "89",
+    //     "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+    //   ];
+
     expect(shoot(QuadVerticalTest2, board0, "23")).toEqual(
       {
         myTilesOverlay: [
           "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-          "10", "11", "12", "13", "14", "miss", "16", "17", "18", "19",
-          "20", "21", "22", "23", "24", "hit checked", "26", "27", "28", "29",
-          "30", "31", "32", "33", "34", "hit checked", "36", "37", "38", "39",
-          "40", "41", "42", "43", "44", "hit checked", "46", "47", "48", "49",
-          "50", "51", "52", "53", "54", "hit finished", "56", "57", "58", "59",
-          "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+          "10", "11", "12", "13", "miss", "miss", "miss", "17", "18", "19",
+          "20", "21", "22", "23", "miss", "hit checked", "miss", "27", "28", "29",
+          "30", "31", "32", "33", "miss", "hit checked", "miss", "37", "38", "39",
+          "40", "41", "42", "43", "miss", "hit checked", "miss", "47", "48", "49",
+          "50", "51", "52", "53", "miss", "hit finished", "miss", "57", "58", "59",
+          "60", "61", "62", "63", "miss", "miss", "miss", "67", "68", "69",
           "70", "71", "72", "73", "miss", "75", "76", "77", "78", "79",
           "80", "81", "82", "miss", "hit checked", "hit checked", "hit checked", "hit finished", "88", "89",
           "90", "91", "92", "93", "miss", "95", "96", "97", "98", "99"

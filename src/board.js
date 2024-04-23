@@ -1228,6 +1228,72 @@ export function checkIfAllHitsFinished(tilesOverlay) {
   }, true);
 }
 
+
+
+function allNumbersAroundIt(tile) {
+  const surroundingTiles = [];
+  const [row, col] = tile.split("").map(num => parseInt(num, 10));
+  if (row > 0) {
+    if (col > 0) {
+      surroundingTiles.push(`${row - 1}${col - 1}`);
+    } 
+    surroundingTiles.push(`${row - 1}${col}`);
+    if(col < 9) {
+      surroundingTiles.push(`${row - 1}${col + 1}`);
+    }
+  }
+
+  if (col > 0) {
+    surroundingTiles.push(`${row}${col - 1}`);
+  } 
+  if(col < 9) {
+    surroundingTiles.push(`${row}${col + 1}`);
+  }
+
+  if (row < 9) {
+    if (col > 0) {
+      surroundingTiles.push(`${row + 1}${col - 1}`);
+    } 
+    surroundingTiles.push(`${row + 1}${col}`);
+    if(col < 9) {
+      surroundingTiles.push(`${row + 1}${col + 1}`);
+    }
+  }
+
+  return surroundingTiles;
+}
+
+
+export function getSurroundingTiles(overlayedTiles, playerBoard, tile) {
+  const shipName = playerBoard[parseInt(tile, 10)].split(" ").pop();
+  const allTilesOfTheShip = playerBoard.reduce((acc, value, index) => {
+    if (value.split(" ").pop() === shipName) {
+      acc.push(String(index).padStart(2, "0"));
+      return acc;
+    }
+    return acc;
+  }, []);
+
+  const allTilesAroundTheShip = allTilesOfTheShip.reduce((acc, value, index) => {
+    const surroundingNumbers = allNumbersAroundIt(value);
+    surroundingNumbers.forEach((num) => {
+      if (acc.indexOf(num) === -1) {
+        acc.push(num);
+      }
+    })
+    return acc;
+  }, [])
+  const onlyTheTiles = allTilesAroundTheShip.reduce((acc, value) => {
+    if (!isNaN(overlayedTiles[parseInt(value, 10)]) && !isNaN(playerBoard[parseInt(value, 10)])) {
+      acc.push(value);
+      return acc;
+    }
+    return acc
+  }, [])
+
+  return onlyTheTiles;
+}
+
 export function shoot(tilesOverlay, playerBoard, randomNo = null) {
   let myTilesOverlay = [...tilesOverlay];
   let chosenTile = randomNo;
@@ -1239,6 +1305,9 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
         if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
           myTilesOverlay[i] = "miss";
         } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
+          getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]).forEach((num) => {  
+            myTilesOverlay[parseInt(num, 10)] = "miss";
+          })
           myTilesOverlay[i] = "hit finished";
         } else {
           myTilesOverlay[i] = "hit";
@@ -1253,6 +1322,9 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
         if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
           myTilesOverlay[i] = "miss";
         } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
+          getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]).forEach((num) => {  
+            myTilesOverlay[parseInt(num, 10)] = "miss";
+          })
           myTilesOverlay[i] = "hit finished";
           myTilesOverlay[parseInt(hitTile, 10)] = "hit checked";
         } else {
@@ -1263,10 +1335,4 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
     }
   }
   return { myTilesOverlay, tile };
-}
-
-function getSurroundingTiles(overlayedTiles, playerBoard, tile) {
-  const tiles = overlayedTiles.reduce((acc, tileOv, index) => {
-    if ()
-  })
 }
