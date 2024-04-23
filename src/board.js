@@ -1298,6 +1298,7 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
   let myTilesOverlay = [...tilesOverlay];
   let chosenTile = randomNo;
   const { tile, sentTileOverlay, hitTile } = getIndexOfNextLikelyTile(tilesOverlay);
+  let surroundingTiles = [];
   if (checkIfAllHitsFinished(myTilesOverlay)) {
     chosenTile = randomNo;
     for (let i = 0; i < myTilesOverlay.length; i += 1) {
@@ -1305,9 +1306,11 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
         if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
           myTilesOverlay[i] = "miss";
         } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
-          getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]).forEach((num) => {  
+          surroundingTiles = getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]);
+          surroundingTiles.forEach((num) => {  
             myTilesOverlay[parseInt(num, 10)] = "miss";
           })
+
           myTilesOverlay[i] = "hit finished";
         } else {
           myTilesOverlay[i] = "hit";
@@ -1322,7 +1325,8 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
         if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
           myTilesOverlay[i] = "miss";
         } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
-          getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]).forEach((num) => {  
+          surroundingTiles = getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]);
+          surroundingTiles.forEach((num) => {  
             myTilesOverlay[parseInt(num, 10)] = "miss";
           })
           myTilesOverlay[i] = "hit finished";
@@ -1334,5 +1338,5 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
       }
     }
   }
-  return { myTilesOverlay, tile };
+  return { myTilesOverlay, tile, surroundingTiles };
 }
