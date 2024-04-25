@@ -836,12 +836,43 @@ export function checkIfInsertable(placementSquare, shipName, board) {
   return true
 }
 
+export function allTilesAroundAPoint(board, tile) {
+  const [row, col] = tile.split("").map(value => parseInt(value, 10));
+  return [`${Math.abs(row - 1)}${Math.abs(col - 1)}`, `${Math.abs(row - 1)}${Math.abs(col)}`, `${Math.abs(row - 1)}${Math.abs(col + 1)}`, `${Math.abs(row)}${Math.abs(col - 1)}`, `${Math.abs(row)}${Math.abs(col)}`, `${Math.abs(row)}${Math.abs(col + 1)}`, `${Math.abs(row + 1)}${Math.abs(col - 1)}`, `${Math.abs(row + 1)}${Math.abs(col)}`, `${Math.abs(row)}${Math.abs(col + 1)}`]
+}
+
 export function addableSquares(shipName, board) {
   const addableBoard = [];
-  for (let i = 0; i < board.length; i += 1) {
-    if (!Number.isNaN(parseInt(board[i], 10))) {
-      if (checkIfInsertable(board[i], shipName, board)) {
-        addableBoard.push(board[i]);
+  const indexOfEachNonTile = board.reduce((acc, value, index) => {
+    if (isNaN(value)) {
+      acc.push(`${index}`.padStart(2, "0"));
+      return acc;
+    }
+    return acc
+  }, [])
+  console.log("the index of the ships", indexOfEachNonTile)
+  const tilesSurroundingShips = indexOfEachNonTile.reduce((acc, value, index) => {
+    const tileSurroundingShip = allTilesAroundAPoint(board, value);
+    tileSurroundingShip.forEach((tile) => {
+      if (acc.indexOf(tile) === -1) {
+        acc.push(tile);
+      }
+    })
+    return acc;
+  }, [])
+  console.log("the board is", board);
+  console.log("ship tiles are", indexOfEachNonTile)
+  console.log("the surrounding tiles", tilesSurroundingShips)
+  const myBoard = [...board];
+  tilesSurroundingShips.forEach((tile) => {
+    if (!isNaN(tile) && parseInt(tile, 10) >= 0 && parseInt(tile, 10) <= 99) {
+      myBoard.splice(parseInt(tile, 10), 1, "space taken");
+    }
+  })
+  for (let i = 0; i < myBoard.length; i += 1) {
+    if (!Number.isNaN(parseInt(myBoard[i], 10))) {
+      if (checkIfInsertable(myBoard[i], shipName, myBoard) && tilesSurroundingShips.indexOf(myBoard[i]) === -1) {
+        addableBoard.push(myBoard[i]);
       }
     }
 
@@ -1127,17 +1158,23 @@ export function getIndexOfFirstHit(tilesOverlay) {
 
       let alignment = "vertical";
       if (col > 0) {
-        if (myTilesOverlay[`${row}${col - 1}`].split(" ").indexOf("hit") !== -1 && myTilesOverlay[`${row}${col - 1}`].split(" ").indexOf("finished") === -1) {
+        if (myTilesOverlay[parseInt(`${row}${col - 1}`, 10)].split(" ").indexOf("hit") !== -1 && myTilesOverlay[parseInt(`${row}${col - 1}`, 10)].split(" ").indexOf("finished") === -1) {
           alignment = "horizontal";
         }
       }
-      if (col < 10) {
-        if (myTilesOverlay[`${row}${col + 1}`].split(" ").indexOf("hit") !== -1 && myTilesOverlay[`${row}${col + 1}`].split(" ").indexOf("finished") === -1) {
+      if (col < 9) {
+        if (myTilesOverlay[parseInt(`${row}${col + 1}`, 10)].split(" ").indexOf("hit") !== -1 && myTilesOverlay[parseInt(`${row}${col + 1}`, 10)].split(" ").indexOf("finished") === -1) {
           alignment = "horizontal";
         }
       }
 
+      // now check for not misses for both up and down
 
+      if (myTilesOverlay[parseInt(`${row - 1}${col}`, 10)].split(" ").indexOf("miss") !== -1 && myTilesOverlay[parseInt(`${row + 1}${col}`, 10)].split(" ").indexOf("miss") !== -1) {
+        alignment = "horizontal";
+      }
+
+      console.log("alignment", myTilesOverlay[parseInt(`${row}${col - 1}`, 10)].split(" ").indexOf("hit"))
       return {
         hitTile: `${index}`,
         newTilesOverlay: myTilesOverlay,
@@ -1149,6 +1186,73 @@ export function getIndexOfFirstHit(tilesOverlay) {
   return firstTile || "all hit tiles have been finished";
 }
 
+export function getNextPossibleShipMember(tilesOverlay, alignment, hitTile) {
+  const [row, col] = hitTile.split("").map((value) => parseInt(value, 10));
+  const possibleMembers = [];
+  if (alignment === "vertical") {
+    let rowCopy = row
+
+    // go up one by one to check if there is a tile vertically that can be hit
+    while (tilesOverlay[parseInt(`${rowCopy}${col}`, 10)] !== "miss") {
+      if (!isNaN(tilesOverlay[parseInt(`${rowCopy}${col}`, 10)])) {
+        possibleMembers.push(`${rowCopy}${col}`);
+        break;
+      }
+      if (rowCopy > 0) {
+        rowCopy -= 1;
+      } else {
+        break;
+      }
+    }
+
+    // go down one by one to check if there is a tile vertically that can be hit
+
+    rowCopy = row;
+    while (tilesOverlay[parseInt(`${rowCopy}${col}`, 10)] !== "miss") {
+      if (!isNaN(tilesOverlay[parseInt(`${rowCopy}${col}`, 10)])) {
+        possibleMembers.push(`${rowCopy}${col}`);
+        break;
+      }
+      if (rowCopy < 9) {
+        rowCopy += 1;
+      } else {
+        break;
+      }
+    }
+  } else {
+    let colCopy = col
+
+    // go up one by one to check if there is a tile vertically that can be hit
+    while (tilesOverlay[parseInt(`${row}${colCopy}`, 10)] !== "miss") {
+      if (!isNaN(tilesOverlay[parseInt(`${row}${colCopy}`, 10)])) {
+        possibleMembers.push(`${row}${colCopy}`);
+        break;
+      }
+      if (colCopy > 0) {
+        colCopy -= 1;
+      } else {
+        break;
+      }
+    }
+
+    // go down one by one to check if there is a tile vertically that can be hit
+
+    colCopy = row;
+    while (tilesOverlay[parseInt(`${row}${colCopy}`, 10)] !== "miss") {
+      if (!isNaN(tilesOverlay[parseInt(`${row}${colCopy}`, 10)])) {
+        possibleMembers.push(`${row}${colCopy}`);
+        break;
+      }
+      if (colCopy < 9) {
+        colCopy += 1;
+      } else {
+        break;
+      }
+    }
+  }
+  return possibleMembers
+}
+
 export function getIndexOfNextLikelyTile(tilesOverlay) {
   let { hitTile, newTilesOverlay, alignment } = getIndexOfFirstHit(tilesOverlay);
 
@@ -1156,9 +1260,10 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
     hitTile = `0${hitTile}`;
   }
 
+  console.log("alignment", alignment)
+
   if (!isNaN(hitTile) && alignment === "vertical") {
     const [row, col] = hitTile.split("").map((value) => parseInt(value, 10));
-    console.log("hitTile", hitTile, row, col)
     if (row > 0) {
       if (!isNaN(tilesOverlay[`${row - 1}${col}`])) {
         return { tile: `${row - 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
@@ -1171,17 +1276,20 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
       }
     }
 
-    if (col > 0) {
-      if (!isNaN(tilesOverlay[`${row}${col - 1}`])) {
-        return { tile: `${row}${col - 1}`, sentTileOverlay: newTilesOverlay, hitTile }
-      }
-    }
+    const tileMember = getNextPossibleShipMember(tilesOverlay, alignment, hitTile)[0]
+    return { tile: tileMember, sentTileOverlay: newTilesOverlay, hitTile }
 
-    if (col < 9) {
-      if (!isNaN(tilesOverlay[`${row}${col + 1}`])) {
-        return { tile: `${row}${col + 1}`, sentTileOverlay: newTilesOverlay, hitTile }
-      }
-    }
+    // if (col > 0) {
+    //   if (!isNaN(tilesOverlay[`${row}${col - 1}`])) {
+    //     return { tile: `${row}${col - 1}`, sentTileOverlay: newTilesOverlay, hitTile }
+    //   }
+    // }
+
+    // if (col < 9) {
+    //   if (!isNaN(tilesOverlay[`${row}${col + 1}`])) {
+    //     return { tile: `${row}${col + 1}`, sentTileOverlay: newTilesOverlay, hitTile }
+    //   }
+    // }
 
     return "can't find where to hit for some reason"
   }
@@ -1200,17 +1308,21 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
       }
     }
 
-    if (row > 0) {
-      if (!isNaN(tilesOverlay[`${row - 1}${col}`])) {
-        return { tile: `${row - 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
-      }
-    }
+    const tileMemberHorizontal = getNextPossibleShipMember(tilesOverlay, alignment, hitTile)[0]
+    return { tile: tileMemberHorizontal, sentTileOverlay: newTilesOverlay, hitTile }
 
-    if (row < 9) {
-      if (!isNaN(tilesOverlay[`${row + 1}${col}`])) {
-        return { tile: `${row + 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
-      }
-    }
+
+    // if (row > 0) {
+    //   if (!isNaN(tilesOverlay[`${row - 1}${col}`])) {
+    //     return { tile: `${row - 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
+    //   }
+    // }
+
+    // if (row < 9) {
+    //   if (!isNaN(tilesOverlay[`${row + 1}${col}`])) {
+    //     return { tile: `${row + 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
+    //   }
+    // }
 
     return "can't find where to hit for some reason"
   }
@@ -1236,26 +1348,26 @@ function allNumbersAroundIt(tile) {
   if (row > 0) {
     if (col > 0) {
       surroundingTiles.push(`${row - 1}${col - 1}`);
-    } 
+    }
     surroundingTiles.push(`${row - 1}${col}`);
-    if(col < 9) {
+    if (col < 9) {
       surroundingTiles.push(`${row - 1}${col + 1}`);
     }
   }
 
   if (col > 0) {
     surroundingTiles.push(`${row}${col - 1}`);
-  } 
-  if(col < 9) {
+  }
+  if (col < 9) {
     surroundingTiles.push(`${row}${col + 1}`);
   }
 
   if (row < 9) {
     if (col > 0) {
       surroundingTiles.push(`${row + 1}${col - 1}`);
-    } 
+    }
     surroundingTiles.push(`${row + 1}${col}`);
-    if(col < 9) {
+    if (col < 9) {
       surroundingTiles.push(`${row + 1}${col + 1}`);
     }
   }
@@ -1307,7 +1419,7 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
           myTilesOverlay[i] = "miss";
         } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
           surroundingTiles = getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]);
-          surroundingTiles.forEach((num) => {  
+          surroundingTiles.forEach((num) => {
             myTilesOverlay[parseInt(num, 10)] = "miss";
           })
 
@@ -1326,7 +1438,7 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
           myTilesOverlay[i] = "miss";
         } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
           surroundingTiles = getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]);
-          surroundingTiles.forEach((num) => {  
+          surroundingTiles.forEach((num) => {
             myTilesOverlay[parseInt(num, 10)] = "miss";
           })
           myTilesOverlay[i] = "hit finished";

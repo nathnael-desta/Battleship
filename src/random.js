@@ -38,3 +38,9 @@ const arr =[1,2,3,4,5,6];
 //   console.log(arr[6])
 //   console.log("asfdadsf")
 // }
+
+if (arr[-1] === 7) {
+  console.log("sadfa")
+}
+
+console.log("adsafsdddddddddddddddddd")

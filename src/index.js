@@ -251,7 +251,7 @@ function computerClicker() {
         return;
     }
     if (shipsThatHit.length !== 0) {
-        const { myTilesOverlay, tile } = shoot(tilesOverlayArray, playerBoard.boardArray, 0);
+        const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, 0);
         tilesOverlayArray = myTilesOverlay;
         console.log("tile", tile, tilesOverlayDivsCopy);
         const chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
@@ -264,14 +264,44 @@ function computerClicker() {
         console.log("started thinking", myTilesOverlay, checkIfAllHitsFinished(tilesOverlayArray));
         chosenTileDiv.click();
 
+        const missDivs = surroundingTiles.map(((num) => {
+            const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
+                if (value.classList[0] === num) {
+                    return tilesOverlayDivsCopy.splice(index, 1)[0];
+                }
+                return acc
+            }, null)
+            return theDiv;
+        }))
+        missDivs.forEach((div) => {
+            if (div !== null) {
+                div.click()
+            }
+        })
+
     } else {
-        const { chosenTile, newTilesOverlay } = clickRandomTiles(tilesOverlayDivsCopy);
+        const { chosenTile, newTilesOverlay} = clickRandomTiles(tilesOverlayDivsCopy);
         const myRandomNumber = chosenTile.classList[0];
-        const { myTilesOverlay, tile } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
+        const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
         tilesOverlayArray = myTilesOverlay;
         console.log("randomlyGuessing", myTilesOverlay, checkIfAllHitsFinished(tilesOverlayArray))
         chosenTile.click();
         tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
+
+        const missDivs = surroundingTiles.map(((num) => {
+            const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
+                if (value.classList[0] === num) {
+                    return tilesOverlayDivsCopy.splice(index, 1)[0];
+                }
+                return acc
+            }, null)
+            return theDiv;
+        }))
+        missDivs.forEach((div) => {
+            if (div !== null) {
+                div.click()
+            }
+        })
     }
 
 }
