@@ -43,4 +43,4 @@ if (arr[-1] === 7) {
   console.log("sadfa")
 }
 
-console.log("adsafsdddddddddddddddddd")
+console.log(arr.slice(2,4))

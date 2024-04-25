@@ -837,7 +837,7 @@ export function checkIfInsertable(placementSquare, shipName, board) {
 }
 
 export function allTilesAroundAPoint(board, tile) {
-  const [row, col] = tile.split("").map(value => parseInt(value, 10));
+  const [row, col] = tile.padStart(2, "0").split("").map(value => parseInt(value, 10));
   return [`${Math.abs(row - 1)}${Math.abs(col - 1)}`, `${Math.abs(row - 1)}${Math.abs(col)}`, `${Math.abs(row - 1)}${Math.abs(col + 1)}`, `${Math.abs(row)}${Math.abs(col - 1)}`, `${Math.abs(row)}${Math.abs(col)}`, `${Math.abs(row)}${Math.abs(col + 1)}`, `${Math.abs(row + 1)}${Math.abs(col - 1)}`, `${Math.abs(row + 1)}${Math.abs(col)}`, `${Math.abs(row)}${Math.abs(col + 1)}`]
 }
 
@@ -1114,7 +1114,7 @@ export function getSurroundingDivs(box, shipName, user) {
 
 
 export function checkIfShipIsDestroyed(tilesOverlay, playerBoard, shotTile) {
-  const [row, col] = shotTile.split("").map((value) => parseInt(value, 10));
+  const [row, col] = shotTile.padStart(2, "0").split("").map((value) => parseInt(value, 10));
 
   let shipType = "";
   let checkShip = "";
@@ -1154,7 +1154,7 @@ export function getIndexOfFirstHit(tilesOverlay) {
   const myTilesOverlay = [...tilesOverlay]
   const firstTile = myTilesOverlay.reduce((acc, tile, index) => {
     if (tile === "hit") {
-      const [row, col] = `${index}`.split("").map((value) => parseInt(value, 10));
+      const [row, col] = `${index}`.padStart(2, "0").split("").map((value) => parseInt(value, 10));
 
       let alignment = "vertical";
       if (col > 0) {
@@ -1169,14 +1169,22 @@ export function getIndexOfFirstHit(tilesOverlay) {
       }
 
       // now check for not misses for both up and down
-
-      if (myTilesOverlay[parseInt(`${row - 1}${col}`, 10)].split(" ").indexOf("miss") !== -1 && myTilesOverlay[parseInt(`${row + 1}${col}`, 10)].split(" ").indexOf("miss") !== -1) {
-        alignment = "horizontal";
+      if (row > 0 && row < 9) {
+        if (myTilesOverlay[parseInt(`${row - 1}${col}`, 10)].split(" ").indexOf("miss") !== -1 && myTilesOverlay[parseInt(`${row + 1}${col}`, 10)].split(" ").indexOf("miss") !== -1) {
+          alignment = "horizontal";
+        }
+      } else if (row > 0) {
+        if (myTilesOverlay[parseInt(`${row - 1}${col}`, 10)].split(" ").indexOf("miss") !== -1) {
+          alignment = "horizontal";
+        }
+      } else if (row < 9) {
+        if (myTilesOverlay[parseInt(`${row + 1}${col}`, 10)].split(" ").indexOf("miss") !== -1) {
+          alignment = "horizontal";
+        }
       }
 
-      console.log("alignment", myTilesOverlay[parseInt(`${row}${col - 1}`, 10)].split(" ").indexOf("hit"))
       return {
-        hitTile: `${index}`,
+        hitTile: `${index}`.padStart(2, "0"),
         newTilesOverlay: myTilesOverlay,
         alignment
       }
@@ -1187,7 +1195,7 @@ export function getIndexOfFirstHit(tilesOverlay) {
 }
 
 export function getNextPossibleShipMember(tilesOverlay, alignment, hitTile) {
-  const [row, col] = hitTile.split("").map((value) => parseInt(value, 10));
+  const [row, col] = hitTile.padStart(2, "0").split("").map((value) => parseInt(value, 10));
   const possibleMembers = [];
   if (alignment === "vertical") {
     let rowCopy = row
@@ -1222,7 +1230,7 @@ export function getNextPossibleShipMember(tilesOverlay, alignment, hitTile) {
   } else {
     let colCopy = col
 
-    // go up one by one to check if there is a tile vertically that can be hit
+    // go left one by one to check if there is a tile vertically that can be hit
     while (tilesOverlay[parseInt(`${row}${colCopy}`, 10)] !== "miss") {
       if (!isNaN(tilesOverlay[parseInt(`${row}${colCopy}`, 10)])) {
         possibleMembers.push(`${row}${colCopy}`);
@@ -1237,7 +1245,7 @@ export function getNextPossibleShipMember(tilesOverlay, alignment, hitTile) {
 
     // go down one by one to check if there is a tile vertically that can be hit
 
-    colCopy = row;
+    colCopy = col;
     while (tilesOverlay[parseInt(`${row}${colCopy}`, 10)] !== "miss") {
       if (!isNaN(tilesOverlay[parseInt(`${row}${colCopy}`, 10)])) {
         possibleMembers.push(`${row}${colCopy}`);
@@ -1260,10 +1268,9 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
     hitTile = `0${hitTile}`;
   }
 
-  console.log("alignment", alignment)
 
   if (!isNaN(hitTile) && alignment === "vertical") {
-    const [row, col] = hitTile.split("").map((value) => parseInt(value, 10));
+    const [row, col] = hitTile.padStart(2, "0").split("").map((value) => parseInt(value, 10));
     if (row > 0) {
       if (!isNaN(tilesOverlay[`${row - 1}${col}`])) {
         return { tile: `${row - 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
@@ -1295,7 +1302,8 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
   }
 
   if (!isNaN(hitTile) && alignment === "horizontal") {
-    const [row, col] = hitTile.split("").map((value) => parseInt(value, 10));
+    const [row, col] = hitTile.padStart(2, "0").split("").map((value) => parseInt(value, 10));
+    console.log(row, col)
     if (col > 0) {
       if (!isNaN(tilesOverlay[`${row}${col - 1}`])) {
         return { tile: `${row}${col - 1}`, sentTileOverlay: newTilesOverlay, hitTile }
@@ -1309,22 +1317,9 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
     }
 
     const tileMemberHorizontal = getNextPossibleShipMember(tilesOverlay, alignment, hitTile)[0]
+    console.log("the tile members",tileMemberHorizontal)
     return { tile: tileMemberHorizontal, sentTileOverlay: newTilesOverlay, hitTile }
 
-
-    // if (row > 0) {
-    //   if (!isNaN(tilesOverlay[`${row - 1}${col}`])) {
-    //     return { tile: `${row - 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
-    //   }
-    // }
-
-    // if (row < 9) {
-    //   if (!isNaN(tilesOverlay[`${row + 1}${col}`])) {
-    //     return { tile: `${row + 1}${col}`, sentTileOverlay: newTilesOverlay, hitTile }
-    //   }
-    // }
-
-    return "can't find where to hit for some reason"
   }
 
 
@@ -1344,7 +1339,7 @@ export function checkIfAllHitsFinished(tilesOverlay) {
 
 function allNumbersAroundIt(tile) {
   const surroundingTiles = [];
-  const [row, col] = tile.split("").map(num => parseInt(num, 10));
+  const [row, col] = tile.padStart(2, "0").split("").map(num => parseInt(num, 10));
   if (row > 0) {
     if (col > 0) {
       surroundingTiles.push(`${row - 1}${col - 1}`);
@@ -1406,11 +1401,22 @@ export function getSurroundingTiles(overlayedTiles, playerBoard, tile) {
   return onlyTheTiles;
 }
 
+export function clickRandomTiles(tileContainer) {
+  const myTilesCopy = [...tileContainer]; // Create a copy of the array
+  const index = Math.floor(Math.random() * myTilesCopy.length); // Use Math.random()
+  const chosenTile = myTilesCopy[index]; // Access the element directly
+
+  return {
+      chosenTile,
+  };
+}
+
 export function shoot(tilesOverlay, playerBoard, randomNo = null) {
   let myTilesOverlay = [...tilesOverlay];
   let chosenTile = randomNo;
   const { tile, sentTileOverlay, hitTile } = getIndexOfNextLikelyTile(tilesOverlay);
   let surroundingTiles = [];
+  console.log("------------------------------have all hits finished",checkIfAllHitsFinished(myTilesOverlay));
   if (checkIfAllHitsFinished(myTilesOverlay)) {
     chosenTile = randomNo;
     for (let i = 0; i < myTilesOverlay.length; i += 1) {
@@ -1452,3 +1458,4 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
   }
   return { myTilesOverlay, tile, surroundingTiles };
 }
+
