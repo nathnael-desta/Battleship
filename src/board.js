@@ -744,10 +744,6 @@ export function checkSurrounding(board) {
       let [row, col] = tile.split("");
       row = parseInt(row, 10);
       col = parseInt(col, 10);
-      // console.log("******************************************************",myBoard[parseInt(`${row - 1}${col}`, 10)], Number.isNaN(parseInt(myBoard[parseInt(`${row - 1}${col}`, 10)], 10)))
-      // if (Number.isNaN(myBoard[parseInt(`${row - 1}${col}`, 10)])) {
-      //   console.log("******************************************************", myBoard[parseInt(`${row - 1}${col}`, 10)])
-      // }
 
       if (row > 0) {
         if (Number.isNaN(parseInt(myBoard[parseInt(`${row - 1}${col}`, 10)], 10))) {
@@ -850,7 +846,6 @@ export function addableSquares(shipName, board) {
     }
     return acc
   }, [])
-  console.log("the index of the ships", indexOfEachNonTile)
   const tilesSurroundingShips = indexOfEachNonTile.reduce((acc, value, index) => {
     const tileSurroundingShip = allTilesAroundAPoint(board, value);
     tileSurroundingShip.forEach((tile) => {
@@ -860,9 +855,6 @@ export function addableSquares(shipName, board) {
     })
     return acc;
   }, [])
-  console.log("the board is", board);
-  console.log("ship tiles are", indexOfEachNonTile)
-  console.log("the surrounding tiles", tilesSurroundingShips)
   const myBoard = [...board];
   tilesSurroundingShips.forEach((tile) => {
     if (!isNaN(tile) && parseInt(tile, 10) >= 0 && parseInt(tile, 10) <= 99) {
@@ -1303,7 +1295,6 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
 
   if (!isNaN(hitTile) && alignment === "horizontal") {
     const [row, col] = hitTile.padStart(2, "0").split("").map((value) => parseInt(value, 10));
-    console.log(row, col)
     if (col > 0) {
       if (!isNaN(tilesOverlay[`${row}${col - 1}`])) {
         return { tile: `${row}${col - 1}`, sentTileOverlay: newTilesOverlay, hitTile }
@@ -1317,7 +1308,6 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
     }
 
     const tileMemberHorizontal = getNextPossibleShipMember(tilesOverlay, alignment, hitTile)[0]
-    console.log("the tile members",tileMemberHorizontal)
     return { tile: tileMemberHorizontal, sentTileOverlay: newTilesOverlay, hitTile }
 
   }
@@ -1402,12 +1392,12 @@ export function getSurroundingTiles(overlayedTiles, playerBoard, tile) {
 }
 
 export function clickRandomTiles(tileContainer) {
-  const myTilesCopy = [...tileContainer]; // Create a copy of the array
-  const index = Math.floor(Math.random() * myTilesCopy.length); // Use Math.random()
-  const chosenTile = myTilesCopy[index]; // Access the element directly
+  // const myTilesCopy = [...tileContainer]; // Create a copy of the array
+  const index = Math.floor(Math.random() * tileContainer.length); // Use Math.random()
+  const chosenTile = tileContainer.splice(index, 1)[0]; // Access the element directly
 
   return {
-      chosenTile,
+      chosenTile
   };
 }
 
@@ -1416,7 +1406,6 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
   let chosenTile = randomNo;
   const { tile, sentTileOverlay, hitTile } = getIndexOfNextLikelyTile(tilesOverlay);
   let surroundingTiles = [];
-  console.log("------------------------------have all hits finished",checkIfAllHitsFinished(myTilesOverlay));
   if (checkIfAllHitsFinished(myTilesOverlay)) {
     chosenTile = randomNo;
     for (let i = 0; i < myTilesOverlay.length; i += 1) {

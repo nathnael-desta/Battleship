@@ -74,7 +74,7 @@ document.addEventListener("keydown", (e) => {
 })
 
 
-
+let playerTurn = true;
 
 selfCreate.addEventListener("click", () => {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
@@ -94,35 +94,37 @@ selfCreate.addEventListener("click", () => {
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
     ships.forEach((ship) => {
         ship.addEventListener("click", (e) => {
-            if (clickedShips.indexOf(ship) === -1) {
-                clickedShips.push(ship);
-            }
-            const { shift } = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
-            const circle = [...ship.children][shift];
-            circle.classList.add("crossed");
-
-            const allCrossedOut = [...ship.children].reduce((acc, child) => {
-                if (!child.classList.contains("crossed")) {
-                    return false
+            if (playerTurn) {
+                if (clickedShips.indexOf(ship) === -1) {
+                    clickedShips.push(ship);
                 }
-                return acc && true;
-            }, true);
-            if (allCrossedOut) {
-                getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "player");
-                const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1)[0];
-                const shipName = `${theShip.classList[0].split("_")[0]}_horizontal`;
-                const pickedShip = dockedShips.reduce((acc, subShip) => {
-                    if (subShip.classList.contains(shipName) && acc === null) {
-                        [...subShip.children].forEach((theCircle) => {
-                            theCircle.classList.add("crossed");
-                        })
-                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                const { shift } = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
+                const circle = [...ship.children][shift];
+                circle.classList.add("crossed");
+    
+                const allCrossedOut = [...ship.children].reduce((acc, child) => {
+                    if (!child.classList.contains("crossed")) {
+                        return false
                     }
-                    return acc || null;
-                }, null);
+                    return acc && true;
+                }, true);
+                if (allCrossedOut) {
+                    getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "player");
+                    const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1)[0];
+                    const shipName = `${theShip.classList[0].split("_")[0]}_horizontal`;
+                    const pickedShip = dockedShips.reduce((acc, subShip) => {
+                        if (subShip.classList.contains(shipName) && acc === null) {
+                            [...subShip.children].forEach((theCircle) => {
+                                theCircle.classList.add("crossed");
+                            })
+                            return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                        }
+                        return acc || null;
+                    }, null);
+                }
+    
+                e.stopPropagation();
             }
-
-            e.stopPropagation();
         })
     })
 
@@ -242,7 +244,7 @@ let tilesOverlayArray =
 
 
 
-button.addEventListener("click", computerClicker);
+
 
 function computerClicker() {
     if (tilesOverlayDivsCopy.length === 0) {
@@ -252,25 +254,25 @@ function computerClicker() {
     if (!checkIfAllHitsFinished(tilesOverlayArray)) {
         const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, 0);
         tilesOverlayArray = myTilesOverlay;
-        console.log("tile", tile, tilesOverlayDivsCopy);
         const chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
             if (tileOv.classList[0] === `${tile}`) {
-                return tilesOverlayDivsCopy.slice(index, index + 1)[0];
+                return tilesOverlayDivsCopy.splice(index, 1)[0];
             }
             return acc;
         }, null);
-        console.log("chosenTile", chosenTileDiv);
+        console.log("thinking chosen", chosenTileDiv)
         chosenTileDiv.click();
 
         const missDivs = surroundingTiles.map(((num) => {
             const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
                 if (value.classList[0] === num) {
-                    return tilesOverlayDivsCopy.slice(index, index + 1)[0];
+                    return tilesOverlayDivsCopy.splice(index, 1)[0];
                 }
                 return acc
             }, null)
             return theDiv;
         }))
+        console.log("the miss divs", missDivs)
         missDivs.forEach((div) => {
             if (div !== null) {
                 div.click()
@@ -279,19 +281,18 @@ function computerClicker() {
 
     } else {
         const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
+        console.log("randomly chosen", chosenTile)
         const myRandomNumber = chosenTile.classList[0];
         const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
-        console.log("tile", tile, tilesOverlayDivsCopy);
         tilesOverlayArray = myTilesOverlay;
         chosenTile.click();
 
-        // console.log("chosenTile", chosenTileDiv);
         // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
 
         const missDivs = surroundingTiles.map(((num) => {
             const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
                 if (value.classList[0] === num) {
-                    return tilesOverlayDivsCopy.slice(index, index + 1)[0];
+                    return tilesOverlayDivsCopy.splice(index, 1)[0];
                 }
                 return acc
             }, null)
@@ -303,23 +304,23 @@ function computerClicker() {
             }
         })
     }
-
+    console.log("the tiles div overlay", tilesOverlayDivsCopy)
 }
 
-// function clicker() {
-//     if (tilesOverlayDivsCopy.length === 0) {
-//         return;
-//     }
-//     let chosen = "";
-//     if (shipsThatHit.length !== 0) {
-//         chosen = { myTilesCopy: shipsThatHit.shouldClick.pop() };
-//     } else {
-//         chosen = clickRandomTiles(tilesOverlayDivsCopy);
-//     }
+function clicker() {
+    if (tilesOverlayDivsCopy.length === 0) {
+        return;
+    }
+    let chosen = "";
+    if (shipsThatHit.length !== 0) {
+        chosen = { myTilesCopy: shipsThatHit.shouldClick.pop() };
+    } else {
+        chosen = clickRandomTiles(tilesOverlayDivsCopy);
+    }
 
-//     tilesOverlayDivsCopy = chosen.myTilesCopy;
-//     chosen.chosenTile.click();
-// }
+    tilesOverlayDivsCopy = chosen.myTilesCopy;
+    chosen.chosenTile.click();
+}
 
 
 
@@ -402,6 +403,25 @@ function takeOutClickedTiles(overlayedTiles) {
     }
     )
 }
+
+playerTiles.addEventListener("click", () => {
+    playerTurn = !playerTurn;
+    if (!playerTurn) {
+        setTimeout(() => {
+            computerClicker()
+        }, 500)
+    }
+})
+
+function playGame() {
+    opponentCreate.click();
+    selfCreate.click();
+    
+}
+
+button.addEventListener("click", computerClicker);
+
+
 
 
 
