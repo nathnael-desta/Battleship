@@ -33,14 +33,27 @@ const qhBoard = [
 
 // console.log(Number.isNaN("asdf"))
 
-const arr =[1,2,3,4,5,6];
-// if (arr[6] === 7) {
-//   console.log(arr[6])
-//   console.log("asfdadsf")
+// const arr =[1,2,3,4,5,6];
+// // if (arr[6] === 7) {
+// //   console.log(arr[6])
+// //   console.log("asfdadsf")
+// // }
+
+// if (arr[-1] === 7) {
+//   console.log("sadfa")
 // }
 
-if (arr[-1] === 7) {
-  console.log("sadfa")
+// console.log(arr.slice(2,4))
+
+function rando() {
+  let time;
+  setTimeout(() => {
+    time = 50
+  }, 500)
+  return time
 }
 
-console.log(arr.slice(2,4))
+
+
+console.log(time) // gives me 50
+
