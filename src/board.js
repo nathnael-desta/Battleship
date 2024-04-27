@@ -1483,3 +1483,32 @@ export function getTypeOfSquare(id) {
   return `the id is ${row}${col} and it isunspecified in if statment`;
 }
 
+export function getColumnPosition(tiles, x) {
+  const box = tiles.getBoundingClientRect();
+  const width = box.width - 9;
+    let col = -1;
+
+    if (x > (box.right - (width / 10))) {
+        col = 9;
+    } else if (x > (box.right - (width * 2 / 10))) {
+        col = 8;
+    } else if (x > (box.right - (width * 3 / 10))) {
+        col = 7;
+    } else if (x > (box.right - (width * 4 / 10))) {
+        col = 6;
+    } else if (x > (box.right - (width * 5 / 10))) {
+        col = 5;
+    } else if (x > (box.right - (width * 6 / 10))) {
+        col = 4;
+    } else if (x > (box.right - (width * 7 / 10))) {
+        col = 3;
+    } else if (x > (box.right - (width * 8 / 10))) {
+        col = 2;
+    } else if (x > (box.right - (width * 9 / 10))) {
+        col = 1;
+    }  else if (x > (box.right - (width * 10 / 10))) {
+        col = 0;
+    }
+
+    return col;
+}

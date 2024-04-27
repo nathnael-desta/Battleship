@@ -1,6 +1,6 @@
 import json5 from "json5";
 import { VERSION, pick, result } from "lodash";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare, getColumnPosition } from "./board";
 
 import("./style.css");
 
@@ -221,23 +221,23 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
             }
         })
 
-        opponentIndividualTiles.addEventListener("mouseover", (event) => {
+        // opponentIndividualTiles.addEventListener("mouseover", (event) => {
 
-            if (player2Turn) {
-                if (event.target.classList.contains("tile")) {
-                    console.log(getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0")))
-                    event.target.classList.add(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
-                }
-            }
-        })
+        //     if (player2Turn) {
+        //         if (event.target.classList.contains("tile")) {
+        //             console.log(getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0")))
+        //             event.target.classList.add(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
+        //         }
+        //     }
+        // })
 
-        opponentIndividualTiles.addEventListener("mouseout", (event) => {
-            if (player2Turn) {
-                if (event.target.classList.contains("tile")) {
-                    event.target.classList.remove(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
-                }
-            }
-        })
+        // opponentIndividualTiles.addEventListener("mouseout", (event) => {
+        //     if (player2Turn) {
+        //         if (event.target.classList.contains("tile")) {
+        //             event.target.classList.remove(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
+        //         }
+        //     }
+        // })
 
 
     }
@@ -393,6 +393,25 @@ function createOpponentBoardOnPlayer1() {
             }
         }
     })
+
+
+
+    // playerIndividualTiles.addEventListener("mouseover", (event) => {
+
+    //     if (player1Turn) {
+    //         if (event.target.classList.contains("tile")) {
+    //             event.target.classList.add(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
+    //         }
+    //     }
+    // })
+
+    // playerIndividualTiles.addEventListener("mouseout", (event) => {
+    //     if (player1Turn) {
+    //         if (event.target.classList.contains("tile")) {
+    //             event.target.classList.remove(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
+    //         }
+    //     }
+    // })
 
 
     const { createdBoard, boardArray } = opponentCreateBoard(playerTiles);
@@ -723,4 +742,56 @@ pvp.addEventListener("click", playGamePVP)
 
 
 
-
+playerTiles.addEventListener("mousemove", (event) => {
+    const col = getColumnPosition(playerTiles, event.clientX);
+    if (col === 0) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("zerothCol");
+    }
+    if (col === 1) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("firstCol");
+    }
+    if (col === 2) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("secondCol");
+    }
+    if (col === 3) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("thirdCol");
+    }
+    if (col === 4) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("fourthCol");
+    }
+    if (col === 5) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("fifthCol");
+    }
+    if (col === 6) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("sixthCol");
+    }
+    if (col === 7) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("seventhCol");
+    }
+    if (col === 8) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("eighthCol");
+    }
+    if (col === 9) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+        playerTiles.classList.add("ninthCol");
+    }
+})

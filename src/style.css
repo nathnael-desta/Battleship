@@ -194,6 +194,50 @@
                     }
                 }
 
+                .miss {
+                    position: relative;
+                    opacity: 50%;
+                    will-change: transform;
+                }
+                
+                .miss::before {
+                    position: absolute;
+                    content: "";
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background-color: #D31CD7;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    will-change: transform;
+                }
+
+                
+                .crossedTile {
+                
+                    &::before,
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        width: 90%;
+                        left: 2%;
+                        height: 3px;
+                        background-color: #D31CD7;
+                        top: 47%;
+                        transform-origin: center;
+                    }
+                
+                    &::before {
+                        transform: rotate(45deg);
+                    }
+                
+                    &::after {
+                        transform: rotate(-45deg);
+                    }
+                
+                }
+
                 .squareMissileCenter {
                     position: relative;
                     z-index: -1;
@@ -343,8 +387,17 @@
                     left: -74px;
                     right: 0px;
                     border-radius: 6px;
-
                     outline: 3px solid rgb(238, 97, 97);
+                }
+
+
+                .innerDiv {
+                    position: relative;
+                    width: 300%;
+                    height: 300%;
+                    border-radius: 6px;
+                    outline: 3px solid rgb(238, 97, 97);
+                    
                 }
 
 
@@ -832,46 +885,153 @@
     font-size: 1.75rem;
 }
 
-.miss {
+.zerothCol {
     position: relative;
-    opacity: 50%;
-    will-change: transform;
 }
 
-.miss::before {
-    position: absolute;
+.zerothCol::before {
     content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #D31CD7;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    will-change: transform;
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 8px;
+    right: 368px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
 }
 
-.crossedTile {
+.firstCol {
+    position: relative;
+}
 
-    &::before,
-    &::after {
-        content: "";
-        position: absolute;
-        width: 90%;
-        left: 2%;
-        height: 3px;
-        background-color: #D31CD7;
-        top: 47%;
-        transform-origin: center;
-    }
+.firstCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 49px;
+    right: 327px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
 
-    &::before {
-        transform: rotate(45deg);
-    }
+.secondCol {
+    position: relative;
+}
 
-    &::after {
-        transform: rotate(-45deg);
-    }
+.secondCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 90px;
+    right: 286px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
 
+.thirdCol {
+    position: relative;
+}
+
+.thirdCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 131px;
+    right: 245px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.fourthCol {
+    position: relative;
+}
+
+.fourthCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 172px;
+    right: 204px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.fifthCol {
+    position: relative;
+}
+
+.fifthCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 213px;
+    right: 163px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.sixthCol {
+    position: relative;
+}
+
+.sixthCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 254px;
+    right: 122px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.seventhCol {
+    position: relative;
+}
+
+.seventhCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 295px;
+    right: 81px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.eightCol {
+    position: relative;
+}
+
+.eighthCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 336px;
+    right: 40px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.ninthCol {
+    position: relative;
+}
+
+.ninthCol::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: 377px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
 }
 
