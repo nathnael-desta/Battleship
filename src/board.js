@@ -1399,7 +1399,7 @@ export function clickRandomTiles(tileContainer) {
   const chosenTile = tileContainer.splice(index, 1)[0]; // Access the element directly
 
   return {
-      chosenTile
+    chosenTile
   };
 }
 
@@ -1448,5 +1448,38 @@ export function shoot(tilesOverlay, playerBoard, randomNo = null) {
     }
   }
   return { myTilesOverlay, tile, surroundingTiles };
+}
+
+export function getTypeOfSquare(id) {
+  const [row, col] = id.split("").map(num => parseInt(num, 10));
+
+  if (row === 0 && col === 0) {
+    return "squareMissileTopLeft";
+  }
+  if (row === 0 && col === 9) {
+    return "squareMissileTopRight";
+  }
+  if (row === 9 && col === 0) {
+    return "squareMissileBottomLeft";
+  }
+  if(row === 9 && col === 9) {
+    return "squareMissileBottomRight";
+  }
+  if (row === 0) {
+    return "squareMissileTop";
+  }
+  if(col === 0) {
+    return "squareMissileLeft";
+  }
+  if(col === 9) {
+    return "squareMissileRight"
+  }
+  if(row === 9) {
+    return "squareMissileBottom"
+  }
+  if(row > 0 && row < 9 && col > 0 && col < 9){
+    return "squareMissileCenter"
+  }
+  return `the id is ${row}${col} and it isunspecified in if statment`;
 }
 

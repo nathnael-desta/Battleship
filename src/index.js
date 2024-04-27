@@ -1,6 +1,6 @@
 import json5 from "json5";
-import { pick, result } from "lodash";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles } from "./board";
+import { VERSION, pick, result } from "lodash";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare } from "./board";
 
 import("./style.css");
 
@@ -35,7 +35,11 @@ let shipsOp1;
 let tilesP2;
 let shipsP2;
 
-let player1Turn = true; 
+// for PVE
+let playerTurn = true;
+
+// for PVP
+let player1Turn = true;
 let player2Turn = false;
 
 
@@ -43,6 +47,7 @@ let player2Turn = false;
 createSquares(playerTiles);
 createSquares(opponentTiles);
 
+// for draging ships for initial placment 
 shipsPlayer.forEach((ship) => {
     ship.addEventListener("dragstart", (e) => {
 
@@ -53,7 +58,6 @@ shipsPlayer.forEach((ship) => {
             e.preventDefault();
             e.stopPropagation();
             ship.classList.toggle("rotate");
-
         }
         ship.classList.add("draged");
         const shipName = ship.classList[2];
@@ -125,13 +129,14 @@ shipsOpponent.forEach((ship) => {
     })
 })
 
+
 document.addEventListener("keydown", (e) => {
     if (e.key === "z") {
         undo(playerTiles);
     }
 })
 
-let playerTurn = true;
+
 
 function createPlayer1Board() {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
@@ -204,8 +209,10 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
         })
     } else {
         opponentIndividualTiles.addEventListener("click", (event) => {
+
             if (player2Turn) {
                 if (event.target.classList.contains("tile")) {
+                    console.log(event.target)
                     if (event.target.classList.contains("miss")) {
                         player2Turn = false;
                         player1Turn = true;
@@ -213,6 +220,26 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                 }
             }
         })
+
+        opponentIndividualTiles.addEventListener("mouseover", (event) => {
+
+            if (player2Turn) {
+                if (event.target.classList.contains("tile")) {
+                    console.log(getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0")))
+                    event.target.classList.add(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
+                }
+            }
+        })
+
+        opponentIndividualTiles.addEventListener("mouseout", (event) => {
+            if (player2Turn) {
+                if (event.target.classList.contains("tile")) {
+                    event.target.classList.remove(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
+                }
+            }
+        })
+
+
     }
 
 
@@ -241,12 +268,12 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             clickedShips.push(tile.classList[1]);
                         }
                     }
-    
+
                     if (clickedShips.length !== 0) {
                         clickedShips.forEach((ship) => {
                             const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
-    
-    
+
+
                             const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
                                 if (!shipTile.classList.contains("crossedTile")) {
                                     return false
@@ -279,75 +306,75 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                                     }
                                     return acc || null;
                                 }, null);
-    
+
                             }
                         })
-    
+
                     }
                 }
             } else if (!withComputerClicker) {
-                    if (player2Turn) {
-                        if (tile.classList.contains("onlyTile")) {
-                            tile.classList.add("miss");
-                        } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
-                            tile.classList.add("crossedTile");
-                            if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
-                                clickedShips.push(tile.classList[1].slice(0, -1));
-                            }
-                        } else {
-                            tile.classList.add("crossedTile");
-                            if (clickedShips.indexOf(tile.classList[1]) === -1) {
-                                clickedShips.push(tile.classList[1]);
-                            }
+                if (player2Turn) {
+                    if (tile.classList.contains("onlyTile")) {
+                        tile.classList.add("miss");
+                    } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
+                            clickedShips.push(tile.classList[1].slice(0, -1));
                         }
-        
-                        if (clickedShips.length !== 0) {
-                            clickedShips.forEach((ship) => {
-                                const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
-        
-        
-                                const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
-                                    if (!shipTile.classList.contains("crossedTile")) {
-                                        return false
-                                    }
-                                    return acc && true
-                                }, true)
-                                if (allHaveBeenClicked) {
-                                    let newShip;
-                                    shipTiles.forEach((shipTile) => {
-                                        if (shipTile.classList.contains(`${ship}`)) {
-                                            newShip = createShips(ship.split("X")[0]);
-                                            [...newShip.children].forEach((circle) => {
-                                                circle.classList.add("crossed");
-                                            })
-                                            shipTile.parentElement.insertBefore(newShip, shipTile);
-                                            shipTile.parentElement.removeChild(shipTile);
-                                        } else {
-                                            shipTile.parentElement.removeChild(shipTile);
-                                        }
-                                    })
-                                    getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
-                                    const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
-                                    const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
-                                    const pickedShip = dockedShips.reduce((acc, subShip) => {
-                                        if (subShip.classList.contains(shipName) && acc === null) {
-                                            [...subShip.children].forEach((circle) => {
-                                                circle.classList.add("crossed");
-                                            })
-                                            return dockedShips.splice(dockedShips.indexOf(subShip), 1);
-                                        }
-                                        return acc || null;
-                                    }, null);
-        
+                    } else {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1]) === -1) {
+                            clickedShips.push(tile.classList[1]);
+                        }
+                    }
+
+                    if (clickedShips.length !== 0) {
+                        clickedShips.forEach((ship) => {
+                            const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
+
+
+                            const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
+                                if (!shipTile.classList.contains("crossedTile")) {
+                                    return false
                                 }
-                            })
-        
-                        }
+                                return acc && true
+                            }, true)
+                            if (allHaveBeenClicked) {
+                                let newShip;
+                                shipTiles.forEach((shipTile) => {
+                                    if (shipTile.classList.contains(`${ship}`)) {
+                                        newShip = createShips(ship.split("X")[0]);
+                                        [...newShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        })
+                                        shipTile.parentElement.insertBefore(newShip, shipTile);
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    } else {
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    }
+                                })
+                                getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
+                                const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
+                                const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
+                                const pickedShip = dockedShips.reduce((acc, subShip) => {
+                                    if (subShip.classList.contains(shipName) && acc === null) {
+                                        [...subShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        })
+                                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                                    }
+                                    return acc || null;
+                                }, null);
+
+                            }
+                        })
+
                     }
                 }
             }
+        }
 
-            
+
         )
     });
 }
@@ -373,7 +400,7 @@ function createOpponentBoardOnPlayer1() {
 
     const clickedShips = [];
 
-    const dockedShips = [...document.querySelectorAll(".opponent .ship")];
+    const dockedShips = [...document.querySelectorAll(".player .ship")];
 
     tilesOp1.forEach((tile) => {
         tile.addEventListener("click", () => {
@@ -693,5 +720,7 @@ function playGamePVP() {
 }
 
 pvp.addEventListener("click", playGamePVP)
+
+
 
 

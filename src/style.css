@@ -194,6 +194,160 @@
                     }
                 }
 
+                .squareMissileCenter {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileCenter::before {
+                    position: absolute;
+                    content: "";
+                    top: -37px;
+                    bottom: -37px;
+                    left: -37px;
+                    right: -37px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileBottom {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileBottom::before {
+                    position: absolute;
+                    content: "";
+                    top: -74px;
+                    bottom: 0px;
+                    left: -37px;
+                    right: -37px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileTop {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileTop::before {
+                    position: absolute;
+                    content: "";
+                    top: 0px;
+                    bottom: -74px;
+                    left: -37px;
+                    right: -37px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileLeft {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileLeft::before {
+                    position: absolute;
+                    content: "";
+                    top: -37px;
+                    bottom: -37px;
+                    left: 0px;
+                    right: -74px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileRight {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileRight::before {
+                    position: absolute;
+                    content: "";
+                    top: -37px;
+                    bottom: -37px;
+                    left: -74px;
+                    right: 0px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileTopLeft {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileTopLeft::before {
+                    position: absolute;
+                    content: "";
+                    top: 0;
+                    bottom: -74px;
+                    left: 0px;
+                    right: -74px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileTopRight {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileTopRight::before {
+                    position: absolute;
+                    content: "";
+                    top: 0;
+                    bottom: -74px;
+                    left: -74px;
+                    right: 0px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileBottomLeft {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileBottomLeft::before {
+                    position: absolute;
+                    content: "";
+                    top: -74px;
+                    bottom: 0px;
+                    left: 0px;
+                    right: -74px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+                .squareMissileBottomRight {
+                    position: relative;
+                    z-index: -1;
+                }
+                
+                .squareMissileBottomRight::before {
+                    position: absolute;
+                    content: "";
+                    top: -74px;
+                    bottom: 0px;
+                    left: -74px;
+                    right: 0px;
+                    border-radius: 6px;
+
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
+
                 .letter {
                     font-size: 30px;
                     font-family: myExtraBold;
@@ -720,3 +874,4 @@
     }
 
 }
+
