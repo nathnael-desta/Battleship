@@ -6,7 +6,8 @@ import("./style.css");
 
 const playerTiles = document.querySelector(".player .tiles");
 const opponentTiles = document.querySelector(".opponent .tiles");
-const shipsPlayer = document.querySelectorAll(".player .ship")
+const shipsPlayer = document.querySelectorAll(".player .ship");
+const shipsOpponent = document.querySelectorAll(".opponent .ship")
 const individualships = document.querySelectorAll(".ship");
 const selfCreate = document.querySelector(".playerRefresh");
 const opponentCreate = document.querySelector(".opponentRefresh");
@@ -14,20 +15,76 @@ const tileDivs = document.querySelectorAll(".tiles > div");
 const tilesOverlayDivs = document.querySelectorAll(".tilesOverlay div");
 const thePlayerTiles = document.querySelectorAll(".player .tiles")
 const button = document.querySelector(".start_button");
-let opponentIndividualTiles = document.querySelectorAll(".opponent .tile")
+let opponentIndividualTiles = document.querySelectorAll(".opponent .tile");
+let playerIndividualTiles = document.querySelectorAll(".player .tile");
 let playerBoard = null;
 let tilesOverlayDivsCopy = [...tilesOverlayDivs];
+const pvp = document.querySelector(".pvp");
 
 let circles;
+
 let tiles;
 let ships;
+
 let tilesOp;
 let shipsOp;
+
+let tilesOp1;
+let shipsOp1;
+
+let tilesP2;
+let shipsP2;
+
+let player1Turn = true; 
+let player2Turn = false;
+
+
 
 createSquares(playerTiles);
 createSquares(opponentTiles);
 
 shipsPlayer.forEach((ship) => {
+    ship.addEventListener("dragstart", (e) => {
+
+        if (ship.classList.contains("draged")) {
+            return;
+        }
+        if (e.key === "r") {
+            e.preventDefault();
+            e.stopPropagation();
+            ship.classList.toggle("rotate");
+
+        }
+        ship.classList.add("draged");
+        const shipName = ship.classList[2];
+        const box = ship.getBoundingClientRect();
+        const datavalue = whichCircle(shipName, e.clientX, e.clientY, box);
+        ship.dataset.circle = JSON.stringify(datavalue);
+    })
+
+    ship.addEventListener("dragend", (e) => {
+        ship.classList.remove("draged")
+        const rect = playerTiles.getBoundingClientRect();
+        const x = e.clientX;
+        const y = e.clientY;
+        placedShips.push(ship);
+        if (!(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)) {
+            placedShips.pop();
+            return;
+        }
+        placedShipDimmer(placedShips);
+        const dragObj = getDragElement(playerTiles, e.clientX, e.clientY);
+        const removeElement = dragObj.element;
+        const nums = removeElement.id.split("");
+        const tile = getTileFromNumber(nums[0], nums[1]);
+        const col = tile[0];
+        const row = parseInt(tile.slice(1));
+        const myPiece = ship.classList[2];
+        insert(col, row, ship, myShips, playerTiles, myPiece);
+    })
+})
+
+shipsOpponent.forEach((ship) => {
     ship.addEventListener("dragstart", (e) => {
 
         if (ship.classList.contains("draged")) {
@@ -74,9 +131,9 @@ document.addEventListener("keydown", (e) => {
     }
 })
 
+let playerTurn = true;
 
-
-selfCreate.addEventListener("click", () => {
+function createPlayer1Board() {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
     const clickedShips = [];
 
@@ -89,7 +146,7 @@ selfCreate.addEventListener("click", () => {
             event.stopPropagation();
         }, false)
 
-    })
+    });
 
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
     ships.forEach((ship) => {
@@ -127,48 +184,40 @@ selfCreate.addEventListener("click", () => {
         }
         )
     })
+}
 
-});
+selfCreate.addEventListener("click", createPlayer1Board);
 
-let playerTurn = true;
-
-
-opponentCreate.addEventListener("click", () => {
+function createOpponentBoardOnPlayer2(withComputerClicker) {
     opponentIndividualTiles = document.querySelector(".opponent .tiles");
-    opponentIndividualTiles.addEventListener("click", (event) => {
-        if (playerTurn) {
-            if (event.target.classList.contains("tile")) {
-                if (event.target.classList.contains("miss")) {
-                    playerTurn = false;
-                    setTimeout(startComputerClicker);
+
+    if (withComputerClicker) {
+        opponentIndividualTiles.addEventListener("click", (event) => {
+            if (playerTurn) {
+                if (event.target.classList.contains("tile")) {
+                    if (event.target.classList.contains("miss")) {
+                        playerTurn = false;
+                        setTimeout(startComputerClicker);
+                    }
                 }
             }
-        }
+        })
+    } else {
+        opponentIndividualTiles.addEventListener("click", (event) => {
+            if (player2Turn) {
+                if (event.target.classList.contains("tile")) {
+                    if (event.target.classList.contains("miss")) {
+                        player2Turn = false;
+                        player1Turn = true;
+                    }
+                }
+            }
+        })
+    }
 
-    })
 
     const { createdBoard, boardArray } = opponentCreateBoard(opponentTiles);
     tilesOp = document.querySelectorAll(".opponent .tile");
-
-    // shipsOp = document.querySelectorAll(".opponent .tiles > div:not(.tile)");
-    // shipsOp.forEach((ship) => {
-    //     ship.addEventListener("click", (e) => {
-    //         const {shift} = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
-    //         const circle = [...ship.children][shift];
-    //         circle.classList.add("crossed");
-
-
-    //         const allCrossedOut = [...ship.children].reduce((acc, child) => {
-    //             if (!child.classList.contains("crossed")) {
-    //                 return false
-    //             }
-    //             return acc && true;
-    //         }, true);
-    //         if (allCrossedOut) {
-    //             getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "opponent");
-    //         }
-    //     })
-    // })
 
     const clickedShips = [];
 
@@ -177,7 +226,158 @@ opponentCreate.addEventListener("click", () => {
 
     tilesOp.forEach((tile) => {
         tile.addEventListener("click", () => {
-            if (playerTurn) {
+            if (withComputerClicker) {
+                if (playerTurn) {
+                    if (tile.classList.contains("onlyTile")) {
+                        tile.classList.add("miss");
+                    } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
+                            clickedShips.push(tile.classList[1].slice(0, -1));
+                        }
+                    } else {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1]) === -1) {
+                            clickedShips.push(tile.classList[1]);
+                        }
+                    }
+    
+                    if (clickedShips.length !== 0) {
+                        clickedShips.forEach((ship) => {
+                            const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
+    
+    
+                            const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
+                                if (!shipTile.classList.contains("crossedTile")) {
+                                    return false
+                                }
+                                return acc && true
+                            }, true)
+                            if (allHaveBeenClicked) {
+                                let newShip;
+                                shipTiles.forEach((shipTile) => {
+                                    if (shipTile.classList.contains(`${ship}`)) {
+                                        newShip = createShips(ship.split("X")[0]);
+                                        [...newShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        })
+                                        shipTile.parentElement.insertBefore(newShip, shipTile);
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    } else {
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    }
+                                })
+                                getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
+                                const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
+                                const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
+                                const pickedShip = dockedShips.reduce((acc, subShip) => {
+                                    if (subShip.classList.contains(shipName) && acc === null) {
+                                        [...subShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        })
+                                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                                    }
+                                    return acc || null;
+                                }, null);
+    
+                            }
+                        })
+    
+                    }
+                }
+            } else if (!withComputerClicker) {
+                    if (player2Turn) {
+                        if (tile.classList.contains("onlyTile")) {
+                            tile.classList.add("miss");
+                        } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
+                            tile.classList.add("crossedTile");
+                            if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
+                                clickedShips.push(tile.classList[1].slice(0, -1));
+                            }
+                        } else {
+                            tile.classList.add("crossedTile");
+                            if (clickedShips.indexOf(tile.classList[1]) === -1) {
+                                clickedShips.push(tile.classList[1]);
+                            }
+                        }
+        
+                        if (clickedShips.length !== 0) {
+                            clickedShips.forEach((ship) => {
+                                const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
+        
+        
+                                const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
+                                    if (!shipTile.classList.contains("crossedTile")) {
+                                        return false
+                                    }
+                                    return acc && true
+                                }, true)
+                                if (allHaveBeenClicked) {
+                                    let newShip;
+                                    shipTiles.forEach((shipTile) => {
+                                        if (shipTile.classList.contains(`${ship}`)) {
+                                            newShip = createShips(ship.split("X")[0]);
+                                            [...newShip.children].forEach((circle) => {
+                                                circle.classList.add("crossed");
+                                            })
+                                            shipTile.parentElement.insertBefore(newShip, shipTile);
+                                            shipTile.parentElement.removeChild(shipTile);
+                                        } else {
+                                            shipTile.parentElement.removeChild(shipTile);
+                                        }
+                                    })
+                                    getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
+                                    const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
+                                    const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
+                                    const pickedShip = dockedShips.reduce((acc, subShip) => {
+                                        if (subShip.classList.contains(shipName) && acc === null) {
+                                            [...subShip.children].forEach((circle) => {
+                                                circle.classList.add("crossed");
+                                            })
+                                            return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                                        }
+                                        return acc || null;
+                                    }, null);
+        
+                                }
+                            })
+        
+                        }
+                    }
+                }
+            }
+
+            
+        )
+    });
+}
+
+function createOpponentBoardOnPlayer1() {
+    playerIndividualTiles = document.querySelector(".player .tiles");
+
+
+    playerIndividualTiles.addEventListener("click", (event) => {
+        if (player1Turn) {
+            if (event.target.classList.contains("tile")) {
+                if (event.target.classList.contains("miss")) {
+                    player1Turn = false;
+                    player2Turn = true;
+                }
+            }
+        }
+    })
+
+
+    const { createdBoard, boardArray } = opponentCreateBoard(playerTiles);
+    tilesOp1 = document.querySelectorAll(".player .tile");
+
+    const clickedShips = [];
+
+    const dockedShips = [...document.querySelectorAll(".opponent .ship")];
+
+    tilesOp1.forEach((tile) => {
+        tile.addEventListener("click", () => {
+            if (player1Turn) {
                 if (tile.classList.contains("onlyTile")) {
                     tile.classList.add("miss");
                 } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
@@ -217,7 +417,7 @@ opponentCreate.addEventListener("click", () => {
                                     shipTile.parentElement.removeChild(shipTile);
                                 }
                             })
-                            getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
+                            getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "player");
                             const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
                             const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
                             const pickedShip = dockedShips.reduce((acc, subShip) => {
@@ -237,9 +437,11 @@ opponentCreate.addEventListener("click", () => {
             }
         })
     });
+}
 
 
-})
+
+opponentCreate.addEventListener("click", createOpponentBoardOnPlayer2.bind(null, true))
 
 
 
@@ -264,95 +466,96 @@ let tilesOverlayArray =
 
 
 function computerClicker() {
-    return setTimeout(() => {
-        if (tilesOverlayDivsCopy.length === 0) {
-            return;
+    if (tilesOverlayDivsCopy.length === 0) {
+        return;
+    }
+    let chosenTileDiv;
+    // if (shipsThatHit.length !== 0) {
+    if (!checkIfAllHitsFinished(tilesOverlayArray)) {
+        const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, 0);
+        tilesOverlayArray = myTilesOverlay;
+        chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
+            if (tileOv.classList[0] === `${tile}`) {
+                return tilesOverlayDivsCopy.splice(index, 1)[0];
+            }
+            return acc;
+        }, null);
+        chosenTileDiv.click();
+        if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
+            // playerTurn = false;
+            // setTimeout(computerClicker, 500);
+        } else {
+            // playerTurn = true;
         }
-        let chosenTileDiv;
-        // if (shipsThatHit.length !== 0) {
-        if (!checkIfAllHitsFinished(tilesOverlayArray)) {
-            const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, 0);
-            tilesOverlayArray = myTilesOverlay;
-            chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
-                if (tileOv.classList[0] === `${tile}`) {
+        console.log("the player board is", playerBoard.boardArray, "anfalksnfa")
+        console.log("comp chose", chosenTileDiv)
+
+        const missDivs = surroundingTiles.map(((num) => {
+            const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
+                if (value.classList[0] === num) {
                     return tilesOverlayDivsCopy.splice(index, 1)[0];
                 }
-                return acc;
-            }, null);
-            chosenTileDiv.click();
-            if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
-                // playerTurn = false;
-                // setTimeout(computerClicker, 500);
-            } else {
-                // playerTurn = true;
+                return acc
+            }, null)
+            return theDiv;
+        }))
+        missDivs.forEach((div) => {
+            if (div !== null) {
+                div.click()
             }
-            console.log("the player board is", playerBoard.boardArray, "anfalksnfa")
-            console.log("comp chose", chosenTileDiv)
+        })
 
-            const missDivs = surroundingTiles.map(((num) => {
-                const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
-                    if (value.classList[0] === num) {
-                        return tilesOverlayDivsCopy.splice(index, 1)[0];
-                    }
-                    return acc
-                }, null)
-                return theDiv;
-            }))
-            missDivs.forEach((div) => {
-                if (div !== null) {
-                    div.click()
-                }
-            })
+    } else {
+        const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
+        chosenTileDiv = chosenTile;
+        const myRandomNumber = chosenTileDiv.classList[0];
+        const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
+        tilesOverlayArray = myTilesOverlay;
+        chosenTileDiv.click();
+        console.log("on PB", playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
+        if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
+            // playerTurn = false;
+            // setTimeout(computerClicker, 500);
 
         } else {
-            const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
-            chosenTileDiv = chosenTile;
-            const myRandomNumber = chosenTileDiv.classList[0];
-            const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
-            tilesOverlayArray = myTilesOverlay;
-            chosenTileDiv.click();
-            console.log("on PB", playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
-            if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
-                // playerTurn = false;
-                // setTimeout(computerClicker, 500);
-
-            } else {
-                // playerTurn = true;
-            }
-
-            console.log("the player board is", playerBoard.boardArray, "anfalksnfa")
-            console.log("comp chose", chosenTileDiv)
-
-            // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
-
-            const missDivs = surroundingTiles.map(((num) => {
-                const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
-                    if (value.classList[0] === num) {
-                        return tilesOverlayDivsCopy.splice(index, 1)[0];
-                    }
-                    return acc
-                }, null)
-                return theDiv;
-            }))
-            missDivs.forEach((div) => {
-                if (div !== null) {
-                    div.click()
-                }
-            })
+            // playerTurn = true;
         }
 
-        return { chosenTileDiv }
-    }, 500)
+        console.log("the player board is", playerBoard.boardArray, "anfalksnfa")
+        console.log("comp chose", chosenTileDiv)
+
+        // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
+
+        const missDivs = surroundingTiles.map(((num) => {
+            const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
+                if (value.classList[0] === num) {
+                    return tilesOverlayDivsCopy.splice(index, 1)[0];
+                }
+                return acc
+            }, null)
+            return theDiv;
+        }))
+        missDivs.forEach((div) => {
+            if (div !== null) {
+                div.click()
+            }
+        })
+    }
+
+
+    return { chosenTileDiv }
+
 }
 
 function startComputerClicker() {
     playerTurn = true;
-    let chosenDiv = computerClicker().chosenTileDiv
-    console.log(chosenDiv)
-    while (isNaN(playerBoard.boardArray[parseInt(chosenDiv.classList[0], 10)])) {
-        chosenDiv = computerClicker().chosenTileDiv
-    }
+    setTimeout(() => {
+        let chosenDiv = computerClicker().chosenTileDiv;
 
+        while (isNaN(playerBoard.boardArray[parseInt(chosenDiv.classList[0], 10)])) {
+            chosenDiv = computerClicker().chosenTileDiv
+        }
+    }, 500)
 
 
 }
@@ -460,57 +663,35 @@ function takeOutClickedTiles(overlayedTiles) {
 
 
 
-function playGame() {
+function playGamePVE() {
     const clickEvent = new MouseEvent("click", {
         bubbles: true, // Simulates a user click
         cancelable: true, // Allows default behavior to be prevented
         view: window
     });
 
-    opponentCreate.dispatchEvent(clickEvent);
-    selfCreate.dispatchEvent(clickEvent)
-    // opponentCreate.click();
-    // selfCreate.click();
+    // opponentCreate.dispatchEvent(clickEvent);
+    // selfCreate.dispatchEvent(clickEvent)
+    createPlayer1Board();
+    createOpponentBoardOnPlayer2(true);
+}
+
+button.addEventListener("click", playGamePVE);
+
+function playGamePVP() {
+    const clickEvent = new MouseEvent("click", {
+        bubbles: true, // Simulates a user click
+        cancelable: true, // Allows default behavior to be prevented
+        view: window
+    });
+
+    createOpponentBoardOnPlayer1();
+    createOpponentBoardOnPlayer2(false);
+
+
 
 }
 
-button.addEventListener("click", playGame);
-
-
-
-
-
-function refresh(divs, func) {
-
-}
-
-function drawboard(playerBoard) {
-
-}
-
-
-
-// document.addEventListener('keydown', (e) => {
-//     if (e.key === "r") {
-//         individualships.forEach((ship) => {
-//             if (ship.classList.contains('dragging')) {
-//                 ship.classList.toggle("rotate")
-//             }
-//         })
-//     }
-// })
-
-
-
-
-// insert("I", 9, "quad_horizontal", myShips, playerTiles);
-
-
-
-
-
-
-
-
+pvp.addEventListener("click", playGamePVP)
 
 

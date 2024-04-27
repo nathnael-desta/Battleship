@@ -1096,8 +1096,10 @@ export function getSurroundingDivs(box, shipName, user) {
       return acc1;
     }, Number.POSITIVE_INFINITY)
 
+    console.log("surrounding check")
     if (tileDistance < 30) {
       tile.classList.add("miss");
+      console.log("the tiles that miss", tile)
     }
   })
 }

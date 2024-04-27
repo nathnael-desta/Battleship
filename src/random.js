@@ -45,13 +45,13 @@ const qhBoard = [
 
 // console.log(arr.slice(2,4))
 
-function rando() {
-  let time;
-  setTimeout(() => {
-    time = 50
-  }, 500)
-  return time
-}
+// function rando() {
+//   let time;
+//   setTimeout(() => {
+//     time = 50
+//   }, 500)
+//   return time
+// }
 
 
 

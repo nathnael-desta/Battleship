@@ -659,6 +659,25 @@
     font-size: 1.75rem;
 }
 
+.pvp {
+    width: 120px;
+    height: 60px;
+    position: absolute;
+    right: 300px;
+    top: 100%;
+    transform: translateY(-50%);
+    background-color: #D31CD7;
+    border-radius: 5px;
+    box-shadow: 5px 2px 5px rgb(0 0 0 / 25%);
+    cursor: pointer;
+    color: white;
+    font-family: myBold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.75rem;
+}
+
 .miss {
     position: relative;
     opacity: 50%;
