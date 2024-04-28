@@ -1,6 +1,6 @@
 import json5 from "json5";
 import { VERSION, pick, result } from "lodash";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare, getColumnPosition } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare, getPosition, lineMissile } from "./board";
 
 import("./style.css");
 
@@ -20,6 +20,8 @@ let playerIndividualTiles = document.querySelectorAll(".player .tile");
 let playerBoard = null;
 let tilesOverlayDivsCopy = [...tilesOverlayDivs];
 const pvp = document.querySelector(".pvp");
+const squareMissileButton = document.querySelector(".square_missile_button");
+const lineMissileButton = document.querySelector(".line_missile_button");
 
 let circles;
 
@@ -41,6 +43,11 @@ let playerTurn = true;
 // for PVP
 let player1Turn = true;
 let player2Turn = false;
+
+let squareMissileP1Active = false;
+let lineMissileP1Active = false;
+
+let player1LineMissileAlignment = "horizontal"
 
 
 
@@ -133,6 +140,39 @@ shipsOpponent.forEach((ship) => {
 document.addEventListener("keydown", (e) => {
     if (e.key === "z") {
         undo(playerTiles);
+    };
+
+    if (e.key === "r") {
+        if (player1Turn && lineMissileP1Active) {
+            if (player1LineMissileAlignment === "horizontal") {
+                player1LineMissileAlignment = "vertical";
+            } else {
+                player1LineMissileAlignment = "horizontal";
+            }
+
+
+            // const lineType = playerTiles.classList[1];
+
+            // const line = lineType.slice(lineType.length - 3);
+            // // console.log(lineType.slice(0, lineType.length - 3))
+            // // const newLineType;
+            // console.log(e.clientX, e.clientY);
+            // if (line === "Row") {
+            //     playerTiles.classList.remove(lineType);
+            //     playerTiles.classList.add(`${lineType.slice(0, lineType.length - 3)}Col`);
+            // } else {
+            //     playerTiles.classList.remove(lineType);
+            //     playerTiles.classList.add(`${lineType.slice(0, lineType.length - 3)}Row`);
+            // }
+
+
+
+            // playerTiles.classList.remove(...playerTiles.classList);
+            // playerTiles.classList.add("tiles");
+            // const { col, row } = getPosition(playerTiles, e.clientX, e.clientY);
+
+            // lineMissile(playerTiles, col, row, player1LineMissileAlignment);
+        }
     }
 })
 
@@ -238,6 +278,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
         //         }
         //     }
         // })
+
 
 
     }
@@ -413,6 +454,47 @@ function createOpponentBoardOnPlayer1() {
     //     }
     // })
 
+    playerIndividualTiles.addEventListener("mousemove", (event) => {
+        if (player1Turn && squareMissileP1Active) {
+            const square = playerIndividualTiles.children[playerIndividualTiles.children.length - 1];
+            if (square.classList.contains("squareMissile")) {
+                square.remove();
+            }
+
+            let { row, col } = getPosition(playerIndividualTiles, event.clientX, event.clientY);
+            if (row === -1 || col === -1) {
+                return;
+            }
+            if (row === 0) {
+                row = 1;
+            }
+            if (row === 9) {
+                row = 8;
+            }
+            if (col === 0) {
+                col = 1;
+            }
+            if (col === 9) {
+                col = 8;
+            }
+
+            const box = playerIndividualTiles.getBoundingClientRect()
+
+            const squareMissile = document.createElement("div");
+            squareMissile.classList.add("squareMissile");
+            squareMissile.style.left = `${9 + 17 - 59 + (41 * col)}px`;
+            squareMissile.style.top = `${17 - 59 + (41 * row)}px`;
+            playerIndividualTiles.appendChild(squareMissile);
+        }
+    })
+
+    playerIndividualTiles.addEventListener("mouseout", () => {
+        const square = playerIndividualTiles.children[playerIndividualTiles.children.length - 1];
+        if (square.classList.contains("squareMissile")) {
+            square.remove();
+        }
+    })
+
 
     const { createdBoard, boardArray } = opponentCreateBoard(playerTiles);
     tilesOp1 = document.querySelectorAll(".player .tile");
@@ -424,6 +506,12 @@ function createOpponentBoardOnPlayer1() {
     tilesOp1.forEach((tile) => {
         tile.addEventListener("click", () => {
             if (player1Turn) {
+                if (squareMissileP1Active) {
+                    squareMissileP1Active = false;
+                }
+                if (lineMissileP1Active) {
+                    lineMissileP1Active = false;
+                }
                 if (tile.classList.contains("onlyTile")) {
                     tile.classList.add("miss");
                 } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
@@ -441,7 +529,6 @@ function createOpponentBoardOnPlayer1() {
                 if (clickedShips.length !== 0) {
                     clickedShips.forEach((ship) => {
                         const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
-
 
                         const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
                             if (!shipTile.classList.contains("crossedTile")) {
@@ -740,58 +827,32 @@ function playGamePVP() {
 
 pvp.addEventListener("click", playGamePVP)
 
+squareMissileButton.addEventListener("click", () => {
+    if (!lineMissileP1Active) {
+        squareMissileP1Active = !squareMissileP1Active;
+    }
 
+})
+
+lineMissileButton.addEventListener("click", () => {
+    if (!squareMissileP1Active) {
+        lineMissileP1Active = !lineMissileP1Active;
+    }
+    if (!lineMissileP1Active) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+    }
+
+
+})
 
 playerTiles.addEventListener("mousemove", (event) => {
-    const col = getColumnPosition(playerTiles, event.clientX);
-    if (col === 0) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("zerothCol");
-    }
-    if (col === 1) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("firstCol");
-    }
-    if (col === 2) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("secondCol");
-    }
-    if (col === 3) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("thirdCol");
-    }
-    if (col === 4) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("fourthCol");
-    }
-    if (col === 5) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("fifthCol");
-    }
-    if (col === 6) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("sixthCol");
-    }
-    if (col === 7) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("seventhCol");
-    }
-    if (col === 8) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("eighthCol");
-    }
-    if (col === 9) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-        playerTiles.classList.add("ninthCol");
+    if (lineMissileP1Active) {
+        const { col, row } = getPosition(playerTiles, event.clientX, event.clientY);
+        lineMissile(playerTiles, col, row, player1LineMissileAlignment);
     }
 })
+
+
+
+

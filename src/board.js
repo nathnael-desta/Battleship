@@ -1462,53 +1462,184 @@ export function getTypeOfSquare(id) {
   if (row === 9 && col === 0) {
     return "squareMissileBottomLeft";
   }
-  if(row === 9 && col === 9) {
+  if (row === 9 && col === 9) {
     return "squareMissileBottomRight";
   }
   if (row === 0) {
     return "squareMissileTop";
   }
-  if(col === 0) {
+  if (col === 0) {
     return "squareMissileLeft";
   }
-  if(col === 9) {
+  if (col === 9) {
     return "squareMissileRight"
   }
-  if(row === 9) {
+  if (row === 9) {
     return "squareMissileBottom"
   }
-  if(row > 0 && row < 9 && col > 0 && col < 9){
+  if (row > 0 && row < 9 && col > 0 && col < 9) {
     return "squareMissileCenter"
   }
   return `the id is ${row}${col} and it isunspecified in if statment`;
 }
 
-export function getColumnPosition(tiles, x) {
+export function getPosition(tiles, x, y) {
   const box = tiles.getBoundingClientRect();
   const width = box.width - 9;
-    let col = -1;
+  const { height } = box;
 
-    if (x > (box.right - (width / 10))) {
-        col = 9;
-    } else if (x > (box.right - (width * 2 / 10))) {
-        col = 8;
-    } else if (x > (box.right - (width * 3 / 10))) {
-        col = 7;
-    } else if (x > (box.right - (width * 4 / 10))) {
-        col = 6;
-    } else if (x > (box.right - (width * 5 / 10))) {
-        col = 5;
-    } else if (x > (box.right - (width * 6 / 10))) {
-        col = 4;
-    } else if (x > (box.right - (width * 7 / 10))) {
-        col = 3;
-    } else if (x > (box.right - (width * 8 / 10))) {
-        col = 2;
-    } else if (x > (box.right - (width * 9 / 10))) {
-        col = 1;
-    }  else if (x > (box.right - (width * 10 / 10))) {
-        col = 0;
+  let col = -1;
+  let row = -1;
+
+  if (x > (box.right - (width / 10))) {
+    col = 9;
+  } else if (x > (box.right - (width * 2 / 10))) {
+    col = 8;
+  } else if (x > (box.right - (width * 3 / 10))) {
+    col = 7;
+  } else if (x > (box.right - (width * 4 / 10))) {
+    col = 6;
+  } else if (x > (box.right - (width * 5 / 10))) {
+    col = 5;
+  } else if (x > (box.right - (width * 6 / 10))) {
+    col = 4;
+  } else if (x > (box.right - (width * 7 / 10))) {
+    col = 3;
+  } else if (x > (box.right - (width * 8 / 10))) {
+    col = 2;
+  } else if (x > (box.right - (width * 9 / 10))) {
+    col = 1;
+  } else if (x > (box.right - (width * 10 / 10))) {
+    col = 0;
+  }
+
+  if (y > (box.bottom - (height / 10))) {
+    row = 9;
+  } else if (y > (box.bottom - (height * 2 / 10))) {
+    row = 8;
+  } else if (y > (box.bottom - (height * 3 / 10))) {
+    row = 7;
+  } else if (y > (box.bottom - (height * 4 / 10))) {
+    row = 6;
+  } else if (y > (box.bottom - (height * 5 / 10))) {
+    row = 5;
+  } else if (y > (box.bottom - (height * 6 / 10))) {
+    row = 4;
+  } else if (y > (box.bottom - (height * 7 / 10))) {
+    row = 3;
+  } else if (y > (box.bottom - (height * 8 / 10))) {
+    row = 2;
+  } else if (y > (box.bottom - (height * 9 / 10))) {
+    row = 1;
+  } else if (y > (box.bottom - (height * 10 / 10))) {
+    row = 0;
+  }
+
+  return { col, row };
+}
+
+export function lineMissile(tiles, col, row, alignment = "vertical") {
+  if (alignment === "vertical") {
+    if (col === 0) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("zerothCol");
     }
-
-    return col;
+    if (col === 1) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("firstCol");
+    }
+    if (col === 2) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("secondCol");
+    }
+    if (col === 3) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("thirdCol");
+    }
+    if (col === 4) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("fourthCol");
+    }
+    if (col === 5) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("fifthCol");
+    }
+    if (col === 6) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("sixthCol");
+    }
+    if (col === 7) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("seventhCol");
+    }
+    if (col === 8) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("eighthCol");
+    }
+    if (col === 9) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("ninthCol");
+    }
+  } else {
+    if (row === 0) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("zerothRow");
+    }
+    if (row === 1) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("firstRow");
+    }
+    if (row === 2) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("secondRow");
+    }
+    if (row === 3) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("thirdRow");
+    }
+    if (row === 4) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("fourthRow");
+    }
+    if (row === 5) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("fifthRow");
+    }
+    if (row === 6) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("sixthRow");
+    }
+    if (row === 7) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("seventhRow");
+    }
+    if (row === 8) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("eighthRow");
+    }
+    if (row === 9) {
+      tiles.classList.remove(...tiles.classList);
+      tiles.classList.add("tiles");
+      tiles.classList.add("ninthRow");
+    }
+  }
 }

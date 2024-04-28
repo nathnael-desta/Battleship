@@ -255,6 +255,20 @@
                     outline: 3px solid rgb(238, 97, 97);
                 }
 
+                .squareMissile {
+                    position: absolute;
+                    z-index: -1;
+                }
+                
+                .squareMissile::before {
+                    position: absolute;
+                    content: "";
+                    width: 118px;
+                    height: 118px;
+                    border-radius: 6px;
+                    outline: 3px solid rgb(238, 97, 97);
+                }
+
                 .squareMissileBottom {
                     position: relative;
                     z-index: -1;
@@ -885,6 +899,44 @@
     font-size: 1.75rem;
 }
 
+.square_missile_button {
+    width: 120px;
+    height: 60px;
+    position: absolute;
+    right: 500px;
+    top: 100%;
+    transform: translateY(-50%);
+    background-color: #D31CD7;
+    border-radius: 5px;
+    box-shadow: 5px 2px 5px rgb(0 0 0 / 25%);
+    cursor: pointer;
+    color: white;
+    font-family: myBold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.75rem;
+}
+
+.line_missile_button {
+    width: 120px;
+    height: 60px;
+    position: absolute;
+    right: 700px;
+    top: 100%;
+    transform: translateY(-50%);
+    background-color: #D31CD7;
+    border-radius: 5px;
+    box-shadow: 5px 2px 5px rgb(0 0 0 / 25%);
+    cursor: pointer;
+    color: white;
+    font-family: myBold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.75rem;
+}
+
 .zerothCol {
     position: relative;
 }
@@ -1035,3 +1087,152 @@
     border-radius: 5px;
 }
 
+.zerothRow {
+    position: relative;
+}
+
+.zerothRow::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: 368px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.firstRow {
+    position: relative;
+}
+
+.firstRow::before {
+    content: "";
+    position: absolute;
+    top: 40px;
+    bottom: 327px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.secondRow {
+    position: relative;
+}
+
+.secondRow::before {
+    content: "";
+    position: absolute;
+    top: 81px;
+    bottom: 286px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.thirdRow {
+    position: relative;
+}
+
+.thirdRow::before {
+    content: "";
+    position: absolute;
+    top: 122px;
+    bottom: 245px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.fourthRow {
+    position: relative;
+}
+
+.fourthRow::before {
+    content: "";
+    position: absolute;
+    top: 163px;
+    bottom: 204px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.fifthRow {
+    position: relative;
+}
+
+.fifthRow::before {
+    content: "";
+    position: absolute;
+    top: 204px;
+    bottom: 163px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.sixthRow {
+    position: relative;
+}
+
+.sixthRow::before {
+    content: "";
+    position: absolute;
+    top: 245px;
+    bottom: 122px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.seventhRow {
+    position: relative;
+}
+
+.seventhRow::before {
+    content: "";
+    position: absolute;
+    top: 286px;
+    bottom: 81px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.eighthRow {
+    position: relative;
+}
+
+.eighthRow::before {
+    content: "";
+    position: absolute;
+    top: 327px;
+    bottom: 40px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
+
+.ninthRow {
+    position: relative;
+}
+
+.ninthRow::before {
+    content: "";
+    position: absolute;
+    top: 368px;
+    bottom: -1px;
+    left: 8px;
+    right: -1px;
+    outline: 4px solid rgb(238, 97, 97);
+    border-radius: 5px;
+}
