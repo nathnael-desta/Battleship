@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare } from "./board.js";
+import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare, getSquareTiles } from "./board.js";
 
 
 describe("insertion tests", () => {
@@ -1826,7 +1826,7 @@ describe("insertion tests", () => {
         "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
         "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
         "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
-      ], surroundingTiles: ["02", "03" ,"04" ,"12", "14", "22", "23", "24"]
+      ], surroundingTiles: ["02", "03", "04", "12", "14", "22", "23", "24"]
     })
 
 
@@ -3168,5 +3168,18 @@ describe("missile tests", () => {
 
     expect(getTypeOfSquare("44")).toBe("squareMissileCenter");
 
-  }) 
+  })
+
+  test("square missiles array test", () => {
+
+    expect(getSquareTiles("44")).toEqual(["33", "34", "35", "43", "44", "45", "53", "54", "55"]);
+
+    expect(getSquareTiles("00")).toEqual(["00", "01", "02", "10", "11", "12", "20", "21", "22"]);
+
+    expect(getSquareTiles("09")).toEqual(["07", "08", "09", "17", "18", "19", "27", "28", "29"]);
+
+    expect(getSquareTiles("99")).toEqual(["77", "78", "79", "87", "88", "89", "97", "98", "99"]);
+
+    expect(getSquareTiles("90")).toEqual(["70", "71", "72", "80", "81", "82", "90", "91", "92"]);
+  })
 })

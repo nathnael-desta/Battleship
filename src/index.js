@@ -1,6 +1,6 @@
 import json5 from "json5";
 import { VERSION, pick, result } from "lodash";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare, getPosition, lineMissile } from "./board";
+import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare, getPosition, lineMissile, getSquareTiles } from "./board";
 
 import("./style.css");
 
@@ -12,16 +12,20 @@ const individualships = document.querySelectorAll(".ship");
 const selfCreate = document.querySelector(".playerRefresh");
 const opponentCreate = document.querySelector(".opponentRefresh");
 const tileDivs = document.querySelectorAll(".tiles > div");
-const tilesOverlayDivs = document.querySelectorAll(".tilesOverlay div");
-const thePlayerTiles = document.querySelectorAll(".player .tiles")
+const tilesOverlayDivs = document.querySelectorAll(".player .tilesOverlay div");
+const thePlayerTiles = document.querySelectorAll(".player .tiles");
+
 const button = document.querySelector(".start_button");
 let opponentIndividualTiles = document.querySelectorAll(".opponent .tile");
 let playerIndividualTiles = document.querySelectorAll(".player .tile");
 let playerBoard = null;
+const playerBoard2 = null;
 let tilesOverlayDivsCopy = [...tilesOverlayDivs];
 const pvp = document.querySelector(".pvp");
 const squareMissileButton = document.querySelector(".square_missile_button");
 const lineMissileButton = document.querySelector(".line_missile_button");
+const player1Overlays = document.querySelectorAll(".player .overlay");
+const opponent1Overlays = document.querySelectorAll(".opponent .overlay");
 
 let circles;
 
@@ -47,7 +51,9 @@ let player2Turn = false;
 let squareMissileP1Active = false;
 let lineMissileP1Active = false;
 
-let player1LineMissileAlignment = "horizontal"
+let player1LineMissileAlignment = "horizontal";
+
+let computerPlaying = false;
 
 
 
@@ -190,13 +196,11 @@ function createPlayer1Board() {
             tile.classList.add("miss");
             event.stopPropagation();
         }, false)
-
     });
 
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
     ships.forEach((ship) => {
         ship.addEventListener("click", (e) => {
-
             if (clickedShips.indexOf(ship) === -1) {
                 clickedShips.push(ship);
             }
@@ -236,13 +240,13 @@ selfCreate.addEventListener("click", createPlayer1Board);
 function createOpponentBoardOnPlayer2(withComputerClicker) {
     opponentIndividualTiles = document.querySelector(".opponent .tiles");
 
-    if (withComputerClicker) {
+    if (computerPlaying) {
         opponentIndividualTiles.addEventListener("click", (event) => {
             if (playerTurn) {
                 if (event.target.classList.contains("tile")) {
                     if (event.target.classList.contains("miss")) {
                         playerTurn = false;
-                        setTimeout(startComputerClicker);
+                        computerClicker();
                     }
                 }
             }
@@ -294,7 +298,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
     tilesOp.forEach((tile) => {
         tile.addEventListener("click", () => {
-            if (withComputerClicker) {
+            if (computerPlaying) {
                 if (playerTurn) {
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
@@ -353,7 +357,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
                     }
                 }
-            } else if (!withComputerClicker) {
+            } else if (!computerPlaying) {
                 if (player2Turn) {
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
@@ -507,7 +511,9 @@ function createOpponentBoardOnPlayer1() {
         tile.addEventListener("click", () => {
             if (player1Turn) {
                 if (squareMissileP1Active) {
-                    squareMissileP1Active = false;
+                    setTimeout(() => {
+                        squareMissileP1Active = false;
+                    }, 0);
                 }
                 if (lineMissileP1Active) {
                     lineMissileP1Active = false;
@@ -594,6 +600,21 @@ let tilesOverlayArray =
         "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
     ];
 
+const tilesOverlayArrayP2 =
+    [
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+        "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+        "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+        "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
+        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+    ];
+
+
 
 
 
@@ -613,15 +634,14 @@ function computerClicker() {
             }
             return acc;
         }, null);
+        console.log("the chosen div is", chosenTileDiv)
         chosenTileDiv.click();
         if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
-            // playerTurn = false;
-            // setTimeout(computerClicker, 500);
+            computerClicker()
         } else {
-            // playerTurn = true;
+            playerTurn = true;
         }
-        console.log("the player board is", playerBoard.boardArray, "anfalksnfa")
-        console.log("comp chose", chosenTileDiv)
+
 
         const missDivs = surroundingTiles.map(((num) => {
             const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
@@ -644,18 +664,15 @@ function computerClicker() {
         const myRandomNumber = chosenTileDiv.classList[0];
         const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
         tilesOverlayArray = myTilesOverlay;
+        console.log("the chosen div is", chosenTileDiv, tilesOverlayDivsCopy)
         chosenTileDiv.click();
-        console.log("on PB", playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
         if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
-            // playerTurn = false;
-            // setTimeout(computerClicker, 500);
+            playerTurn = false;
+            computerClicker()
 
         } else {
-            // playerTurn = true;
+            playerTurn = true;
         }
-
-        console.log("the player board is", playerBoard.boardArray, "anfalksnfa")
-        console.log("comp chose", chosenTileDiv)
 
         // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
 
@@ -675,22 +692,17 @@ function computerClicker() {
         })
     }
 
-
-    return { chosenTileDiv }
-
 }
 
 function startComputerClicker() {
     playerTurn = true;
-    setTimeout(() => {
-        let chosenDiv = computerClicker().chosenTileDiv;
 
-        while (isNaN(playerBoard.boardArray[parseInt(chosenDiv.classList[0], 10)])) {
-            chosenDiv = computerClicker().chosenTileDiv
-        }
-    }, 500)
+    let chosenDiv = computerClicker().chosenTileDiv;
 
-
+    while (isNaN(playerBoard.boardArray[parseInt(chosenDiv.classList[0], 10)])) {
+        chosenDiv = computerClicker().chosenTileDiv;
+        console.log(chosenDiv);
+    }
 }
 
 function clicker() {
@@ -748,11 +760,7 @@ tilesOverlayDivs.forEach((tile) => {
                             start: tile.classList[0]
                         })
                     }
-
-
                 }
-
-
             }
         })
     }, false)
@@ -805,6 +813,8 @@ function playGamePVE() {
 
     // opponentCreate.dispatchEvent(clickEvent);
     // selfCreate.dispatchEvent(clickEvent)
+
+    computerPlaying = true;
     createPlayer1Board();
     createOpponentBoardOnPlayer2(true);
 }
@@ -818,8 +828,18 @@ function playGamePVP() {
         view: window
     });
 
+    computerPlaying = false;
+
     createOpponentBoardOnPlayer1();
     createOpponentBoardOnPlayer2(false);
+    document.querySelectorAll("player .tile").forEach((tile) => {
+        tile.addEventListener("click", (e) => {
+            console.log(tile)
+            if (e.target.classList.contains("overlay")) {
+                console.log(e.target)
+            }
+        })
+    })
 
 
 
@@ -827,17 +847,19 @@ function playGamePVP() {
 
 pvp.addEventListener("click", playGamePVP)
 
-squareMissileButton.addEventListener("click", () => {
+squareMissileButton.addEventListener("click", (e) => {
+    lineMissileP1Active = false;
     if (!lineMissileP1Active) {
-        squareMissileP1Active = !squareMissileP1Active;
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
     }
+    squareMissileP1Active = !squareMissileP1Active;
 
 })
 
 lineMissileButton.addEventListener("click", () => {
-    if (!squareMissileP1Active) {
-        lineMissileP1Active = !lineMissileP1Active;
-    }
+    squareMissileP1Active = false;
+    lineMissileP1Active = !lineMissileP1Active;
     if (!lineMissileP1Active) {
         playerTiles.classList.remove(...playerTiles.classList);
         playerTiles.classList.add("tiles");
@@ -853,6 +875,58 @@ playerTiles.addEventListener("mousemove", (event) => {
     }
 })
 
+// player1Overlays.forEach((tile) => {
+//     tile.addEventListener("click", () => {
+//         console.log("clicked")
+//         if (squareMissileP1Active) {
+//             const squareTiles = getSquareTiles(tile.classList[1]);
+//             squareTiles.forEach((squareTile) => {
+//                 shoot(tilesOverlayArray, playerBoard.boardArray, squareTile, true);
+//             })
+//         }
+//     })
+// })
 
+playerIndividualTiles.forEach((tile) => {
+    console.log(tile)
 
+    tile.addEventListener("click", (e) => {
+        console.log(tile)
+        if (e.target.classList.contains("overlay")) {
+            console.log(e.target)
+        }
+    })
+})
 
+playerTiles.addEventListener("click", (e) => {
+    console.log("clicked", squareMissileP1Active)
+    if (squareMissileP1Active) {
+        const tile = [...player1Overlays].reduce((acc, value) => {
+            const box = value.getBoundingClientRect();
+            if (e.clientX > box.left && e.clientX < box.right && e.clientY > box.top && e.clientY < box.bottom) {
+                acc = value;
+                return acc;
+            }
+            return acc;
+        }, null);
+        if (tile === null) {
+            return;
+        }
+
+        const clickEvent = new MouseEvent("click", {
+            bubbles: true, // Simulates a user click
+            cancelable: true, // Allows default behavior to be prevented
+            view: window
+        });
+        const allTiles = getSquareTiles(tile);
+        allTiles.forEach(chosenTile => chosenTile.dispatchEvent(clickEvent));
+    }
+})
+
+// setInterval(() => {
+//     console.log(squareMissileP1Active)
+// }, 500)
+
+document.addEventListener("click", () => {
+    console.log(playerTurn);
+})

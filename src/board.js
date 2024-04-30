@@ -1096,10 +1096,8 @@ export function getSurroundingDivs(box, shipName, user) {
       return acc1;
     }, Number.POSITIVE_INFINITY)
 
-    console.log("surrounding check")
     if (tileDistance < 30) {
       tile.classList.add("miss");
-      console.log("the tiles that miss", tile)
     }
   })
 }
@@ -1403,9 +1401,28 @@ export function clickRandomTiles(tileContainer) {
   };
 }
 
-export function shoot(tilesOverlay, playerBoard, randomNo = null) {
+export function shoot(tilesOverlay, playerBoard, randomNo = null, dontThink = false) {
   let myTilesOverlay = [...tilesOverlay];
   let chosenTile = randomNo;
+  if (dontThink) {
+    chosenTile = randomNo;
+    for (let i = 0; i < myTilesOverlay.length; i += 1) {
+      if (myTilesOverlay[i] === chosenTile) {
+        if (!Number.isNaN(parseInt(playerBoard[i], 10))) {
+          myTilesOverlay[i] = "miss";
+        } else if (checkIfShipIsDestroyed(myTilesOverlay, playerBoard, chosenTile)) {
+          surroundingTiles = getSurroundingTiles(tilesOverlay, playerBoard, myTilesOverlay[i]);
+          surroundingTiles.forEach((num) => {
+            myTilesOverlay[parseInt(num, 10)] = "miss";
+          })
+
+          myTilesOverlay[i] = "hit finished";
+        } else {
+          myTilesOverlay[i] = "hit";
+        }
+      }
+    }
+  }
   const { tile, sentTileOverlay, hitTile } = getIndexOfNextLikelyTile(tilesOverlay);
   let surroundingTiles = [];
   if (checkIfAllHitsFinished(myTilesOverlay)) {
@@ -1642,4 +1659,32 @@ export function lineMissile(tiles, col, row, alignment = "vertical") {
       tiles.classList.add("ninthRow");
     }
   }
+}
+
+export function getSquareTiles(tile) {
+  let [row, col] = tile.split("").map(num => parseInt(num, 10));
+  if (row === 0) {
+    row += 1;
+  }
+  if (row === 9) {
+    row -= 1;
+  }
+  if (col === 0) {
+    col += 1;
+  }
+  if (col === 9) {
+    col -= 1;
+  }
+  const squareTiles = [];
+  squareTiles.push(`${row - 1}${col - 1}`);
+  squareTiles.push(`${row - 1}${col}`);
+  squareTiles.push(`${row - 1}${col + 1}`);
+  squareTiles.push(`${row}${col - 1}`);
+  squareTiles.push(`${row}${col}`);
+  squareTiles.push(`${row}${col + 1}`);
+  console.log("the tile",row, col)
+  squareTiles.push(`${row + 1}${col - 1}`);
+  squareTiles.push(`${row + 1}${col}`);
+  squareTiles.push(`${row + 1}${col + 1}`);
+  return squareTiles;
 }
