@@ -1,31 +1,64 @@
 import json5 from "json5";
 import { VERSION, pick, result } from "lodash";
-import { createSquares, myShips, createShips, getTile, insertAt, insert, getDragElement, getTileFromNumber, whichCircle, undo, rotate, numToLetters, finalTile, flippable, placedShipDimmer, placedShips, selfCreateBoard, getSurroundingDivs, opponentCreateBoard, checkSurrounding, shoot, checkIfAllHitsFinished, clickRandomTiles, getTypeOfSquare, getPosition, lineMissile, getSquareTiles } from "./board";
+import {
+    createSquares,
+    myShips,
+    createShips,
+    getTile,
+    insertAt,
+    insert,
+    getDragElement,
+    getTileFromNumber,
+    whichCircle,
+    undo,
+    rotate,
+    numToLetters,
+    finalTile,
+    flippable,
+    placedShipDimmer,
+    placedShips,
+    selfCreateBoard,
+    getSurroundingDivs,
+    opponentCreateBoard,
+    checkSurrounding,
+    shoot,
+    checkIfAllHitsFinished,
+    clickRandomTiles,
+    getTypeOfSquare,
+    getPosition,
+    lineMissile,
+    getSquareTiles,
+    getLineTiles,
+} from "./board";
 
 import("./style.css");
 
 const playerTiles = document.querySelector(".player .tiles");
 const opponentTiles = document.querySelector(".opponent .tiles");
 const shipsPlayer = document.querySelectorAll(".player .ship");
-const shipsOpponent = document.querySelectorAll(".opponent .ship")
+const shipsOpponent = document.querySelectorAll(".opponent .ship");
 const individualships = document.querySelectorAll(".ship");
-const selfCreate = document.querySelector(".playerRefresh");
+const selfCreate = document.querySelector(".randomize");
 const opponentCreate = document.querySelector(".opponentRefresh");
 const tileDivs = document.querySelectorAll(".tiles > div");
 const tilesOverlayDivs = document.querySelectorAll(".player .tilesOverlay div");
 const thePlayerTiles = document.querySelectorAll(".player .tiles");
 
-const button = document.querySelector(".start_button");
+const button = document.querySelector(".pvc");
 let opponentIndividualTiles = document.querySelectorAll(".opponent .tile");
 let playerIndividualTiles = document.querySelectorAll(".player .tile");
 let playerBoard = null;
 const playerBoard2 = null;
 let tilesOverlayDivsCopy = [...tilesOverlayDivs];
-const pvp = document.querySelector(".pvp");
-const squareMissileButton = document.querySelector(".square_missile_button");
-const lineMissileButton = document.querySelector(".line_missile_button");
-const player1Overlays = document.querySelectorAll(".player .overlay");
+const pvp = document.querySelector(".pvsp");
+const squareMissileButton = document.querySelector(".opponent .bomb");
+const lineMissileButton = document.querySelector(".opponent .airforce");
+const squareMissileButton2 = document.querySelector(".player .bomb");
+const lineMissileButton2 = document.querySelector(".player .airforce");
+const player1Overlays = document.querySelectorAll(".player .tilesOverlay div");
+const player2Overlays = document.querySelectorAll(".opponent .tilesOverlay div");
 const opponent1Overlays = document.querySelectorAll(".opponent .overlay");
+let eachPlayerTile = document.querySelectorAll(".player .tile");
 
 let circles;
 
@@ -51,19 +84,23 @@ let player2Turn = false;
 let squareMissileP1Active = false;
 let lineMissileP1Active = false;
 
+let squareMissileP2Active = false;
+let lineMissileP2Active = false;
+
 let player1LineMissileAlignment = "horizontal";
+let player2LineMissileAlignment = "horizontal";
+
 
 let computerPlaying = false;
 
-
+const missileShot = false;
 
 createSquares(playerTiles);
 createSquares(opponentTiles);
 
-// for draging ships for initial placment 
+// for draging ships for initial placment
 shipsPlayer.forEach((ship) => {
     ship.addEventListener("dragstart", (e) => {
-
         if (ship.classList.contains("draged")) {
             return;
         }
@@ -77,15 +114,17 @@ shipsPlayer.forEach((ship) => {
         const box = ship.getBoundingClientRect();
         const datavalue = whichCircle(shipName, e.clientX, e.clientY, box);
         ship.dataset.circle = JSON.stringify(datavalue);
-    })
+    });
 
     ship.addEventListener("dragend", (e) => {
-        ship.classList.remove("draged")
+        ship.classList.remove("draged");
         const rect = playerTiles.getBoundingClientRect();
         const x = e.clientX;
         const y = e.clientY;
         placedShips.push(ship);
-        if (!(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)) {
+        if (
+            !(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)
+        ) {
             placedShips.pop();
             return;
         }
@@ -98,12 +137,11 @@ shipsPlayer.forEach((ship) => {
         const row = parseInt(tile.slice(1));
         const myPiece = ship.classList[2];
         insert(col, row, ship, myShips, playerTiles, myPiece);
-    })
-})
+    });
+});
 
 shipsOpponent.forEach((ship) => {
     ship.addEventListener("dragstart", (e) => {
-
         if (ship.classList.contains("draged")) {
             return;
         }
@@ -111,22 +149,23 @@ shipsOpponent.forEach((ship) => {
             e.preventDefault();
             e.stopPropagation();
             ship.classList.toggle("rotate");
-
         }
         ship.classList.add("draged");
         const shipName = ship.classList[2];
         const box = ship.getBoundingClientRect();
         const datavalue = whichCircle(shipName, e.clientX, e.clientY, box);
         ship.dataset.circle = JSON.stringify(datavalue);
-    })
+    });
 
     ship.addEventListener("dragend", (e) => {
-        ship.classList.remove("draged")
+        ship.classList.remove("draged");
         const rect = playerTiles.getBoundingClientRect();
         const x = e.clientX;
         const y = e.clientY;
         placedShips.push(ship);
-        if (!(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)) {
+        if (
+            !(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)
+        ) {
             placedShips.pop();
             return;
         }
@@ -139,14 +178,13 @@ shipsOpponent.forEach((ship) => {
         const row = parseInt(tile.slice(1));
         const myPiece = ship.classList[2];
         insert(col, row, ship, myShips, playerTiles, myPiece);
-    })
-})
-
+    });
+});
 
 document.addEventListener("keydown", (e) => {
     if (e.key === "z") {
         undo(playerTiles);
-    };
+    }
 
     if (e.key === "r") {
         if (player1Turn && lineMissileP1Active) {
@@ -155,7 +193,6 @@ document.addEventListener("keydown", (e) => {
             } else {
                 player1LineMissileAlignment = "horizontal";
             }
-
 
             // const lineType = playerTiles.classList[1];
 
@@ -171,18 +208,21 @@ document.addEventListener("keydown", (e) => {
             //     playerTiles.classList.add(`${lineType.slice(0, lineType.length - 3)}Row`);
             // }
 
-
-
             // playerTiles.classList.remove(...playerTiles.classList);
             // playerTiles.classList.add("tiles");
             // const { col, row } = getPosition(playerTiles, e.clientX, e.clientY);
 
             // lineMissile(playerTiles, col, row, player1LineMissileAlignment);
         }
+        if (player2Turn && lineMissileP2Active) {
+            if (player2LineMissileAlignment === "horizontal") {
+                player2LineMissileAlignment = "vertical";
+            } else {
+                player2LineMissileAlignment = "horizontal";
+            }
+        }
     }
-})
-
-
+});
 
 function createPlayer1Board() {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
@@ -192,10 +232,14 @@ function createPlayer1Board() {
 
     tiles = document.querySelectorAll(".player .tile");
     tiles.forEach((tile) => {
-        tile.addEventListener("click", (event) => {
-            tile.classList.add("miss");
-            event.stopPropagation();
-        }, false)
+        tile.addEventListener(
+            "click",
+            (event) => {
+                tile.classList.add("miss");
+                event.stopPropagation();
+            },
+            false
+        );
     });
 
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
@@ -204,25 +248,34 @@ function createPlayer1Board() {
             if (clickedShips.indexOf(ship) === -1) {
                 clickedShips.push(ship);
             }
-            const { shift } = whichCircle(ship.classList[0], e.clientX, e.clientY, ship.getBoundingClientRect());
+            const { shift } = whichCircle(
+                ship.classList[0],
+                e.clientX,
+                e.clientY,
+                ship.getBoundingClientRect()
+            );
             const circle = [...ship.children][shift];
             circle.classList.add("crossed");
 
             const allCrossedOut = [...ship.children].reduce((acc, child) => {
                 if (!child.classList.contains("crossed")) {
-                    return false
+                    return false;
                 }
                 return acc && true;
             }, true);
             if (allCrossedOut) {
-                getSurroundingDivs(ship.getBoundingClientRect(), ship.classList[0], "player");
+                getSurroundingDivs(
+                    ship.getBoundingClientRect(),
+                    ship.classList[0],
+                    "player"
+                );
                 const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1)[0];
                 const shipName = `${theShip.classList[0].split("_")[0]}_horizontal`;
                 const pickedShip = dockedShips.reduce((acc, subShip) => {
                     if (subShip.classList.contains(shipName) && acc === null) {
                         [...subShip.children].forEach((theCircle) => {
                             theCircle.classList.add("crossed");
-                        })
+                        });
                         return dockedShips.splice(dockedShips.indexOf(subShip), 1);
                     }
                     return acc || null;
@@ -230,9 +283,8 @@ function createPlayer1Board() {
             }
 
             e.stopPropagation();
-        }
-        )
-    })
+        });
+    });
 }
 
 selfCreate.addEventListener("click", createPlayer1Board);
@@ -250,222 +302,42 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     }
                 }
             }
-        })
+
+            opponentTiles.classList.remove(...opponentTiles.classList);
+            opponentTiles.classList.add("tiles");
+        });
     } else {
         opponentIndividualTiles.addEventListener("click", (event) => {
-
             if (player2Turn) {
                 if (event.target.classList.contains("tile")) {
-                    console.log(event.target)
+                    console.log(event.target);
                     if (event.target.classList.contains("miss")) {
                         player2Turn = false;
                         player1Turn = true;
                     }
                 }
             }
-        })
 
-        // opponentIndividualTiles.addEventListener("mouseover", (event) => {
-
-        //     if (player2Turn) {
-        //         if (event.target.classList.contains("tile")) {
-        //             console.log(getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0")))
-        //             event.target.classList.add(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
-        //         }
-        //     }
-        // })
-
-        // opponentIndividualTiles.addEventListener("mouseout", (event) => {
-        //     if (player2Turn) {
-        //         if (event.target.classList.contains("tile")) {
-        //             event.target.classList.remove(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
-        //         }
-        //     }
-        // })
-
-
-
+            opponentTiles.classList.remove(...opponentTiles.classList);
+            opponentTiles.classList.add("tiles");
+        });
     }
 
-
-    const { createdBoard, boardArray } = opponentCreateBoard(opponentTiles);
-    tilesOp = document.querySelectorAll(".opponent .tile");
-
-    const clickedShips = [];
-
-    const dockedShips = [...document.querySelectorAll(".opponent .ship")];
-
-
-    tilesOp.forEach((tile) => {
-        tile.addEventListener("click", () => {
-            if (computerPlaying) {
-                if (playerTurn) {
-                    if (tile.classList.contains("onlyTile")) {
-                        tile.classList.add("miss");
-                    } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
-                        tile.classList.add("crossedTile");
-                        if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
-                            clickedShips.push(tile.classList[1].slice(0, -1));
-                        }
-                    } else {
-                        tile.classList.add("crossedTile");
-                        if (clickedShips.indexOf(tile.classList[1]) === -1) {
-                            clickedShips.push(tile.classList[1]);
-                        }
-                    }
-
-                    if (clickedShips.length !== 0) {
-                        clickedShips.forEach((ship) => {
-                            const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
-
-
-                            const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
-                                if (!shipTile.classList.contains("crossedTile")) {
-                                    return false
-                                }
-                                return acc && true
-                            }, true)
-                            if (allHaveBeenClicked) {
-                                let newShip;
-                                shipTiles.forEach((shipTile) => {
-                                    if (shipTile.classList.contains(`${ship}`)) {
-                                        newShip = createShips(ship.split("X")[0]);
-                                        [...newShip.children].forEach((circle) => {
-                                            circle.classList.add("crossed");
-                                        })
-                                        shipTile.parentElement.insertBefore(newShip, shipTile);
-                                        shipTile.parentElement.removeChild(shipTile);
-                                    } else {
-                                        shipTile.parentElement.removeChild(shipTile);
-                                    }
-                                })
-                                getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
-                                const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
-                                const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
-                                const pickedShip = dockedShips.reduce((acc, subShip) => {
-                                    if (subShip.classList.contains(shipName) && acc === null) {
-                                        [...subShip.children].forEach((circle) => {
-                                            circle.classList.add("crossed");
-                                        })
-                                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
-                                    }
-                                    return acc || null;
-                                }, null);
-
-                            }
-                        })
-
-                    }
-                }
-            } else if (!computerPlaying) {
-                if (player2Turn) {
-                    if (tile.classList.contains("onlyTile")) {
-                        tile.classList.add("miss");
-                    } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
-                        tile.classList.add("crossedTile");
-                        if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
-                            clickedShips.push(tile.classList[1].slice(0, -1));
-                        }
-                    } else {
-                        tile.classList.add("crossedTile");
-                        if (clickedShips.indexOf(tile.classList[1]) === -1) {
-                            clickedShips.push(tile.classList[1]);
-                        }
-                    }
-
-                    if (clickedShips.length !== 0) {
-                        clickedShips.forEach((ship) => {
-                            const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
-
-
-                            const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
-                                if (!shipTile.classList.contains("crossedTile")) {
-                                    return false
-                                }
-                                return acc && true
-                            }, true)
-                            if (allHaveBeenClicked) {
-                                let newShip;
-                                shipTiles.forEach((shipTile) => {
-                                    if (shipTile.classList.contains(`${ship}`)) {
-                                        newShip = createShips(ship.split("X")[0]);
-                                        [...newShip.children].forEach((circle) => {
-                                            circle.classList.add("crossed");
-                                        })
-                                        shipTile.parentElement.insertBefore(newShip, shipTile);
-                                        shipTile.parentElement.removeChild(shipTile);
-                                    } else {
-                                        shipTile.parentElement.removeChild(shipTile);
-                                    }
-                                })
-                                getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "opponent");
-                                const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
-                                const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
-                                const pickedShip = dockedShips.reduce((acc, subShip) => {
-                                    if (subShip.classList.contains(shipName) && acc === null) {
-                                        [...subShip.children].forEach((circle) => {
-                                            circle.classList.add("crossed");
-                                        })
-                                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
-                                    }
-                                    return acc || null;
-                                }, null);
-
-                            }
-                        })
-
-                    }
-                }
-            }
-        }
-
-
-        )
-    });
-}
-
-function createOpponentBoardOnPlayer1() {
-    playerIndividualTiles = document.querySelector(".player .tiles");
-
-
-    playerIndividualTiles.addEventListener("click", (event) => {
-        if (player1Turn) {
-            if (event.target.classList.contains("tile")) {
-                if (event.target.classList.contains("miss")) {
-                    player1Turn = false;
-                    player2Turn = true;
-                }
-            }
-        }
-    })
-
-
-
-    // playerIndividualTiles.addEventListener("mouseover", (event) => {
-
-    //     if (player1Turn) {
-    //         if (event.target.classList.contains("tile")) {
-    //             event.target.classList.add(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
-    //         }
-    //     }
-    // })
-
-    // playerIndividualTiles.addEventListener("mouseout", (event) => {
-    //     if (player1Turn) {
-    //         if (event.target.classList.contains("tile")) {
-    //             event.target.classList.remove(`${getTypeOfSquare(`${Array.prototype.indexOf.call(event.target.parentElement.children, event.target)}`.padStart(2, "0"))}`)
-    //         }
-    //     }
-    // })
-
-    playerIndividualTiles.addEventListener("mousemove", (event) => {
-        if (player1Turn && squareMissileP1Active) {
-            const square = playerIndividualTiles.children[playerIndividualTiles.children.length - 1];
+    opponentIndividualTiles.addEventListener("mousemove", (event) => {
+        if (player2Turn && squareMissileP2Active) {
+            const square =
+                opponentIndividualTiles.children[
+                opponentIndividualTiles.children.length - 1
+                ];
             if (square.classList.contains("squareMissile")) {
                 square.remove();
             }
 
-            let { row, col } = getPosition(playerIndividualTiles, event.clientX, event.clientY);
+            let { row, col } = getPosition(
+                opponentIndividualTiles,
+                event.clientX,
+                event.clientY
+            );
             if (row === -1 || col === -1) {
                 return;
             }
@@ -482,23 +354,274 @@ function createOpponentBoardOnPlayer1() {
                 col = 8;
             }
 
-            const box = playerIndividualTiles.getBoundingClientRect()
+            const box = opponentIndividualTiles.getBoundingClientRect();
 
             const squareMissile = document.createElement("div");
             squareMissile.classList.add("squareMissile");
-            squareMissile.style.left = `${9 + 17 - 59 + (41 * col)}px`;
-            squareMissile.style.top = `${17 - 59 + (41 * row)}px`;
-            playerIndividualTiles.appendChild(squareMissile);
+            squareMissile.style.left = `${9 + 17 - 59 + 41 * col}px`;
+            squareMissile.style.top = `${17 - 59 + 41 * row}px`;
+            opponentIndividualTiles.appendChild(squareMissile);
         }
-    })
+    });
 
-    playerIndividualTiles.addEventListener("mouseout", () => {
-        const square = playerIndividualTiles.children[playerIndividualTiles.children.length - 1];
+    opponentIndividualTiles.addEventListener("mouseout", () => {
+        const square =
+            opponentIndividualTiles.children[opponentIndividualTiles.children.length - 1];
         if (square.classList.contains("squareMissile")) {
             square.remove();
         }
-    })
+    });
 
+
+    const { createdBoard, boardArray } = opponentCreateBoard(opponentTiles);
+    tilesOp = document.querySelectorAll(".opponent .tile");
+
+    const clickedShips = [];
+
+    const dockedShips = [...document.querySelectorAll(".opponent .ship")];
+
+    tilesOp.forEach((tile) => {
+        tile.addEventListener("click", () => {
+            if (computerPlaying) {
+                if (playerTurn) {
+                    if (squareMissileP2Active) {
+                        setTimeout(() => {
+                            squareMissileP2Active = false;
+                        }, 0);
+                    }
+
+                    if (lineMissileP2Active) {
+                        setTimeout(() => {
+                            lineMissileP2Active = false;
+                        }, 0)
+                    }
+
+                    if (tile.classList.contains("onlyTile")) {
+                        tile.classList.add("miss");
+                    } else if (
+                        tile.classList[1].split("")[
+                        tile.classList[1].split("").length - 1
+                        ] === "-"
+                    ) {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
+                            clickedShips.push(tile.classList[1].slice(0, -1));
+                        }
+                    } else {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1]) === -1) {
+                            clickedShips.push(tile.classList[1]);
+                        }
+                    }
+
+                    if (clickedShips.length !== 0) {
+                        clickedShips.forEach((ship) => {
+                            const shipTiles = document.querySelectorAll(
+                                `.${ship}, .${ship}-`
+                            );
+
+                            const allHaveBeenClicked = [...shipTiles].reduce(
+                                (acc, shipTile) => {
+                                    if (!shipTile.classList.contains("crossedTile")) {
+                                        return false;
+                                    }
+                                    return acc && true;
+                                },
+                                true
+                            );
+                            if (allHaveBeenClicked) {
+                                let newShip;
+                                shipTiles.forEach((shipTile) => {
+                                    if (shipTile.classList.contains(`${ship}`)) {
+                                        newShip = createShips(ship.split("X")[0]);
+                                        [...newShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        });
+                                        shipTile.parentElement.insertBefore(newShip, shipTile);
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    } else {
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    }
+                                });
+                                getSurroundingDivs(
+                                    newShip.getBoundingClientRect(),
+                                    newShip.classList[0],
+                                    "opponent"
+                                );
+                                const theShip = clickedShips.splice(
+                                    clickedShips.indexOf(ship),
+                                    1
+                                );
+                                const shipName = `${theShip[0].split("X")[0].split("_")[0]
+                                    }_horizontal`;
+                                const pickedShip = dockedShips.reduce((acc, subShip) => {
+                                    if (subShip.classList.contains(shipName) && acc === null) {
+                                        [...subShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        });
+                                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                                    }
+                                    return acc || null;
+                                }, null);
+                            }
+                        });
+                    }
+                }
+            } else if (!computerPlaying) {
+                if (player2Turn) {
+                    if (squareMissileP2Active) {
+                        setTimeout(() => {
+                            squareMissileP2Active = false;
+                        }, 0);
+                    }
+
+                    if (lineMissileP2Active) {
+                        setTimeout(() => {
+                            lineMissileP2Active = false;
+                        }, 0)
+                    }
+
+                    if (tile.classList.contains("onlyTile")) {
+                        tile.classList.add("miss");
+                    } else if (
+                        tile.classList[1].split("")[
+                        tile.classList[1].split("").length - 1
+                        ] === "-"
+                    ) {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
+                            clickedShips.push(tile.classList[1].slice(0, -1));
+                        }
+                    } else {
+                        tile.classList.add("crossedTile");
+                        if (clickedShips.indexOf(tile.classList[1]) === -1) {
+                            clickedShips.push(tile.classList[1]);
+                        }
+                    }
+
+                    if (clickedShips.length !== 0) {
+                        clickedShips.forEach((ship) => {
+                            const shipTiles = document.querySelectorAll(
+                                `.${ship}, .${ship}-`
+                            );
+
+                            const allHaveBeenClicked = [...shipTiles].reduce(
+                                (acc, shipTile) => {
+                                    if (!shipTile.classList.contains("crossedTile")) {
+                                        return false;
+                                    }
+                                    return acc && true;
+                                },
+                                true
+                            );
+                            if (allHaveBeenClicked) {
+                                let newShip;
+                                shipTiles.forEach((shipTile) => {
+                                    if (shipTile.classList.contains(`${ship}`)) {
+                                        newShip = createShips(ship.split("X")[0]);
+                                        [...newShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        });
+                                        shipTile.parentElement.insertBefore(newShip, shipTile);
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    } else {
+                                        shipTile.parentElement.removeChild(shipTile);
+                                    }
+                                });
+                                getSurroundingDivs(
+                                    newShip.getBoundingClientRect(),
+                                    newShip.classList[0],
+                                    "opponent"
+                                );
+                                const theShip = clickedShips.splice(
+                                    clickedShips.indexOf(ship),
+                                    1
+                                );
+                                const shipName = `${theShip[0].split("X")[0].split("_")[0]
+                                    }_horizontal`;
+                                const pickedShip = dockedShips.reduce((acc, subShip) => {
+                                    if (subShip.classList.contains(shipName) && acc === null) {
+                                        [...subShip.children].forEach((circle) => {
+                                            circle.classList.add("crossed");
+                                        });
+                                        return dockedShips.splice(dockedShips.indexOf(subShip), 1);
+                                    }
+                                    return acc || null;
+                                }, null);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    });
+}
+
+function createOpponentBoardOnPlayer1() {
+    playerIndividualTiles = document.querySelector(".player .tiles");
+
+    playerIndividualTiles.addEventListener("click", (event) => {
+        if (player1Turn) {
+            if (event.target.classList.contains("tile")) {
+                if (event.target.classList.contains("miss")) {
+                    player1Turn = false;
+                    player2Turn = true;
+                }
+            }
+
+            playerTiles.classList.remove(...playerTiles.classList);
+            playerTiles.classList.add("tiles");
+        }
+    });
+
+    playerIndividualTiles.addEventListener("mousemove", (event) => {
+        if (player1Turn && squareMissileP1Active) {
+            const square =
+                playerIndividualTiles.children[
+                playerIndividualTiles.children.length - 1
+                ];
+            if (square.classList.contains("squareMissile")) {
+                square.remove();
+            }
+
+            let { row, col } = getPosition(
+                playerIndividualTiles,
+                event.clientX,
+                event.clientY
+            );
+            if (row === -1 || col === -1) {
+                return;
+            }
+            if (row === 0) {
+                row = 1;
+            }
+            if (row === 9) {
+                row = 8;
+            }
+            if (col === 0) {
+                col = 1;
+            }
+            if (col === 9) {
+                col = 8;
+            }
+
+            const box = playerIndividualTiles.getBoundingClientRect();
+
+            const squareMissile = document.createElement("div");
+            squareMissile.classList.add("squareMissile");
+            squareMissile.style.left = `${9 + 17 - 59 + 41 * col}px`;
+            squareMissile.style.top = `${17 - 59 + 41 * row}px`;
+            playerIndividualTiles.appendChild(squareMissile);
+        }
+    });
+
+    playerIndividualTiles.addEventListener("mouseout", () => {
+        const square =
+            playerIndividualTiles.children[playerIndividualTiles.children.length - 1];
+        if (square.classList.contains("squareMissile")) {
+            square.remove();
+        }
+    });
 
     const { createdBoard, boardArray } = opponentCreateBoard(playerTiles);
     tilesOp1 = document.querySelectorAll(".player .tile");
@@ -515,12 +638,19 @@ function createOpponentBoardOnPlayer1() {
                         squareMissileP1Active = false;
                     }, 0);
                 }
+
                 if (lineMissileP1Active) {
-                    lineMissileP1Active = false;
+                    setTimeout(() => {
+                        lineMissileP1Active = false;
+                    }, 0)
                 }
                 if (tile.classList.contains("onlyTile")) {
                     tile.classList.add("miss");
-                } else if (tile.classList[1].split("")[tile.classList[1].split("").length - 1] === "-") {
+                } else if (
+                    tile.classList[1].split("")[
+                    tile.classList[1].split("").length - 1
+                    ] === "-"
+                ) {
                     tile.classList.add("crossedTile");
                     if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
                         clickedShips.push(tile.classList[1].slice(0, -1));
@@ -536,12 +666,15 @@ function createOpponentBoardOnPlayer1() {
                     clickedShips.forEach((ship) => {
                         const shipTiles = document.querySelectorAll(`.${ship}, .${ship}-`);
 
-                        const allHaveBeenClicked = [...shipTiles].reduce((acc, shipTile) => {
-                            if (!shipTile.classList.contains("crossedTile")) {
-                                return false
-                            }
-                            return acc && true
-                        }, true)
+                        const allHaveBeenClicked = [...shipTiles].reduce(
+                            (acc, shipTile) => {
+                                if (!shipTile.classList.contains("crossedTile")) {
+                                    return false;
+                                }
+                                return acc && true;
+                            },
+                            true
+                        );
                         if (allHaveBeenClicked) {
                             let newShip;
                             shipTiles.forEach((shipTile) => {
@@ -549,75 +682,253 @@ function createOpponentBoardOnPlayer1() {
                                     newShip = createShips(ship.split("X")[0]);
                                     [...newShip.children].forEach((circle) => {
                                         circle.classList.add("crossed");
-                                    })
+                                    });
                                     shipTile.parentElement.insertBefore(newShip, shipTile);
                                     shipTile.parentElement.removeChild(shipTile);
                                 } else {
                                     shipTile.parentElement.removeChild(shipTile);
                                 }
-                            })
-                            getSurroundingDivs(newShip.getBoundingClientRect(), newShip.classList[0], "player");
-                            const theShip = clickedShips.splice(clickedShips.indexOf(ship), 1);
-                            const shipName = `${theShip[0].split("X")[0].split("_")[0]}_horizontal`;
+                            });
+                            getSurroundingDivs(
+                                newShip.getBoundingClientRect(),
+                                newShip.classList[0],
+                                "player"
+                            );
+                            const theShip = clickedShips.splice(
+                                clickedShips.indexOf(ship),
+                                1
+                            );
+                            const shipName = `${theShip[0].split("X")[0].split("_")[0]
+                                }_horizontal`;
                             const pickedShip = dockedShips.reduce((acc, subShip) => {
                                 if (subShip.classList.contains(shipName) && acc === null) {
                                     [...subShip.children].forEach((circle) => {
                                         circle.classList.add("crossed");
-                                    })
+                                    });
                                     return dockedShips.splice(dockedShips.indexOf(subShip), 1);
                                 }
                                 return acc || null;
                             }, null);
-
                         }
-                    })
-
+                    });
                 }
             }
-        })
+        });
     });
 }
 
-
-
-opponentCreate.addEventListener("click", createOpponentBoardOnPlayer2.bind(null, true))
-
-
+opponentCreate.addEventListener(
+    "click",
+    createOpponentBoardOnPlayer2.bind(null, true)
+);
 
 const shipsThatHit = [];
 
-let tilesOverlayArray =
-    [
-        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
-        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
-        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
-        "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
-        "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
-        "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
-        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
-    ];
+let tilesOverlayArray = [
+    "00",
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51",
+    "52",
+    "53",
+    "54",
+    "55",
+    "56",
+    "57",
+    "58",
+    "59",
+    "60",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "66",
+    "67",
+    "68",
+    "69",
+    "70",
+    "71",
+    "72",
+    "73",
+    "74",
+    "75",
+    "76",
+    "77",
+    "78",
+    "79",
+    "80",
+    "81",
+    "82",
+    "83",
+    "84",
+    "85",
+    "86",
+    "87",
+    "88",
+    "89",
+    "90",
+    "91",
+    "92",
+    "93",
+    "94",
+    "95",
+    "96",
+    "97",
+    "98",
+    "99",
+];
 
-const tilesOverlayArrayP2 =
-    [
-        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
-        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
-        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
-        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
-        "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
-        "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
-        "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
-        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
-    ];
-
-
-
-
-
+const tilesOverlayArrayP2 = [
+    "00",
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "37",
+    "38",
+    "39",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51",
+    "52",
+    "53",
+    "54",
+    "55",
+    "56",
+    "57",
+    "58",
+    "59",
+    "60",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "66",
+    "67",
+    "68",
+    "69",
+    "70",
+    "71",
+    "72",
+    "73",
+    "74",
+    "75",
+    "76",
+    "77",
+    "78",
+    "79",
+    "80",
+    "81",
+    "82",
+    "83",
+    "84",
+    "85",
+    "86",
+    "87",
+    "88",
+    "89",
+    "90",
+    "91",
+    "92",
+    "93",
+    "94",
+    "95",
+    "96",
+    "97",
+    "98",
+    "99",
+];
 
 function computerClicker() {
     if (tilesOverlayDivsCopy.length === 0) {
@@ -626,7 +937,11 @@ function computerClicker() {
     let chosenTileDiv;
     // if (shipsThatHit.length !== 0) {
     if (!checkIfAllHitsFinished(tilesOverlayArray)) {
-        const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, 0);
+        const { myTilesOverlay, tile, surroundingTiles } = shoot(
+            tilesOverlayArray,
+            playerBoard.boardArray,
+            0
+        );
         tilesOverlayArray = myTilesOverlay;
         chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
             if (tileOv.classList[0] === `${tile}`) {
@@ -634,64 +949,68 @@ function computerClicker() {
             }
             return acc;
         }, null);
-        console.log("the chosen div is", chosenTileDiv)
+        console.log("the chosen div is", chosenTileDiv);
         chosenTileDiv.click();
-        if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
-            computerClicker()
+        if (
+            isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
+        ) {
+            computerClicker();
         } else {
             playerTurn = true;
         }
 
-
-        const missDivs = surroundingTiles.map(((num) => {
+        const missDivs = surroundingTiles.map((num) => {
             const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
                 if (value.classList[0] === num) {
                     return tilesOverlayDivsCopy.splice(index, 1)[0];
                 }
-                return acc
-            }, null)
+                return acc;
+            }, null);
             return theDiv;
-        }))
+        });
         missDivs.forEach((div) => {
             if (div !== null) {
-                div.click()
+                div.click();
             }
-        })
-
+        });
     } else {
         const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
         chosenTileDiv = chosenTile;
         const myRandomNumber = chosenTileDiv.classList[0];
-        const { myTilesOverlay, tile, surroundingTiles } = shoot(tilesOverlayArray, playerBoard.boardArray, myRandomNumber);
+        const { myTilesOverlay, tile, surroundingTiles } = shoot(
+            tilesOverlayArray,
+            playerBoard.boardArray,
+            myRandomNumber
+        );
         tilesOverlayArray = myTilesOverlay;
-        console.log("the chosen div is", chosenTileDiv, tilesOverlayDivsCopy)
+        console.log("the chosen div is", chosenTileDiv, tilesOverlayDivsCopy);
         chosenTileDiv.click();
-        if (isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])) {
+        if (
+            isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
+        ) {
             playerTurn = false;
-            computerClicker()
-
+            computerClicker();
         } else {
             playerTurn = true;
         }
 
         // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
 
-        const missDivs = surroundingTiles.map(((num) => {
+        const missDivs = surroundingTiles.map((num) => {
             const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
                 if (value.classList[0] === num) {
                     return tilesOverlayDivsCopy.splice(index, 1)[0];
                 }
-                return acc
-            }, null)
+                return acc;
+            }, null);
             return theDiv;
-        }))
+        });
         missDivs.forEach((div) => {
             if (div !== null) {
-                div.click()
+                div.click();
             }
-        })
+        });
     }
-
 }
 
 function startComputerClicker() {
@@ -720,69 +1039,80 @@ function clicker() {
     chosen.chosenTile.click();
 }
 
-
-
-
 tilesOverlayDivs.forEach((tile) => {
-    tilesOverlayDivsCopy = [...tilesOverlayDivsCopy]
-    tile.addEventListener("click", () => {
-        const box = tile.getBoundingClientRect();
-        [...thePlayerTiles[0].children].forEach((playerTile) => {
-            if (isPointInsideDiv(playerTile, box.x + box.width / 2, box.y + box.height / 2)) {
-                const xValue = box.x + box.width / 2;
-                const yValue = box.y + box.height / 2;
-                const clickEvent = new MouseEvent("click", {
-                    clientX: xValue,
-                    clientY: yValue,
-                    bubbles: true,
-                });
-                playerTile.dispatchEvent(clickEvent);
+    tilesOverlayDivsCopy = [...tilesOverlayDivsCopy];
+    tile.addEventListener(
+        "click",
+        () => {
+            const box = tile.getBoundingClientRect();
+            [...thePlayerTiles[0].children].forEach((playerTile) => {
+                if (
+                    isPointInsideDiv(
+                        playerTile,
+                        box.x + box.width / 2,
+                        box.y + box.height / 2
+                    )
+                ) {
+                    const xValue = box.x + box.width / 2;
+                    const yValue = box.y + box.height / 2;
+                    const clickEvent = new MouseEvent("click", {
+                        clientX: xValue,
+                        clientY: yValue,
+                        bubbles: true,
+                    });
+                    console.log("playertile", playerTile);
+                    playerTile.dispatchEvent(clickEvent);
 
-                // takeOutClickedTiles(tilesOverlayDivsCopy);
+                    // takeOutClickedTiles(tilesOverlayDivsCopy);
 
-                const isPlayerFullyClicked = [...playerTile.children].reduce((acc, circle) => {
-                    if (!circle.classList.contains("crossed")) {
-                        return false;
-                    }
-                    return acc && true;
-                }, true)
+                    const isPlayerFullyClicked = [...playerTile.children].reduce(
+                        (acc, circle) => {
+                            if (!circle.classList.contains("crossed")) {
+                                return false;
+                            }
+                            return acc && true;
+                        },
+                        true
+                    );
 
-
-                if (!playerTile.classList.contains("tile")) {
-                    if (isPlayerFullyClicked) {
-                        shipsThatHit.pop();
-                    } else if (shipsThatHit.indexOf(playerTile) === -1) {
-                        const [row, col] = tile.classList[0].split("").map((string) => parseInt(string, 10));
-                        shipsThatHit.push({
-                            ship: playerTile,
-                            shouldClick: [`${row}${col + 1}`, `${row}${col - 1}`],
-                            alignment: "horizontal",
-                            start: tile.classList[0]
-                        })
+                    if (!playerTile.classList.contains("tile")) {
+                        if (isPlayerFullyClicked) {
+                            shipsThatHit.pop();
+                        } else if (shipsThatHit.indexOf(playerTile) === -1) {
+                            const [row, col] = tile.classList[0]
+                                .split("")
+                                .map((string) => parseInt(string, 10));
+                            shipsThatHit.push({
+                                ship: playerTile,
+                                shouldClick: [`${row}${col + 1}`, `${row}${col - 1}`],
+                                alignment: "horizontal",
+                                start: tile.classList[0],
+                            });
+                        }
                     }
                 }
-            }
-        })
-    }, false)
-})
+            });
+        },
+        false
+    );
+});
 
 function isPointInsideDiv(div, x, y) {
     const rect = div.getBoundingClientRect();
-    return (
-        x >= rect.left &&
-        x <= rect.right &&
-        y >= rect.top &&
-        y <= rect.bottom
-    );
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }
-
-
 
 function takeOutClickedTiles(overlayedTiles) {
     overlayedTiles.forEach((tile) => {
         const box = tile.getBoundingClientRect();
         [...thePlayerTiles[0].children].forEach((playerTile) => {
-            if (isPointInsideDiv(playerTile, box.x + box.width / 2, box.y + box.height / 2)) {
+            if (
+                isPointInsideDiv(
+                    playerTile,
+                    box.x + box.width / 2,
+                    box.y + box.height / 2
+                )
+            ) {
                 if (playerTile.classList.contains("miss")) {
                     // const index = [overlayedTiles].reduce((acc, tileOv, ind) => {
                     //     if (tileOv.classList[0] === tile.classList[0]) {
@@ -793,22 +1123,15 @@ function takeOutClickedTiles(overlayedTiles) {
                     overlayedTiles.splice(overlayedTiles.indexOf(tile), 1);
                 }
             }
-        })
-    }
-    )
+        });
+    });
 }
-
-
-
-
-
-
 
 function playGamePVE() {
     const clickEvent = new MouseEvent("click", {
         bubbles: true, // Simulates a user click
         cancelable: true, // Allows default behavior to be prevented
-        view: window
+        view: window,
     });
 
     // opponentCreate.dispatchEvent(clickEvent);
@@ -825,7 +1148,7 @@ function playGamePVP() {
     const clickEvent = new MouseEvent("click", {
         bubbles: true, // Simulates a user click
         cancelable: true, // Allows default behavior to be prevented
-        view: window
+        view: window,
     });
 
     computerPlaying = false;
@@ -834,18 +1157,15 @@ function playGamePVP() {
     createOpponentBoardOnPlayer2(false);
     document.querySelectorAll("player .tile").forEach((tile) => {
         tile.addEventListener("click", (e) => {
-            console.log(tile)
+            console.log(tile);
             if (e.target.classList.contains("overlay")) {
-                console.log(e.target)
+                console.log(e.target);
             }
-        })
-    })
-
-
-
+        });
+    });
 }
 
-pvp.addEventListener("click", playGamePVP)
+pvp.addEventListener("click", playGamePVP);
 
 squareMissileButton.addEventListener("click", (e) => {
     lineMissileP1Active = false;
@@ -854,61 +1174,83 @@ squareMissileButton.addEventListener("click", (e) => {
         playerTiles.classList.add("tiles");
     }
     squareMissileP1Active = !squareMissileP1Active;
-
-})
+});
 
 lineMissileButton.addEventListener("click", () => {
     squareMissileP1Active = false;
-    lineMissileP1Active = !lineMissileP1Active;
-    if (!lineMissileP1Active) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
+
+    setTimeout(() => {
+        lineMissileP1Active = !lineMissileP1Active;
+        if (!lineMissileP1Active) {
+            playerTiles.classList.remove(...playerTiles.classList);
+            playerTiles.classList.add("tiles");
+        }
+    }, 0);
+});
+
+squareMissileButton2.addEventListener("click", (e) => {
+    lineMissileP2Active = false;
+    if (!lineMissileP2Active) {
+        opponentTiles.classList.remove(...opponentTiles.classList);
+        opponentTiles.classList.add("tiles");
     }
+    squareMissileP2Active = !squareMissileP2Active;
+});
 
+lineMissileButton2.addEventListener("click", () => {
+    squareMissileP2Active = false;
 
-})
+    setTimeout(() => {
+        lineMissileP2Active = !lineMissileP2Active;
+        if (!lineMissileP2Active) {
+            opponentTiles.classList.remove(...opponentTiles.classList);
+            opponentTiles.classList.add("tiles");
+        }
+    }, 0);
+});
 
 playerTiles.addEventListener("mousemove", (event) => {
     if (lineMissileP1Active) {
         const { col, row } = getPosition(playerTiles, event.clientX, event.clientY);
         lineMissile(playerTiles, col, row, player1LineMissileAlignment);
     }
-})
+});
 
-// player1Overlays.forEach((tile) => {
-//     tile.addEventListener("click", () => {
-//         console.log("clicked")
-//         if (squareMissileP1Active) {
-//             const squareTiles = getSquareTiles(tile.classList[1]);
-//             squareTiles.forEach((squareTile) => {
-//                 shoot(tilesOverlayArray, playerBoard.boardArray, squareTile, true);
-//             })
-//         }
-//     })
-// })
+opponentTiles.addEventListener("mousemove", (event) => {
+    if (lineMissileP2Active) {
+        const { col, row } = getPosition(opponentTiles, event.clientX, event.clientY);
+        lineMissile(opponentTiles, col, row, player2LineMissileAlignment);
+    }
+});
 
 playerIndividualTiles.forEach((tile) => {
-    console.log(tile)
+    console.log(tile);
 
     tile.addEventListener("click", (e) => {
-        console.log(tile)
+        console.log(tile);
         if (e.target.classList.contains("overlay")) {
-            console.log(e.target)
+            console.log(e.target);
         }
-    })
-})
+    });
+});
 
 playerTiles.addEventListener("click", (e) => {
-    console.log("clicked", squareMissileP1Active)
-    if (squareMissileP1Active) {
+    if (squareMissileP1Active || lineMissileP1Active) {
         const tile = [...player1Overlays].reduce((acc, value) => {
             const box = value.getBoundingClientRect();
-            if (e.clientX > box.left && e.clientX < box.right && e.clientY > box.top && e.clientY < box.bottom) {
-                acc = value;
+
+            if (
+                e.clientX > box.left &&
+                e.clientX < box.right &&
+                e.clientY > box.top &&
+                e.clientY < box.bottom
+            ) {
+                acc = value.classList[0];
                 return acc;
             }
             return acc;
         }, null);
+
         if (tile === null) {
             return;
         }
@@ -916,17 +1258,212 @@ playerTiles.addEventListener("click", (e) => {
         const clickEvent = new MouseEvent("click", {
             bubbles: true, // Simulates a user click
             cancelable: true, // Allows default behavior to be prevented
-            view: window
+            view: window,
         });
-        const allTiles = getSquareTiles(tile);
-        allTiles.forEach(chosenTile => chosenTile.dispatchEvent(clickEvent));
+
+        eachPlayerTile = document.querySelectorAll(".player .tile");
+
+        if (squareMissileP1Active) {
+            const allTiles = getSquareTiles(tile);
+
+            allTiles.forEach((chosenTile) => {
+                const tileDiv = [...player1Overlays].reduce((acc, value) => {
+                    if (value.classList[0] === chosenTile) {
+                        acc = value;
+                        return acc;
+                    }
+                    return acc;
+                }, null);
+
+                if (!tileDiv) {
+                    return;
+                }
+
+                const box = tileDiv.getBoundingClientRect();
+                const centerX = box.left + box.width / 2;
+                const centerY = box.top + box.height / 2;
+                playerTiles.classList.add("tiles");
+
+                const playerTile = [...eachPlayerTile].reduce((acc, value) => {
+                    const valueBox = value.getBoundingClientRect();
+                    if (
+                        centerX > valueBox.left &&
+                        centerX < valueBox.right &&
+                        centerY > valueBox.top &&
+                        centerY < valueBox.bottom
+                    ) {
+                        return value;
+                    }
+                    return acc;
+                }, null);
+
+                if (playerTile) {
+                    playerTile.dispatchEvent(clickEvent);
+                    player1Turn = true;
+                }
+            });
+        }
+
+        if (lineMissileP1Active) {
+            const allTiles = getLineTiles(tile, player1LineMissileAlignment);
+
+            allTiles.forEach((chosenTile) => {
+                const tileDiv = [...player1Overlays].reduce((acc, value) => {
+                    if (value.classList[0] === chosenTile) {
+                        acc = value;
+                        return acc;
+                    }
+                    return acc;
+                }, null);
+
+                if (!tileDiv) {
+                    return;
+                }
+
+                const box = tileDiv.getBoundingClientRect();
+                const centerX = box.left + box.width / 2;
+                const centerY = box.top + box.height / 2;
+                playerTiles.classList.add("tiles");
+
+                const playerTile = [...eachPlayerTile].reduce((acc, value) => {
+                    const valueBox = value.getBoundingClientRect();
+                    if (
+                        centerX > valueBox.left &&
+                        centerX < valueBox.right &&
+                        centerY > valueBox.top &&
+                        centerY < valueBox.bottom
+                    ) {
+                        return value;
+                    }
+                    return acc;
+                }, null);
+
+                if (playerTile) {
+                    playerTile.dispatchEvent(clickEvent);
+                    player1Turn = true;
+                }
+            });
+        }
     }
-})
+});
+
+opponentTiles.addEventListener("click", (e) => {
+    if (squareMissileP2Active || lineMissileP2Active) {
+        const tile = [...player2Overlays].reduce((acc, value) => {
+            const box = value.getBoundingClientRect();
+
+            if (
+                e.clientX > box.left &&
+                e.clientX < box.right &&
+                e.clientY > box.top &&
+                e.clientY < box.bottom
+            ) {
+                acc = value.classList[0];
+                return acc;
+            }
+            return acc;
+        }, null);
+
+        if (tile === null) {
+            return;
+        }
+
+        const clickEvent = new MouseEvent("click", {
+            bubbles: true, // Simulates a user click
+            cancelable: true, // Allows default behavior to be prevented
+            view: window,
+        });
+
+        eachPlayerTile = document.querySelectorAll(".opponent .tile");
+
+        if (squareMissileP2Active) {
+            const allTiles = getSquareTiles(tile);
+
+            allTiles.forEach((chosenTile) => {
+                const tileDiv = [...player2Overlays].reduce((acc, value) => {
+                    if (value.classList[0] === chosenTile) {
+                        acc = value;
+                        return acc;
+                    }
+                    return acc;
+                }, null);
+
+                if (!tileDiv) {
+                    return;
+                }
+
+                const box = tileDiv.getBoundingClientRect();
+                const centerX = box.left + box.width / 2;
+                const centerY = box.top + box.height / 2;
+                opponentTiles.classList.add("tiles");
+
+                const playerTile = [...eachPlayerTile].reduce((acc, value) => {
+                    const valueBox = value.getBoundingClientRect();
+                    if (
+                        centerX > valueBox.left &&
+                        centerX < valueBox.right &&
+                        centerY > valueBox.top &&
+                        centerY < valueBox.bottom
+                    ) {
+                        return value;
+                    }
+                    return acc;
+                }, null);
+
+                if (playerTile) {
+                    playerTile.dispatchEvent(clickEvent);
+                    player2Turn = true;
+                }
+            });
+        }
+
+        if (lineMissileP2Active) {
+            const allTiles = getLineTiles(tile, player2LineMissileAlignment);
+
+            allTiles.forEach((chosenTile) => {
+                const tileDiv = [...player2Overlays].reduce((acc, value) => {
+                    if (value.classList[0] === chosenTile) {
+                        acc = value;
+                        return acc;
+                    }
+                    return acc;
+                }, null);
+
+                if (!tileDiv) {
+                    return;
+                }
+
+                const box = tileDiv.getBoundingClientRect();
+                const centerX = box.left + box.width / 2;
+                const centerY = box.top + box.height / 2;
+                opponentTiles.classList.add("tiles");
+
+                const playerTile = [...eachPlayerTile].reduce((acc, value) => {
+                    const valueBox = value.getBoundingClientRect();
+                    if (
+                        centerX > valueBox.left &&
+                        centerX < valueBox.right &&
+                        centerY > valueBox.top &&
+                        centerY < valueBox.bottom
+                    ) {
+                        return value;
+                    }
+                    return acc;
+                }, null);
+
+                if (playerTile) {
+                    playerTile.dispatchEvent(clickEvent);
+                    player2Turn = true;
+                }
+            });
+        }
+    }
+});
+
+// .opponentTiles.addEventListener("click", (e) => {
+
+// })
 
 // setInterval(() => {
 //     console.log(squareMissileP1Active)
 // }, 500)
-
-document.addEventListener("click", () => {
-    console.log(playerTurn);
-})

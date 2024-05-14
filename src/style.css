@@ -86,6 +86,7 @@
             display: flex;
             flex-direction: column;
             
+            /*try to take out teh height to make it more responsive, make it like it is but only with padding, then it will be responive*/
 
             .name {
                 flex: 0.15;
@@ -840,10 +841,555 @@
 
         .player {
             background-color: #4D89D0;
+            position: relative;
+
+            .buttons {
+                position: absolute;
+                left: -15rem;
+                top: 50%;
+                transform: translateY(-50%);   
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+
+                /* &.notStarted > .inGame{
+                    display: none;
+                }
+
+                &.started > .startScreen{
+                    display: none;
+                } */
+
+                .randomize {
+                    height: 4.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    &.pvp {
+                        display: none;
+                    }
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                }
+    
+                .reset {
+                    height: 4.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                    
+                }
+
+                .bomb {
+                    height: 5.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    svg {
+                        margin-top: -0.75rem;
+                    }
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                }
+
+                .airforce {
+                    height: 5.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    svg {
+                        margin-bottom: -1.6rem;
+                    }
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                    
+                }
+            }
         }
 
         .opponent {
             background-color: #239A98;
+            position: relative;
+
+            .buttons {
+                position: absolute;
+                right: -15rem;
+                top: 50%;
+                transform: translateY(-50%);   
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+
+                /* &.notStarted > .inGame{
+                    display: none;
+                }
+
+                &.started > .startScreen{
+                    display: none;
+                } */
+
+                .pvc {
+                    height: 4.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    svg {
+                        margin-bottom: -1rem;
+                    }
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                }
+    
+                .pvsp {
+                    height: 4.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                }
+
+                .start {
+                    height: 4.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                }
+
+                .bomb {
+                    height: 5.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    svg {
+                        margin-top: -0.75rem;
+                    }
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                }
+
+                .airforce {
+                    height: 5.5rem;
+                    width: 13rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+                    font-size: 1.5rem;
+                    font-family: myBold;
+                    gap: 1rem;
+                    cursor: pointer;
+                    box-shadow: 5px 5px 5px rgb(0 0 0 / 25%);
+                    outline: 4px solid #DE4D86;
+
+                    svg {
+                        margin-bottom: -1.6rem;
+                    }
+
+                    &.notClicked {
+                        background-color: white;
+                        color: #DE4D86;
+                        transition: background-color 0.33s ease;
+                        transition: color 0.3s ease;
+                        
+                        svg {
+                            path {
+                                fill: #DE4D86;
+                                transition: fill 0.3s ease;
+                            }
+                        }
+        
+                        &:hover {
+                            background-color: #DE4D86;
+                            color: white;
+        
+                            svg {
+                                path {
+                                    fill: white;
+        
+                                }
+                            }   
+                        }   
+                    }
+        
+                    &.clicked {
+                        background-color: #DE4D86;
+                        color: white;
+                        box-shadow: 3px 3px 3px rgb(0 0 0 / 25%);
+                        
+                        svg {
+                            path {
+                                fill: white;
+                            }
+                        } 
+                    }
+                    
+                }
+            }
+        
         }
     }
 }
@@ -923,6 +1469,44 @@
     height: 60px;
     position: absolute;
     right: 700px;
+    top: 100%;
+    transform: translateY(-50%);
+    background-color: #D31CD7;
+    border-radius: 5px;
+    box-shadow: 5px 2px 5px rgb(0 0 0 / 25%);
+    cursor: pointer;
+    color: white;
+    font-family: myBold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.75rem;
+}
+
+.square_missile_button2 {
+    width: 120px;
+    height: 60px;
+    position: absolute;
+    right: 900px;
+    top: 100%;
+    transform: translateY(-50%);
+    background-color: #D31CD7;
+    border-radius: 5px;
+    box-shadow: 5px 2px 5px rgb(0 0 0 / 25%);
+    cursor: pointer;
+    color: white;
+    font-family: myBold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.75rem;
+}
+
+.line_missile_button2 {
+    width: 120px;
+    height: 60px;
+    position: absolute;
+    right: 1100px;
     top: 100%;
     transform: translateY(-50%);
     background-color: #D31CD7;

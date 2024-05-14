@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare, getSquareTiles } from "./board.js";
+import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare, getSquareTiles, getLineTiles } from "./board.js";
 
 
 describe("insertion tests", () => {
@@ -3181,5 +3181,12 @@ describe("missile tests", () => {
     expect(getSquareTiles("99")).toEqual(["77", "78", "79", "87", "88", "89", "97", "98", "99"]);
 
     expect(getSquareTiles("90")).toEqual(["70", "71", "72", "80", "81", "82", "90", "91", "92"]);
+  })
+
+  test("line missiles array test", () => {
+    
+    expect(getLineTiles("44", "vertical")).toEqual(["04", "14", "24", "34", "44", "54", "64", "74", "84", "94"]);
+
+    expect(getLineTiles("44", "horizontal")).toEqual(["40", "41", "42", "43", "44", "45", "46", "47", "48", "49"]);
   })
 })

@@ -1682,9 +1682,29 @@ export function getSquareTiles(tile) {
   squareTiles.push(`${row}${col - 1}`);
   squareTiles.push(`${row}${col}`);
   squareTiles.push(`${row}${col + 1}`);
-  console.log("the tile",row, col)
   squareTiles.push(`${row + 1}${col - 1}`);
   squareTiles.push(`${row + 1}${col}`);
   squareTiles.push(`${row + 1}${col + 1}`);
   return squareTiles;
 }
+
+export function getLineTiles(tile, alignment) {
+  const [row, col] = tile.split("").map(num => parseInt(num, 10));
+  const tiles = [];
+
+  if (alignment === "vertical") {
+    for (let i = 0; i < 10; i += 1) {
+      tiles.push(`${i}${col}`);
+    }
+  } else if (alignment === "horizontal") {
+    for (let i = 0; i < 10; i += 1) {
+      tiles.push(`${row}${i}`);
+    }
+  }
+
+  return tiles;
+}
+
+// export function singluarClick(tilesOverlay, boardArray, number) {
+
+// }
