@@ -124,6 +124,8 @@ pvp.addEventListener("click", () => {
     selfCreate.classList.add("pvp");
     reset.classList.add("pvp");
 
+    playGamePVP();
+
 })
 
 button.addEventListener("click", () => {
@@ -155,6 +157,7 @@ start.addEventListener("click", () => {
 
     if (button.classList.contains("clicked")) {
         playerSquares.classList.add("notClickable");
+
     }
 
 })
@@ -417,7 +420,7 @@ function createPlayer1Board() {
             }
 
             e.stopPropagation();
-        });
+        }); 
     });
 }
 
@@ -426,38 +429,73 @@ selfCreate.addEventListener("click", createPlayer1Board);
 function createOpponentBoardOnPlayer2(withComputerClicker) {
     opponentIndividualTiles = document.querySelector(".opponent .tiles");
 
-    if (computerPlaying) {
-        opponentIndividualTiles.addEventListener("click", (event) => {
-            if (playerTurn) {
-                if (event.target.classList.contains("tile")) {
-                    if (event.target.classList.contains("miss")) {
-                        playerTurn = false;
-                        playerSquares.classList.remove("notClickable");
-                        computerClicker();
-                        playerSquares.classList.add("notClickable");
+    opponentIndividualTiles.addEventListener("click", (event) => {
+        if (computerPlaying) {
+                if (playerTurn) {
+                    if (event.target.classList.contains("tile")) {
+                        if (event.target.classList.contains("miss")) {
+                            playerTurn = false;
+                            playerSquares.classList.remove("notClickable");
+                            computerClicker();
+                            playerSquares.classList.add("notClickable");
+                            console.log("player squares changed");
+                        }
                     }
                 }
-            }
-
-            opponentTiles.classList.remove(...opponentTiles.classList);
-            opponentTiles.classList.add("tiles");
-        });
-    } else {
-        opponentIndividualTiles.addEventListener("click", (event) => {
-            if (player2Turn) {
-                if (event.target.classList.contains("tile")) {
-                    console.log(event.target);
-                    if (event.target.classList.contains("miss")) {
-                        player2Turn = false;
-                        player1Turn = true;
+    
+                opponentTiles.classList.remove(...opponentTiles.classList);
+                opponentTiles.classList.add("tiles");
+            
+        } else {
+            
+                if (player2Turn) {
+                    if (event.target.classList.contains("tile")) {
+                        if (event.target.classList.contains("miss")) {
+                            player2Turn = false;
+                            player1Turn = true;
+                        }
                     }
                 }
-            }
+    
+                opponentTiles.classList.remove(...opponentTiles.classList);
+                opponentTiles.classList.add("tiles");
+            
+        }
+    })
 
-            opponentTiles.classList.remove(...opponentTiles.classList);
-            opponentTiles.classList.add("tiles");
-        });
-    }
+
+    // if (computerPlaying) {
+    //     opponentIndividualTiles.addEventListener("click", (event) => {
+    //         if (playerTurn) {
+    //             if (event.target.classList.contains("tile")) {
+    //                 if (event.target.classList.contains("miss")) {
+    //                     playerTurn = false;
+    //                     playerSquares.classList.remove("notClickable");
+    //                     computerClicker();
+    //                     playerSquares.classList.add("notClickable");
+    //                     console.log("player squares changed");
+    //                 }
+    //             }
+    //         }
+
+    //         opponentTiles.classList.remove(...opponentTiles.classList);
+    //         opponentTiles.classList.add("tiles");
+    //     });
+    // } else {
+    //     opponentIndividualTiles.addEventListener("click", (event) => {
+    //         if (player2Turn) {
+    //             if (event.target.classList.contains("tile")) {
+    //                 if (event.target.classList.contains("miss")) {
+    //                     player2Turn = false;
+    //                     player1Turn = true;
+    //                 }
+    //             }
+    //         }
+
+    //         opponentTiles.classList.remove(...opponentTiles.classList);
+    //         opponentTiles.classList.add("tiles");
+    //     });
+    // }
 
     opponentIndividualTiles.addEventListener("mousemove", (event) => {
         if (player2Turn && squareMissileP2Active) {
@@ -1119,7 +1157,6 @@ function computerClicker() {
             myRandomNumber
         );
         tilesOverlayArray = myTilesOverlay;
-        console.log("the chosen div is", chosenTileDiv, tilesOverlayDivsCopy);
         chosenTileDiv.click();
         if (
             isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
@@ -1289,7 +1326,7 @@ function playGamePVP() {
     });
 }
 
-pvp.addEventListener("click", playGamePVP);
+
 
 playerTiles.addEventListener("mousemove", (event) => {
     if (lineMissileP1Active) {
