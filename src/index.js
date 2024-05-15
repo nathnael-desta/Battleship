@@ -100,6 +100,8 @@ let player2LineMissileAlignment = "horizontal";
 
 let computerPlaying = false;
 
+let gameStarted = false;
+
 const missileShot = false;
 
 let pvcState = true;
@@ -146,6 +148,8 @@ button.addEventListener("click", () => {
 start.addEventListener("click", () => {
     player1Turn = true;
     playerTurn = true;
+    
+    gameStarted = true;
 
     playerButtons.classList.add("started");
     playerButtons.classList.remove("notStarted");
@@ -359,6 +363,9 @@ function createPlayer1Board() {
         tile.addEventListener(
             "click",
             (event) => {
+                if (!gameStarted) {
+                    return;
+                }
                 tile.classList.add("miss");
                 event.stopPropagation();
             },
@@ -544,6 +551,9 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
     tilesOp.forEach((tile) => {
         tile.addEventListener("click", () => {
+            if (!gameStarted) {
+                return;
+            }
             if (computerPlaying) {
                 if (playerTurn) {
                     if (squareMissileP2Active) {
@@ -794,6 +804,9 @@ function createOpponentBoardOnPlayer1() {
 
     tilesOp1.forEach((tile) => {
         tile.addEventListener("click", () => {
+            if (!gameStarted) {
+                return;
+            }
             if (player1Turn) {
                 if (squareMissileP1Active) {
                     setTimeout(() => {
