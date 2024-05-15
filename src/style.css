@@ -852,13 +852,13 @@
                 flex-direction: column;
                 gap: 2rem;
 
-                /* &.notStarted > .inGame{
+                &.notStarted > .inGame{
                     display: none;
                 }
 
                 &.started > .startScreen{
                     display: none;
-                } */
+                }
 
                 .randomize {
                     height: 4.5rem;
@@ -1101,13 +1101,13 @@
                 flex-direction: column;
                 gap: 2rem;
 
-                /* &.notStarted > .inGame{
+                &.notStarted > .inGame{
                     display: none;
                 }
 
                 &.started > .startScreen{
                     display: none;
-                } */
+                }
 
                 .pvc {
                     height: 4.5rem;
@@ -1819,4 +1819,8 @@
     right: -1px;
     outline: 4px solid rgb(238, 97, 97);
     border-radius: 5px;
+}
+
+.notClickable{
+    pointer-events: none;
 }

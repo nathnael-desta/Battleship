@@ -39,6 +39,7 @@ const shipsPlayer = document.querySelectorAll(".player .ship");
 const shipsOpponent = document.querySelectorAll(".opponent .ship");
 const individualships = document.querySelectorAll(".ship");
 const selfCreate = document.querySelector(".randomize");
+const reset = document.querySelector(".reset");
 const opponentCreate = document.querySelector(".opponentRefresh");
 const tileDivs = document.querySelectorAll(".tiles > div");
 const tilesOverlayDivs = document.querySelectorAll(".player .tilesOverlay div");
@@ -59,6 +60,11 @@ const player1Overlays = document.querySelectorAll(".player .tilesOverlay div");
 const player2Overlays = document.querySelectorAll(".opponent .tilesOverlay div");
 const opponent1Overlays = document.querySelectorAll(".opponent .overlay");
 let eachPlayerTile = document.querySelectorAll(".player .tile");
+const playerSquares = document.querySelector(".player .squares");
+const opponentSquares = document.querySelector(".opponent .squares");
+const start = document.querySelector(".start");
+const playerButtons = document.querySelector(".player .buttons");
+const opponentButtons = document.querySelector(".opponent .buttons");
 
 let circles;
 
@@ -75,10 +81,10 @@ let tilesP2;
 let shipsP2;
 
 // for PVE
-let playerTurn = true;
+let playerTurn = false;
 
 // for PVP
-let player1Turn = true;
+let player1Turn = false;  /// ////////////////////////////////////////////////////////////////////////////////////////////
 let player2Turn = false;
 
 let squareMissileP1Active = false;
@@ -95,8 +101,131 @@ let computerPlaying = false;
 
 const missileShot = false;
 
+let pvcState = true;
+let pvpState = false;
+
 createSquares(playerTiles);
 createSquares(opponentTiles);
+playGamePVE();
+// playerSquares.classList.add("notClickable");
+// opponentSquares.classList.add("notClickable");
+
+pvp.addEventListener("click", () => {
+    pvcState = false;
+    button.classList.remove("clicked");
+    button.classList.add("notClicked");
+
+    pvpState = true;
+    pvp.classList.add("clicked");
+    pvp.classList.remove("notClicked");
+
+    selfCreate.classList.add("pvp");
+    reset.classList.add("pvp");
+
+
+})
+
+button.addEventListener("click", () => {
+    if (!pvcState) {
+        playGamePVE();
+    }
+
+    pvcState = true;
+    button.classList.add("clicked");
+    button.classList.remove("notClicked");
+
+    pvpState = false;
+    pvp.classList.remove("clicked");
+    pvp.classList.add("notClicked");
+
+    selfCreate.classList.remove("pvp");
+    reset.classList.remove("pvp");
+});
+
+start.addEventListener("click", () => {
+    player1Turn = true;
+    playerTurn = true;
+
+    playerButtons.classList.add("started");
+    playerButtons.classList.remove("notStarted");
+
+    opponentButtons.classList.add("started");
+    opponentButtons.classList.remove("notStarted");
+
+})
+
+lineMissileButton.addEventListener("click", () => {
+    lineMissileButton.classList.toggle("notClicked");
+    lineMissileButton.classList.toggle("clicked");
+
+    squareMissileP1Active = false;
+    squareMissileButton.classList.remove("clicked");
+    squareMissileButton.classList.add("notClicked");
+
+    setTimeout(() => {
+        lineMissileP1Active = !lineMissileP1Active;
+        if (!lineMissileP1Active) {
+            playerTiles.classList.remove(...playerTiles.classList);
+            playerTiles.classList.add("tiles");
+        }
+    }, 0);
+
+
+})
+
+squareMissileButton.addEventListener("click", () => {
+
+    squareMissileButton.classList.toggle("notClicked");
+    squareMissileButton.classList.toggle("clicked");
+
+    lineMissileP1Active = false;
+    lineMissileButton.classList.remove("clicked");
+    lineMissileButton.classList.add("notClicked");
+
+    if (!lineMissileP1Active) {
+        playerTiles.classList.remove(...playerTiles.classList);
+        playerTiles.classList.add("tiles");
+    }
+    squareMissileP1Active = !squareMissileP1Active;
+})
+
+lineMissileButton2.addEventListener("click", () => {
+
+    lineMissileButton2.classList.toggle("notClicked");
+    lineMissileButton2.classList.toggle("clicked");
+
+
+    squareMissileP2Active = false;
+    squareMissileButton2.classList.remove("clicked");
+    squareMissileButton2.classList.add("notClicked");
+
+    setTimeout(() => {
+        lineMissileP2Active = !lineMissileP2Active;
+        if (!lineMissileP2Active) {
+            opponentTiles.classList.remove(...opponentTiles.classList);
+            opponentTiles.classList.add("tiles");
+        }
+    }, 0);
+})
+
+squareMissileButton2.addEventListener("click", () => {
+
+    squareMissileButton2.classList.toggle("notClicked");
+    squareMissileButton2.classList.toggle("clicked");
+
+
+    lineMissileP2Active = false;
+    lineMissileButton2.classList.remove("clicked");
+    lineMissileButton2.classList.add("notClicked");
+
+    if (!lineMissileP2Active) {
+        opponentTiles.classList.remove(...opponentTiles.classList);
+        opponentTiles.classList.add("tiles");
+    }
+    squareMissileP2Active = !squareMissileP2Active;
+})
+
+
 
 // for draging ships for initial placment
 shipsPlayer.forEach((ship) => {
@@ -1060,7 +1189,6 @@ tilesOverlayDivs.forEach((tile) => {
                         clientY: yValue,
                         bubbles: true,
                     });
-                    console.log("playertile", playerTile);
                     playerTile.dispatchEvent(clickEvent);
 
                     // takeOutClickedTiles(tilesOverlayDivsCopy);
@@ -1128,21 +1256,10 @@ function takeOutClickedTiles(overlayedTiles) {
 }
 
 function playGamePVE() {
-    const clickEvent = new MouseEvent("click", {
-        bubbles: true, // Simulates a user click
-        cancelable: true, // Allows default behavior to be prevented
-        view: window,
-    });
-
-    // opponentCreate.dispatchEvent(clickEvent);
-    // selfCreate.dispatchEvent(clickEvent)
-
     computerPlaying = true;
     createPlayer1Board();
     createOpponentBoardOnPlayer2(true);
 }
-
-button.addEventListener("click", playGamePVE);
 
 function playGamePVP() {
     const clickEvent = new MouseEvent("click", {
@@ -1166,48 +1283,6 @@ function playGamePVP() {
 }
 
 pvp.addEventListener("click", playGamePVP);
-
-squareMissileButton.addEventListener("click", (e) => {
-    lineMissileP1Active = false;
-    if (!lineMissileP1Active) {
-        playerTiles.classList.remove(...playerTiles.classList);
-        playerTiles.classList.add("tiles");
-    }
-    squareMissileP1Active = !squareMissileP1Active;
-});
-
-lineMissileButton.addEventListener("click", () => {
-    squareMissileP1Active = false;
-
-    setTimeout(() => {
-        lineMissileP1Active = !lineMissileP1Active;
-        if (!lineMissileP1Active) {
-            playerTiles.classList.remove(...playerTiles.classList);
-            playerTiles.classList.add("tiles");
-        }
-    }, 0);
-});
-
-squareMissileButton2.addEventListener("click", (e) => {
-    lineMissileP2Active = false;
-    if (!lineMissileP2Active) {
-        opponentTiles.classList.remove(...opponentTiles.classList);
-        opponentTiles.classList.add("tiles");
-    }
-    squareMissileP2Active = !squareMissileP2Active;
-});
-
-lineMissileButton2.addEventListener("click", () => {
-    squareMissileP2Active = false;
-
-    setTimeout(() => {
-        lineMissileP2Active = !lineMissileP2Active;
-        if (!lineMissileP2Active) {
-            opponentTiles.classList.remove(...opponentTiles.classList);
-            opponentTiles.classList.add("tiles");
-        }
-    }, 0);
-});
 
 playerTiles.addEventListener("mousemove", (event) => {
     if (lineMissileP1Active) {
