@@ -111,8 +111,9 @@ let pvcState = true;
 let pvpState = false;
 
 let resetState = false;
-// playerShips.classList.add("notClickable");
+playerShips.classList.add("notClickable");
 keys.classList.add("hidden");
+
 
 createSquares(playerTiles);
 createSquares(opponentTiles);
@@ -152,6 +153,131 @@ button.addEventListener("click", () => {
     reset.classList.remove("pvp");
 });
 
+function tileToArray(tiles) {
+    const array = [];
+    for (let i = 0; i < 100; i += 1) {
+        array.push(`${i}`.padStart(2, "0"));
+    }
+
+    let count = 0;
+    let actualIndex = 0;
+    [...tiles].forEach((tile, index) => {
+        if (tile.dataset.tile !== undefined) {
+        const {row, col} = JSON.parse(tile.dataset.tile);
+        const shipName = tile.classList[0];
+        if (shipName === "single_horizontal" || shipName === "single_vertical") {
+            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
+            count += 1;
+        }
+        if (shipName === "double_horizontal") {
+            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
+            array.splice(parseInt(`${row}${col + 1}`,10), 1, `- ${shipName}X${count}`);
+            count += 1;
+        }
+        if (shipName === "tri_horizontal") {
+            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
+            array.splice(parseInt(`${row}${col + 1}`,10), 1, `- ${shipName}X${count}`);
+            array.splice(parseInt(`${row}${col + 2}`,10), 1, `- ${shipName}X${count}`);
+            count += 1;
+        }
+        if (shipName === "quad_horizontal") {
+            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
+            array.splice(parseInt(`${row}${col + 1}`,10), 1, `- ${shipName}X${count}`);
+            array.splice(parseInt(`${row}${col + 2}`,10), 1, `- ${shipName}X${count}`);
+            array.splice(parseInt(`${row}${col + 3}`,10), 1, `- ${shipName}X${count}`);
+            count += 1;
+        }
+        if (shipName === "double_vertical") {
+            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
+            array.splice(parseInt(`${row + 1}${col}`,10), 1, `- ${shipName}X${count}`);
+            count += 1;
+        }
+        if (shipName === "tri_vertical") {
+            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
+            array.splice(parseInt(`${row + 1}${col}`,10), 1, `- ${shipName}X${count}`);
+            array.splice(parseInt(`${row + 2}${col}`,10), 1, `- ${shipName}X${count}`);
+            count += 1;
+        }
+        if (shipName === "quad_vertical") {
+            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
+            array.splice(parseInt(`${row + 1}${col}`,10), 1, `- ${shipName}X${count}`);
+            array.splice(parseInt(`${row + 2}${col}`,10), 1, `- ${shipName}X${count}`);
+            array.splice(parseInt(`${row + 3}${col}`,10), 1, `- ${shipName}X${count}`);
+            count += 1;
+        }
+
+
+        }
+
+
+        // if (tile.classList[0] === "tile") {
+        //     actualIndex += 1;
+        //     return;
+        // }
+        // if (tile.classList[0] === "single_horizontal") {
+        //     array.splice(actualIndex, 1, `single_horizontalX${count}`);
+        //     count += 1;
+        //     actualIndex += 1;
+        //     return;
+        // }
+        // if (tile.classList[0] === "single_vertical") {
+        //     array.splice(actualIndex, 1, `single_verticalX${count}`);
+        //     count += 1;
+        //     actualIndex += 1;
+        //     return;
+        // }
+        // if (tile.classList[0] === "double_horizontal") {
+        //     array.splice(actualIndex, 1, `double_horizontalX${count}`);
+        //     array.splice(actualIndex + 1, 1, `- double_horizontalX${count}`);
+        //     actualIndex += 2;
+        //     count += 1;
+        //     return;
+        // }
+        // if (tile.classList[0] === "tri_horizontal") {
+        //     array.splice(actualIndex, 1, `tri_horizontalX${count}`);
+        //     array.splice(actualIndex + 1, 1, `- tri_horizontalX${count}`);
+        //     array.splice(actualIndex + 2, 1, `- tri_horizontalX${count}`);
+        //     count += 1;
+        //     actualIndex += 3;
+        //     return;
+        // }
+        // if (tile.classList[0] === "quad_horizontal") {
+        //     array.splice(actualIndex, 1, `quad_horizontalX${count}`);
+        //     array.splice(actualIndex + 1, 1, `- quad_horizontalX${count}`);
+        //     array.splice(actualIndex + 2, 1, `- quad_horizontalX${count}`);
+        //     array.splice(actualIndex + 3, 1, `- quad_horizontalX${count}`);
+        //     count += 1;
+        //     actualIndex += 4;
+        //     return;
+        // }
+        // if (tile.classList[0] === "double_vertical") {
+        //     const [row, col] = `${actualIndex}`.padStart(2, "0").split("").map(num => parseInt(num, 10));
+        //     array.splice(actualIndex, 1, `double_verticalX${count}`);
+        //     array.splice(parseInt(`${row + 1}${col}`, 10), 1, `- double_verticalX${count}`);
+        //     count += 1;
+        //     return;
+        // }
+        // if (tile.classList[0] === "tri_vertical") {
+        //     const [row, col] = `${actualIndex}`.padStart(2, "0").split("").map(num => parseInt(num, 10));
+        //     array.splice(actualIndex, 1, `tri_verticalX${count}`);
+        //     array.splice(parseInt(`${row + 1}${col}`, 10), 1, `- tri_verticalX${count}`);
+        //     array.splice(parseInt(`${row + 2}${col}`, 10), 1, `- tri_verticalX${count}`);
+        //     count += 1;
+        //     return;
+        // }
+        // if (tile.classList[0] === "quad_vertical") {
+        //     const [row, col] = `${actualIndex}`.padStart(2, "0").split("").map(num => parseInt(num, 10));
+        //     array.splice(actualIndex, 1, `quad_verticalX${count}`);
+        //     array.splice(parseInt(`${row + 1}${col}`, 10), 1, `- quad_verticalX${count}`);
+        //     array.splice(parseInt(`${row + 2}${col}`, 10), 1, `- quad_verticalX${count}`);
+        //     array.splice(parseInt(`${row + 3}${col}`, 10), 1, `- quad_verticalX${count}`);
+        //     count += 1;
+
+        // }
+    })
+    return array;
+}
+
 start.addEventListener("click", () => {
     player1Turn = true;
     playerTurn = true;
@@ -165,7 +291,18 @@ start.addEventListener("click", () => {
     opponentButtons.classList.remove("notStarted");
 
     if (button.classList.contains("clicked")) {
-        // playerSquares.classList.add("notClickable");
+        playerSquares.classList.add("notClickable");
+    }
+
+    const eachPlayerTiles = document.querySelectorAll(".player .tiles div");
+
+    if (resetState) {
+        playerBoard = {
+            createdBoard: null,
+            boardArray: tileToArray(eachPlayerTiles)
+        }
+        player1EventListeners();
+
     }
 });
 
@@ -183,7 +320,7 @@ reset.addEventListener("click", () => {
     reset.classList.toggle("clicked");
     reset.classList.toggle("notClicked");
     keys.classList.toggle("hidden");
-    
+
 
     resetState = !resetState;
     if (resetState) {
@@ -383,11 +520,9 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-function createPlayer1Board() {
+function player1EventListeners() {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
     const clickedShips = [];
-
-    playerBoard = selfCreateBoard(playerTiles);
 
     tiles = document.querySelectorAll(".player .tile");
     tiles.forEach((tile) => {
@@ -407,20 +542,25 @@ function createPlayer1Board() {
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
     ships.forEach((ship) => {
         ship.addEventListener("click", (e) => {
+            console.log("hit a ship")
             if (!gameStarted) {
                 return;
             }
+
             if (clickedShips.indexOf(ship) === -1) {
                 clickedShips.push(ship);
             }
+
             const { shift } = whichCircle(
                 ship.classList[0],
                 e.clientX,
                 e.clientY,
                 ship.getBoundingClientRect()
             );
+
             const circle = [...ship.children][shift];
             circle.classList.add("crossed");
+            console.log("still going")
 
             const allCrossedOut = [...ship.children].reduce((acc, child) => {
                 if (!child.classList.contains("crossed")) {
@@ -446,10 +586,21 @@ function createPlayer1Board() {
                     return acc || null;
                 }, null);
             }
+            console.log("finsihed")
 
             e.stopPropagation();
         });
     });
+}
+
+function createPlayer1Board() {
+
+
+    playerBoard = selfCreateBoard(playerTiles);
+
+    player1EventListeners();
+
+
 }
 
 function opponentClickFunction(event) {
@@ -1144,6 +1295,7 @@ function computerClicker() {
     let chosenTileDiv;
     // if (shipsThatHit.length !== 0) {
     if (!checkIfAllHitsFinished(tilesOverlayArray)) {
+        console.log("that good shit", tilesOverlayArray, playerBoard.boardArray)
         const { myTilesOverlay, tile, surroundingTiles } = shoot(
             tilesOverlayArray,
             playerBoard.boardArray,

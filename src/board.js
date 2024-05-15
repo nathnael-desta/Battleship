@@ -936,6 +936,7 @@ export function selfCreateBoard(tiles) {
   const createdBoard = [];
   const boardArray = [];
   const myBoard = finalBoard(board);
+  console.log("myBoard", myBoard)
   for (let i = 0; i < myBoard.length; i += 1) {
     if (!Number.isNaN(parseInt(myBoard[i], 10))) {
       const tile = document.createElement("div");
@@ -955,6 +956,8 @@ export function selfCreateBoard(tiles) {
       boardArray.push(`- ${shipName}`);
     }
   }
+
+  console.log("the board array", boardArray)
   return { createdBoard, boardArray }
 }
 
