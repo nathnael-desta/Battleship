@@ -67,6 +67,9 @@ const opponentSquares = document.querySelector(".opponent .squares");
 const start = document.querySelector(".start");
 const playerButtons = document.querySelector(".player .buttons");
 const opponentButtons = document.querySelector(".opponent .buttons");
+const playerShips = document.querySelector(".player .ships");
+const keys = document.querySelector(".keys")
+
 
 let circles;
 
@@ -106,6 +109,10 @@ const missileShot = false;
 
 let pvcState = true;
 let pvpState = false;
+
+let resetState = false;
+// playerShips.classList.add("notClickable");
+keys.classList.add("hidden");
 
 createSquares(playerTiles);
 createSquares(opponentTiles);
@@ -148,7 +155,7 @@ button.addEventListener("click", () => {
 start.addEventListener("click", () => {
     player1Turn = true;
     playerTurn = true;
-    
+
     gameStarted = true;
 
     playerButtons.classList.add("started");
@@ -158,9 +165,33 @@ start.addEventListener("click", () => {
     opponentButtons.classList.remove("notStarted");
 
     if (button.classList.contains("clicked")) {
-        playerSquares.classList.add("notClickable");
+        // playerSquares.classList.add("notClickable");
     }
 });
+
+selfCreate.addEventListener("click", () => {
+    resetState = false;
+    reset.classList.remove("clicked");
+    reset.classList.add("notClicked");
+
+    createPlayer1Board();
+
+})
+
+
+reset.addEventListener("click", () => {
+    reset.classList.toggle("clicked");
+    reset.classList.toggle("notClicked");
+    keys.classList.toggle("hidden");
+    
+
+    resetState = !resetState;
+    if (resetState) {
+        playerShips.classList.remove("notClickable");
+        playerTiles.innerHTML = "";
+        createSquares(playerTiles);
+    }
+})
 
 lineMissileButton.addEventListener("click", () => {
     lineMissileButton.classList.toggle("notClicked");
@@ -376,6 +407,9 @@ function createPlayer1Board() {
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
     ships.forEach((ship) => {
         ship.addEventListener("click", (e) => {
+            if (!gameStarted) {
+                return;
+            }
             if (clickedShips.indexOf(ship) === -1) {
                 clickedShips.push(ship);
             }
@@ -417,8 +451,6 @@ function createPlayer1Board() {
         });
     });
 }
-
-selfCreate.addEventListener("click", createPlayer1Board);
 
 function opponentClickFunction(event) {
     if (computerPlaying) {

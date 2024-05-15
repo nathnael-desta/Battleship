@@ -715,7 +715,23 @@
                 display: flex;
                 justify-content: space-between;
                 padding-top: 0px;
+                position: relative;
                 
+
+                .keys {
+                    position: absolute;
+                    bottom: 1rem;
+                    color: white;
+                    font-size: 1.3rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    font-family: myBold;
+
+                    &.hidden {
+                        display: none;
+                    }
+                }
                 
 
                 .distroyers {
