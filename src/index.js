@@ -110,6 +110,8 @@ playGamePVE();
 // playerSquares.classList.add("notClickable");
 // opponentSquares.classList.add("notClickable");
 
+
+
 pvp.addEventListener("click", () => {
     pvcState = false;
     button.classList.remove("clicked");
@@ -121,7 +123,6 @@ pvp.addEventListener("click", () => {
 
     selfCreate.classList.add("pvp");
     reset.classList.add("pvp");
-
 
 })
 
@@ -151,6 +152,10 @@ start.addEventListener("click", () => {
 
     opponentButtons.classList.add("started");
     opponentButtons.classList.remove("notStarted");
+
+    if (button.classList.contains("clicked")) {
+        playerSquares.classList.add("notClickable");
+    }
 
 })
 
@@ -427,7 +432,9 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                 if (event.target.classList.contains("tile")) {
                     if (event.target.classList.contains("miss")) {
                         playerTurn = false;
+                        playerSquares.classList.remove("notClickable");
                         computerClicker();
+                        playerSquares.classList.add("notClickable");
                     }
                 }
             }
