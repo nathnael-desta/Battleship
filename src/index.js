@@ -524,6 +524,7 @@ function player1EventListeners() {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
     const clickedShips = [];
 
+    console.log("player1 was hit")
     tiles = document.querySelectorAll(".player .tile");
     tiles.forEach((tile) => {
         tile.addEventListener(
@@ -586,7 +587,8 @@ function player1EventListeners() {
                     return acc || null;
                 }, null);
             }
-            console.log("finsihed")
+            console.log("finsihed", playerBoard.boardArray)
+
 
             e.stopPropagation();
         });
@@ -913,6 +915,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 }
 
 function createOpponentBoardOnPlayer1() {
+    console.log("a")
     playerIndividualTiles = document.querySelector(".player .tiles");
 
     playerIndividualTiles.addEventListener("click", (event) => {
@@ -985,8 +988,11 @@ function createOpponentBoardOnPlayer1() {
 
     const dockedShips = [...document.querySelectorAll(".player .ship")];
 
+    console.log("b")
+
     tilesOp1.forEach((tile) => {
         tile.addEventListener("click", () => {
+            console.log("c")
             if (!gameStarted) {
                 return;
             }
@@ -1019,6 +1025,7 @@ function createOpponentBoardOnPlayer1() {
                         clickedShips.push(tile.classList[1]);
                     }
                 }
+                console.log("d")
 
                 if (clickedShips.length !== 0) {
                     clickedShips.forEach((ship) => {
@@ -1033,6 +1040,7 @@ function createOpponentBoardOnPlayer1() {
                             },
                             true
                         );
+                        console.log("e")
                         if (allHaveBeenClicked) {
                             let newShip;
                             shipTiles.forEach((shipTile) => {
@@ -1056,6 +1064,7 @@ function createOpponentBoardOnPlayer1() {
                                 clickedShips.indexOf(ship),
                                 1
                             );
+                            console.log("f")
                             const shipName = `${theShip[0].split("X")[0].split("_")[0]
                                 }_horizontal`;
                             const pickedShip = dockedShips.reduce((acc, subShip) => {
