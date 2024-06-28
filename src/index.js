@@ -29,6 +29,8 @@ import {
     lineMissile,
     getSquareTiles,
     getLineTiles,
+    createCreatedBoard, 
+    createBoardArray
 } from "./board";
 
 import("./style.css");
@@ -68,7 +70,8 @@ const start = document.querySelector(".start");
 const playerButtons = document.querySelector(".player .buttons");
 const opponentButtons = document.querySelector(".opponent .buttons");
 const playerShips = document.querySelector(".player .ships");
-const keys = document.querySelector(".keys")
+const keys = document.querySelector(".keys");
+let eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
 
 
 let circles;
@@ -279,6 +282,26 @@ function tileToArray(tiles) {
 }
 
 start.addEventListener("click", () => {
+    eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
+
+    console.log([...eachPlayerDiv], eachPlayerDiv);
+
+    const dataArray = [];
+    [...eachPlayerDiv].forEach(div => {
+        if (!div.classList.contains("tile")) {
+            const divData = [];
+            divData.push(div.classList[0]);
+            const divTile = JSON.parse(div.dataset.tile);
+            divData.push(`${divTile.row}${divTile.col}`);
+
+            dataArray.push(divData)
+        };
+    })
+
+    
+
+    console.log(dataArray);
+
     player1Turn = true;
     playerTurn = true;
 
@@ -304,6 +327,13 @@ start.addEventListener("click", () => {
         player1EventListeners();
 
     }
+
+    
+
+    // playerBoard = {
+    //     boardArray: 
+    // }
+
 });
 
 selfCreate.addEventListener("click", () => {

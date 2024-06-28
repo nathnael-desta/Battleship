@@ -1714,7 +1714,7 @@ export function getLineTiles(tile, alignment) {
 
 
 export function createBoardArray(dataArray) {
-  let boardArray = [];
+  const boardArray = [];
 
   for (let i = 0; i < 100; i += 1) {
     boardArray.push(`${i}`.padStart(2, "0"))
@@ -1779,4 +1779,25 @@ export function createBoardArray(dataArray) {
   })
 
   return boardArray;
+}
+
+
+export function createCreatedBoard(dataArray){
+  const createdBoard = [];
+
+  for (let i = 0; i < 100; i += 1) {
+    const div = document.createElement("div");
+    div.classList.add("tile");
+    div.classList.add("onlyTile");
+    div.id = `${i}`.padStart(2, "0");
+    createdBoard.push(div);
+  }
+
+  dataArray.forEach(ship => {
+    const shipDiv = document.createElement("div");
+    shipDiv.classList.add(`${ship[0]}`);
+    createdBoard[parseInt(ship[1], 10)] = shipDiv;
+  })
+
+  return createdBoard;
 }
