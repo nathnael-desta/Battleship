@@ -1711,3 +1711,72 @@ export function getLineTiles(tile, alignment) {
 // export function singluarClick(tilesOverlay, boardArray, number) {
 
 // }
+
+
+export function createBoardArray(dataArray) {
+  let boardArray = [];
+
+  for (let i = 0; i < 100; i += 1) {
+    boardArray.push(`${i}`.padStart(2, "0"))
+  }
+
+  let count = 0;
+
+  dataArray.forEach(ship => {
+    const [row, col] = ship[1].split("").map(num => parseInt(num, 10));
+
+    if (ship[0] === "single_horizontal") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      count += 1;
+    }
+
+    if (ship[0] === "double_horizontal") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      boardArray[parseInt(`${row}${col + 1}`, 10)] = `- ${ship[0]}X${count}`;
+      count += 1;
+    }
+
+    if (ship[0] === "tri_horizontal") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      boardArray[parseInt(`${row}${col + 1}`, 10)] = `- ${ship[0]}X${count}`;
+      boardArray[parseInt(`${row}${col + 2}`, 10)] = `- ${ship[0]}X${count}`;
+      count += 1;
+    }
+
+    if (ship[0] === "quad_horizontal") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      boardArray[parseInt(`${row}${col + 1}`, 10)] = `- ${ship[0]}X${count}`;
+      boardArray[parseInt(`${row}${col + 2}`, 10)] = `- ${ship[0]}X${count}`;
+      boardArray[parseInt(`${row}${col + 3}`, 10)] = `- ${ship[0]}X${count}`;
+      count += 1;
+    }
+
+    if (ship[0] === "single_vertical") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      count += 1;
+    }
+
+    if (ship[0] === "double_vertical") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      boardArray[parseInt(`${row + 1}${col}`, 10)] = `- ${ship[0]}X${count}`;
+      count += 1;
+    }
+
+    if (ship[0] === "tri_vertical") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      boardArray[parseInt(`${row + 1}${col}`, 10)] = `- ${ship[0]}X${count}`;
+      boardArray[parseInt(`${row + 2}${col}`, 10)] = `- ${ship[0]}X${count}`;
+      count += 1;
+    }
+
+    if (ship[0] === "quad_vertical") {
+      boardArray[parseInt(`${row}${col}`, 10)] = `${ship[0]}X${count}`;
+      boardArray[parseInt(`${row + 1}${col}`, 10)] = `- ${ship[0]}X${count}`;
+      boardArray[parseInt(`${row + 2}${col}`, 10)] = `- ${ship[0]}X${count}`;
+      boardArray[parseInt(`${row + 3}${col}`, 10)] = `- ${ship[0]}X${count}`;
+      count += 1;
+    }
+  })
+
+  return boardArray;
+}

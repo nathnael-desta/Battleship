@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare, getSquareTiles, getLineTiles } from "./board.js";
+import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare, getSquareTiles, getLineTiles, createBoardArray } from "./board.js";
 
 
 describe("insertion tests", () => {
@@ -3198,9 +3198,49 @@ describe("missile tests", () => {
   })
 
   test("line missiles array test", () => {
-    
+
     expect(getLineTiles("44", "vertical")).toEqual(["04", "14", "24", "34", "44", "54", "64", "74", "84", "94"]);
 
     expect(getLineTiles("44", "horizontal")).toEqual(["40", "41", "42", "43", "44", "45", "46", "47", "48", "49"]);
+  })
+})
+
+describe("making the board arrays from the hand placed board", () => {
+  test("making the board array", () => {
+
+    const dataArray = [["double_horizontal", "16"], ["quad_horizontal", "31"], ["double_horizontal", "36"], ["single_horizontal", "38"], ["tri_horizontal", "51"], ["double_horizontal", "55"], ["single_horizontal", "58"], ["tri_horizontal", "61"], ["single_horizontal", "78"], ["single_horizontal", "85"]]
+
+    const dataArray1 = [["double_horizontal", "16"], ["quad_vertical", "30"], ["double_horizontal", "36"], ["single_horizontal", "38"], ["tri_horizontal", "51"], ["double_horizontal", "55"], ["single_horizontal", "58"], ["tri_horizontal", "61"], ["single_horizontal", "78"], ["single_horizontal", "85"]]
+
+
+    expect(createBoardArray(dataArray)).toEqual(
+      [
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "double_horizontalX0", "- double_horizontalX0", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "30", "quad_horizontalX1", "- quad_horizontalX1", "- quad_horizontalX1", "- quad_horizontalX1", "35", "double_horizontalX2", "- double_horizontalX2", "single_horizontalX3", "39",
+        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "tri_horizontalX4", "- tri_horizontalX4", "- tri_horizontalX4", "54", "double_horizontalX5", "- double_horizontalX5", "57", "single_horizontalX6", "59",
+        "60", "tri_horizontalX7", "- tri_horizontalX7", "- tri_horizontalX7", "64", "65", "66", "67", "68", "69",
+        "70", "71", "72", "73", "74", "75", "76", "77", "single_horizontalX8", "79",
+        "80", "81", "82", "83", "84", "single_horizontalX9", "86", "87", "88", "89",
+        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+      ]
+    );
+
+    expect(createBoardArray(dataArray1)).toEqual(
+      [
+        "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+        "10", "11", "12", "13", "14", "15", "double_horizontalX0", "- double_horizontalX0", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "quad_verticalX1", "31", "32", "33", "34", "35", "double_horizontalX2", "- double_horizontalX2", "single_horizontalX3", "39",
+        "- quad_verticalX1", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "- quad_verticalX1", "tri_horizontalX4", "- tri_horizontalX4", "- tri_horizontalX4", "54", "double_horizontalX5", "- double_horizontalX5", "57", "single_horizontalX6", "59",
+        "- quad_verticalX1", "tri_horizontalX7", "- tri_horizontalX7", "- tri_horizontalX7", "64", "65", "66", "67", "68", "69",
+        "70", "71", "72", "73", "74", "75", "76", "77", "single_horizontalX8", "79",
+        "80", "81", "82", "83", "84", "single_horizontalX9", "86", "87", "88", "89",
+        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
+      ]
+    );
   })
 })
