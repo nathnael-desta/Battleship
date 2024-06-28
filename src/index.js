@@ -340,24 +340,30 @@ selfCreate.addEventListener("click", () => {
     resetState = false;
     reset.classList.remove("clicked");
     reset.classList.add("notClicked");
+    playerShips.classList.add("notClickable");
+    keys.classList.add("hidden");
 
     createPlayer1Board();
+
+    const selectShips = document.querySelectorAll(".player .ships div");
+    [...selectShips].forEach(ship => {
+        ship.classList.remove("draged")
+    })
 
 })
 
 
 reset.addEventListener("click", () => {
-    reset.classList.toggle("clicked");
-    reset.classList.toggle("notClicked");
-    keys.classList.toggle("hidden");
+    reset.classList.add("clicked");
+    reset.classList.remove("notClicked");
+    keys.classList.remove("hidden");
 
 
-    resetState = !resetState;
-    if (resetState) {
-        playerShips.classList.remove("notClickable");
-        playerTiles.innerHTML = "";
-        createSquares(playerTiles);
-    }
+    resetState = true;
+
+    playerShips.classList.remove("notClickable");
+    playerTiles.innerHTML = "";
+    createSquares(playerTiles);
 })
 
 lineMissileButton.addEventListener("click", () => {
