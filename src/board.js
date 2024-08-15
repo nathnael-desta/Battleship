@@ -1797,6 +1797,36 @@ export function createCreatedBoard(dataArray){
     const shipDiv = document.createElement("div");
     shipDiv.classList.add(`${ship[0]}`);
     createdBoard[parseInt(ship[1], 10)] = shipDiv;
+
+    const [row, col] = ship[1].split("").map(num => parseInt(num, 10));
+
+    if (ship[0] === "double_horizontal") {
+      createdBoard.splice(parseInt(ship[1], 10) + 1, 1);
+    }
+
+    if (ship[0] === "tri_horizontal") {
+      createdBoard.splice(parseInt(ship[1], 10) + 1, 2);
+    }
+
+    if (ship[0] === "quad_horizontal") {
+      createdBoard.splice(parseInt(ship[1], 10) + 1, 3);
+    }
+
+    if (ship[0] === "double_vertical") {
+      createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
+    }
+
+    if (ship[0] === "tri_vertical") {
+      createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
+      createdBoard.splice(parseInt(`${row + 2}${col}`, 10), 1);
+    }
+
+    if (ship[0] === "quad_vertical") {
+      createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
+      createdBoard.splice(parseInt(`${row + 2}${col}`, 10), 1);
+      createdBoard.splice(parseInt(`${row + 3}${col}`, 10), 1);
+    }
+
   })
 
   return createdBoard;

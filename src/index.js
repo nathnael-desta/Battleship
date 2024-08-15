@@ -29,7 +29,7 @@ import {
     lineMissile,
     getSquareTiles,
     getLineTiles,
-    createCreatedBoard, 
+    createCreatedBoard,
     createBoardArray
 } from "./board";
 
@@ -166,48 +166,48 @@ function tileToArray(tiles) {
     let actualIndex = 0;
     [...tiles].forEach((tile, index) => {
         if (tile.dataset.tile !== undefined) {
-        const {row, col} = JSON.parse(tile.dataset.tile);
-        const shipName = tile.classList[0];
-        if (shipName === "single_horizontal" || shipName === "single_vertical") {
-            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
-            count += 1;
-        }
-        if (shipName === "double_horizontal") {
-            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
-            array.splice(parseInt(`${row}${col + 1}`,10), 1, `- ${shipName}X${count}`);
-            count += 1;
-        }
-        if (shipName === "tri_horizontal") {
-            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
-            array.splice(parseInt(`${row}${col + 1}`,10), 1, `- ${shipName}X${count}`);
-            array.splice(parseInt(`${row}${col + 2}`,10), 1, `- ${shipName}X${count}`);
-            count += 1;
-        }
-        if (shipName === "quad_horizontal") {
-            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
-            array.splice(parseInt(`${row}${col + 1}`,10), 1, `- ${shipName}X${count}`);
-            array.splice(parseInt(`${row}${col + 2}`,10), 1, `- ${shipName}X${count}`);
-            array.splice(parseInt(`${row}${col + 3}`,10), 1, `- ${shipName}X${count}`);
-            count += 1;
-        }
-        if (shipName === "double_vertical") {
-            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
-            array.splice(parseInt(`${row + 1}${col}`,10), 1, `- ${shipName}X${count}`);
-            count += 1;
-        }
-        if (shipName === "tri_vertical") {
-            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
-            array.splice(parseInt(`${row + 1}${col}`,10), 1, `- ${shipName}X${count}`);
-            array.splice(parseInt(`${row + 2}${col}`,10), 1, `- ${shipName}X${count}`);
-            count += 1;
-        }
-        if (shipName === "quad_vertical") {
-            array.splice(parseInt(`${row}${col}`,10), 1, `${shipName}X${count}`);
-            array.splice(parseInt(`${row + 1}${col}`,10), 1, `- ${shipName}X${count}`);
-            array.splice(parseInt(`${row + 2}${col}`,10), 1, `- ${shipName}X${count}`);
-            array.splice(parseInt(`${row + 3}${col}`,10), 1, `- ${shipName}X${count}`);
-            count += 1;
-        }
+            const { row, col } = JSON.parse(tile.dataset.tile);
+            const shipName = tile.classList[0];
+            if (shipName === "single_horizontal" || shipName === "single_vertical") {
+                array.splice(parseInt(`${row}${col}`, 10), 1, `${shipName}X${count}`);
+                count += 1;
+            }
+            if (shipName === "double_horizontal") {
+                array.splice(parseInt(`${row}${col}`, 10), 1, `${shipName}X${count}`);
+                array.splice(parseInt(`${row}${col + 1}`, 10), 1, `- ${shipName}X${count}`);
+                count += 1;
+            }
+            if (shipName === "tri_horizontal") {
+                array.splice(parseInt(`${row}${col}`, 10), 1, `${shipName}X${count}`);
+                array.splice(parseInt(`${row}${col + 1}`, 10), 1, `- ${shipName}X${count}`);
+                array.splice(parseInt(`${row}${col + 2}`, 10), 1, `- ${shipName}X${count}`);
+                count += 1;
+            }
+            if (shipName === "quad_horizontal") {
+                array.splice(parseInt(`${row}${col}`, 10), 1, `${shipName}X${count}`);
+                array.splice(parseInt(`${row}${col + 1}`, 10), 1, `- ${shipName}X${count}`);
+                array.splice(parseInt(`${row}${col + 2}`, 10), 1, `- ${shipName}X${count}`);
+                array.splice(parseInt(`${row}${col + 3}`, 10), 1, `- ${shipName}X${count}`);
+                count += 1;
+            }
+            if (shipName === "double_vertical") {
+                array.splice(parseInt(`${row}${col}`, 10), 1, `${shipName}X${count}`);
+                array.splice(parseInt(`${row + 1}${col}`, 10), 1, `- ${shipName}X${count}`);
+                count += 1;
+            }
+            if (shipName === "tri_vertical") {
+                array.splice(parseInt(`${row}${col}`, 10), 1, `${shipName}X${count}`);
+                array.splice(parseInt(`${row + 1}${col}`, 10), 1, `- ${shipName}X${count}`);
+                array.splice(parseInt(`${row + 2}${col}`, 10), 1, `- ${shipName}X${count}`);
+                count += 1;
+            }
+            if (shipName === "quad_vertical") {
+                array.splice(parseInt(`${row}${col}`, 10), 1, `${shipName}X${count}`);
+                array.splice(parseInt(`${row + 1}${col}`, 10), 1, `- ${shipName}X${count}`);
+                array.splice(parseInt(`${row + 2}${col}`, 10), 1, `- ${shipName}X${count}`);
+                array.splice(parseInt(`${row + 3}${col}`, 10), 1, `- ${shipName}X${count}`);
+                count += 1;
+            }
 
 
         }
@@ -284,23 +284,27 @@ function tileToArray(tiles) {
 start.addEventListener("click", () => {
     eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
 
-    console.log([...eachPlayerDiv], eachPlayerDiv);
+    console.log("the player board is", playerBoard)
 
     const dataArray = [];
-    [...eachPlayerDiv].forEach(div => {
-        if (!div.classList.contains("tile")) {
-            const divData = [];
-            divData.push(div.classList[0]);
-            const divTile = JSON.parse(div.dataset.tile);
-            divData.push(`${divTile.row}${divTile.col}`);
+    if (resetState) {
+        
+        [...eachPlayerDiv].forEach(div => {
+            if (!div.classList.contains("tile")) {
+                const divData = [];
+                divData.push(div.classList[0]);
+                const divTile = JSON.parse(div.dataset.tile);
+                divData.push(`${divTile.row}${divTile.col}`);
 
-            dataArray.push(divData)
-        };
-    })
+                dataArray.push(divData)
+            };
+        })
+    }
 
-    
 
-    console.log(dataArray);
+
+
+
 
     player1Turn = true;
     playerTurn = true;
@@ -321,14 +325,14 @@ start.addEventListener("click", () => {
 
     if (resetState) {
         playerBoard = {
-            createdBoard: null,
-            boardArray: tileToArray(eachPlayerTiles)
+            createdBoard: createCreatedBoard(dataArray),
+            boardArray: createBoardArray(dataArray)
         }
         player1EventListeners();
 
     }
 
-    
+
 
     // playerBoard = {
     //     boardArray: 
@@ -625,7 +629,6 @@ function player1EventListeners() {
             }
             console.log("finsihed", playerBoard.boardArray)
 
-
             e.stopPropagation();
         });
     });
@@ -675,6 +678,8 @@ function opponentClickFunction(event) {
 function createOpponentBoardOnPlayer2(withComputerClicker) {
     opponentIndividualTiles = document.querySelector(".opponent .tiles");
 
+
+    
 
     opponentIndividualTiles.removeEventListener("click", opponentClickFunction);
     opponentIndividualTiles.addEventListener("click", opponentClickFunction);
@@ -1381,6 +1386,7 @@ function computerClicker() {
         const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
         chosenTileDiv = chosenTile;
         const myRandomNumber = chosenTileDiv.classList[0];
+        console.log("....................", playerBoard)
         const { myTilesOverlay, tile, surroundingTiles } = shoot(
             tilesOverlayArray,
             playerBoard.boardArray,
