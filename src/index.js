@@ -73,9 +73,7 @@ const playerShips = document.querySelector(".player .ships");
 const keys = document.querySelector(".keys");
 let eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
 
-setInterval(() => {
-    console.log(playerBoard)
-}, 500)
+
 
 let circles;
 
@@ -109,7 +107,7 @@ let player2LineMissileAlignment = "horizontal";
 
 let computerPlaying = false;
 
-let gameStarted = false;
+export let gameStarted = false;
 
 const missileShot = false;
 

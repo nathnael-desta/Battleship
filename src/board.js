@@ -1,3 +1,4 @@
+import { gameStarted } from "./index";
 const numbers = [];
 const pieceSquare = []
 const piece = [];
@@ -13,6 +14,7 @@ export function createSquares(tiles, numbers = [[101]], pieceSquare = [101], pie
     for (let j = 0; j < 10; j += 1) {
       const tile = document.createElement("div");
       tile.classList.add("tile");
+      tile.classList.add("onlyTile");
       tile.id = `${i}${j}`;
 
 
@@ -527,11 +529,17 @@ export function finalTile(col, row, circleData) {
 }
 
 export function flippable() {
+  if (gameStarted) {
+    return;
+  }
   const tileDivs = document.querySelectorAll(".tiles > div");
   const playerTiles = document.querySelector(".player .tiles");
   tileDivs.forEach((div) => {
     if (!div.classList.contains("tile")) {
       div.addEventListener("click", (event) => {
+        if (gameStarted) {
+          return;
+        }
         const divTile = JSON.parse(div.dataset.tile);
         const myCol = numToLetters[`${divTile.col}`];
         const shipName = div.classList[0];
@@ -1782,7 +1790,7 @@ export function createBoardArray(dataArray) {
 }
 
 
-export function createCreatedBoard(dataArray){
+export function createCreatedBoard(dataArray) {
   let createdBoard = [];
 
   for (let i = 0; i < 100; i += 1) {
@@ -1797,7 +1805,7 @@ export function createCreatedBoard(dataArray){
     const shipDiv = document.createElement("div");
     shipDiv.classList.add(`${ship[0]}`);
     // createdBoard[parseInt(ship[1], 10)] = shipDiv;
-    
+
 
     const ids = getIds(ship);
 
@@ -1861,16 +1869,17 @@ export function getIds(ship) {
 
   const [row, col] = ship[1].split("").map(num => parseInt(num, 10));
 
-  if (ship[0] == "single_horizontal" || ship[0] ==  "single_vertical") {
+  if (ship[0] == "single_horizontal" || ship[0] == "single_vertical") {
     result.push(ship[1]);
   }
 
   if (ship[0] == "double_horizontal") {
     result.push(`${row}${col}`);
-    result.push(`${row}${col + 1}`);  }
+    result.push(`${row}${col + 1}`);
+  }
 
   if (ship[0] == "tri_horizontal") {
-    result.push(`${row}${col}`);    
+    result.push(`${row}${col}`);
     result.push(`${row}${col + 1}`);
     result.push(`${row}${col + 2}`);
   }
