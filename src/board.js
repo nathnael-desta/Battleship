@@ -1783,7 +1783,7 @@ export function createBoardArray(dataArray) {
 
 
 export function createCreatedBoard(dataArray){
-  const createdBoard = [];
+  let createdBoard = [];
 
   for (let i = 0; i < 100; i += 1) {
     const div = document.createElement("div");
@@ -1796,38 +1796,109 @@ export function createCreatedBoard(dataArray){
   dataArray.forEach(ship => {
     const shipDiv = document.createElement("div");
     shipDiv.classList.add(`${ship[0]}`);
-    createdBoard[parseInt(ship[1], 10)] = shipDiv;
+    // createdBoard[parseInt(ship[1], 10)] = shipDiv;
+    
 
-    const [row, col] = ship[1].split("").map(num => parseInt(num, 10));
+    const ids = getIds(ship);
 
-    if (ship[0] === "double_horizontal") {
-      createdBoard.splice(parseInt(ship[1], 10) + 1, 1);
-    }
+    console.log("dataArray", dataArray, "ids", ids);
 
-    if (ship[0] === "tri_horizontal") {
-      createdBoard.splice(parseInt(ship[1], 10) + 1, 2);
-    }
+    createdBoard.forEach((div, index) => {
+      const divId = div.id;
+      const shipId = ship[1];
 
-    if (ship[0] === "quad_horizontal") {
-      createdBoard.splice(parseInt(ship[1], 10) + 1, 3);
-    }
+      if (divId == shipId) {
+        createdBoard[index] = shipDiv;
+      }
+    })
 
-    if (ship[0] === "double_vertical") {
-      createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
-    }
+    // createdBoard.forEach((div, index) => {
+    //   const divId = div.id;
 
-    if (ship[0] === "tri_vertical") {
-      createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
-      createdBoard.splice(parseInt(`${row + 2}${col}`, 10), 1);
-    }
+    //   if (ids.includes(divId)) {
+    //     createdBoard.splice(index, 1);
+    //   }
+    // })
 
-    if (ship[0] === "quad_vertical") {
-      createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
-      createdBoard.splice(parseInt(`${row + 2}${col}`, 10), 1);
-      createdBoard.splice(parseInt(`${row + 3}${col}`, 10), 1);
-    }
+    createdBoard = createdBoard.filter(div => !ids.includes(div.id));
+
+    // const [row, col] = ship[1].split("").map(num => parseInt(num, 10));
+
+    // if (ship[0] === "double_horizontal") {
+    //   createdBoard.splice(parseInt(ship[1], 10) + 1, 1);
+    // }
+
+    // if (ship[0] === "tri_horizontal") {
+    //   createdBoard.splice(parseInt(ship[1], 10) + 1, 2);
+    // }
+
+    // if (ship[0] === "quad_horizontal") {
+    //   createdBoard.splice(parseInt(ship[1], 10) + 1, 3);
+    // }
+
+    // if (ship[0] === "double_vertical") {
+    //   createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
+    // }
+
+    // if (ship[0] === "tri_vertical") {
+    //   createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
+    //   createdBoard.splice(parseInt(`${row + 2}${col}`, 10), 1);
+    // }
+
+    // if (ship[0] === "quad_vertical") {
+    //   createdBoard.splice(parseInt(`${row + 1}${col}`, 10), 1);
+    //   createdBoard.splice(parseInt(`${row + 2}${col}`, 10), 1);
+    //   createdBoard.splice(parseInt(`${row + 3}${col}`, 10), 1);
+    // }
 
   })
 
   return createdBoard;
+}
+
+export function getIds(ship) {
+  const result = [];
+
+  const [row, col] = ship[1].split("").map(num => parseInt(num, 10));
+
+  if (ship[0] == "single_horizontal" || ship[0] ==  "single_vertical") {
+    result.push(ship[1]);
+  }
+
+  if (ship[0] == "double_horizontal") {
+    result.push(`${row}${col}`);
+    result.push(`${row}${col + 1}`);  }
+
+  if (ship[0] == "tri_horizontal") {
+    result.push(`${row}${col}`);    
+    result.push(`${row}${col + 1}`);
+    result.push(`${row}${col + 2}`);
+  }
+
+  if (ship[0] == "quad_horizontal") {
+    result.push(`${row}${col}`);
+    result.push(`${row}${col + 1}`);
+    result.push(`${row}${col + 2}`);
+    result.push(`${row}${col + 3}`);
+  }
+
+  if (ship[0] == "double_vertical") {
+    result.push(`${row}${col}`);
+    result.push(`${row + 1}${col}`);
+  }
+
+  if (ship[0] == "tri_vertical") {
+    result.push(`${row}${col}`);
+    result.push(`${row + 1}${col}`);
+    result.push(`${row + 2}${col}`);
+  }
+
+  if (ship[0] == "quad_vertical") {
+    result.push(`${row}${col}`);
+    result.push(`${row + 1}${col}`);
+    result.push(`${row + 2}${col}`);
+    result.push(`${row + 3}${col}`);
+  }
+
+  return result;
 }

@@ -73,6 +73,9 @@ const playerShips = document.querySelector(".player .ships");
 const keys = document.querySelector(".keys");
 let eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
 
+setInterval(() => {
+    console.log(playerBoard)
+}, 500)
 
 let circles;
 
@@ -288,7 +291,7 @@ start.addEventListener("click", () => {
 
     const dataArray = [];
     if (resetState) {
-        
+
         [...eachPlayerDiv].forEach(div => {
             if (!div.classList.contains("tile")) {
                 const divData = [];
@@ -324,6 +327,10 @@ start.addEventListener("click", () => {
     const eachPlayerTiles = document.querySelectorAll(".player .tiles div");
 
     if (resetState) {
+        console.log("the board array", createBoardArray(dataArray))
+        console.log("the created board", createCreatedBoard(dataArray))
+        // console.log("the data array", dataArray)
+
         playerBoard = {
             createdBoard: createCreatedBoard(dataArray),
             boardArray: createBoardArray(dataArray)
@@ -679,7 +686,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
     opponentIndividualTiles = document.querySelector(".opponent .tiles");
 
 
-    
+
 
     opponentIndividualTiles.removeEventListener("click", opponentClickFunction);
     opponentIndividualTiles.addEventListener("click", opponentClickFunction);

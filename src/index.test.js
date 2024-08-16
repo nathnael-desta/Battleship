@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare, getSquareTiles, getLineTiles, createBoardArray } from "./board.js";
+import { insertAt, getTile, finalTile, occupies, removeDiv, checkIfFlipIsOk, insertInsideArray, checkIfInsertable, addableSquares, checkSurrounding, shoot, checkIfShipIsDestroyed, checkIfAllHitsFinished, getIndexOfFirstHit, getIndexOfNextLikelyTile, getSurroundingTiles, getNextPossibleShipMember, getTypeOfSquare, getSquareTiles, getLineTiles, createBoardArray, getIds } from "./board.js";
 
 
 describe("insertion tests", () => {
@@ -3241,6 +3241,66 @@ describe("making the board arrays from the hand placed board", () => {
         "80", "81", "82", "83", "84", "single_horizontalX9", "86", "87", "88", "89",
         "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"
       ]
+    );
+  })
+})
+
+describe("get created board", () => {
+  test("get id numbers", () => {
+
+    const ship1 = ["single_horizontal", "16"];
+
+    const ship2 = ["single_vertical", "16"];
+
+    const ship3 = ["double_horizontal", "16"];
+
+    const ship4 = ["tri_horizontal", "16"];
+
+    const ship5 = ["quad_horizontal", "16"];
+    
+    const ship6 = ["double_vertical", "16"];
+
+    const ship7 = ["tri_vertical", "16"];
+
+    const ship8 = ["quad_vertical", "16"];
+
+    const ship9 = ["tri_horizontal", "50"]
+    
+
+    expect(getIds(ship1)).toEqual(
+      ["16"]
+    );
+
+    expect(getIds(ship2)).toEqual(
+      ["16"]
+    );
+
+    expect(getIds(ship3)).toEqual(
+      ["16", "17"]
+    );
+
+    expect(getIds(ship4)).toEqual(
+      ["16", "17", "18"]
+    );
+
+    expect(getIds(ship5)).toEqual(
+      ["16", "17", "18", "19"]
+    );
+
+    expect(getIds(ship6)).toEqual(
+      ["16", "26"]
+    );
+
+    expect(getIds(ship7)).toEqual(
+      ["16", "26", "36"]
+    );
+
+    expect(getIds(ship8)).toEqual(
+      ["16", "26", "36", "46"]
+    );
+
+    expect(getIds(ship9)).toEqual(
+      ["16", "26", "36", "46"]
     );
   })
 })
