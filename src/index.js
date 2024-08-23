@@ -1626,6 +1626,7 @@ playerIndividualTiles.forEach((tile) => {
 });
 
 playerTiles.addEventListener("click", (e) => {
+    console.log("player tile hit")
     if (squareMissileP1Active || lineMissileP1Active) {
         const tile = [...player1Overlays].reduce((acc, value) => {
             const box = value.getBoundingClientRect();
@@ -1656,9 +1657,6 @@ playerTiles.addEventListener("click", (e) => {
 
         if (squareMissileP1Active) {
             const allTiles = getSquareTiles(tile);
-
-
-
             allTiles.forEach((chosenTile) => {
                 const tileDiv = [...player1Overlays].reduce((acc, value) => {
                     if (value.classList[0] === chosenTile) {
