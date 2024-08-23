@@ -524,8 +524,6 @@ export function finalTile(col, row, circleData) {
     finalCol: col,
     finalRow: row
   }
-
-
 }
 
 export function flippable() {

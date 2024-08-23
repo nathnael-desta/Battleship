@@ -72,6 +72,8 @@ const opponentButtons = document.querySelector(".opponent .buttons");
 const playerShips = document.querySelector(".player .ships");
 const keys = document.querySelector(".keys");
 let eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
+const player1PointsText = document.querySelector(".player1Points");
+const player2PointsText = document.querySelector(".player2Points");
 
 
 
@@ -106,6 +108,9 @@ let player1LineMissileAlignment = "horizontal";
 let player2LineMissileAlignment = "horizontal";
 
 let computerPlaying = false;
+
+let player1Points = 0;
+let player2Points = 0;
 
 export let gameStarted = false;
 
@@ -285,7 +290,7 @@ function tileToArray(tiles) {
 start.addEventListener("click", () => {
     eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
 
-    console.log("the player board is", playerBoard)
+
 
     const dataArray = [];
     if (resetState) {
@@ -325,15 +330,19 @@ start.addEventListener("click", () => {
     const eachPlayerTiles = document.querySelectorAll(".player .tiles div");
 
     if (resetState) {
-        console.log("the board array", createBoardArray(dataArray))
-        console.log("the created board", createCreatedBoard(dataArray))
-        // console.log("the data array", dataArray)
+
 
         playerBoard = {
             createdBoard: createCreatedBoard(dataArray),
             boardArray: createBoardArray(dataArray)
         }
         player1EventListeners();
+
+    }
+
+    if (!computerPlaying) {
+        player1PointsText.classList.remove("hidden");
+        player2PointsText.classList.remove("hidden");
 
     }
 
@@ -538,9 +547,8 @@ document.addEventListener("keydown", (e) => {
             // const lineType = playerTiles.classList[1];
 
             // const line = lineType.slice(lineType.length - 3);
-            // // console.log(lineType.slice(0, lineType.length - 3))
+
             // // const newLineType;
-            // console.log(e.clientX, e.clientY);
             // if (line === "Row") {
             //     playerTiles.classList.remove(lineType);
             //     playerTiles.classList.add(`${lineType.slice(0, lineType.length - 3)}Col`);
@@ -569,7 +577,6 @@ function player1EventListeners() {
     const dockedShips = [...document.querySelectorAll(".player .ship")];
     const clickedShips = [];
 
-    console.log("player1 was hit")
     tiles = document.querySelectorAll(".player .tile");
     tiles.forEach((tile) => {
         tile.addEventListener(
@@ -588,7 +595,6 @@ function player1EventListeners() {
     ships = document.querySelectorAll(".player .tiles > div:not(.tile)");
     ships.forEach((ship) => {
         ship.addEventListener("click", (e) => {
-            console.log("hit a ship")
             if (!gameStarted) {
                 return;
             }
@@ -606,7 +612,6 @@ function player1EventListeners() {
 
             const circle = [...ship.children][shift];
             circle.classList.add("crossed");
-            console.log("still going")
 
             const allCrossedOut = [...ship.children].reduce((acc, child) => {
                 if (!child.classList.contains("crossed")) {
@@ -632,7 +637,6 @@ function player1EventListeners() {
                     return acc || null;
                 }, null);
             }
-            console.log("finsihed", playerBoard.boardArray)
 
             e.stopPropagation();
         });
@@ -656,7 +660,6 @@ function opponentClickFunction(event) {
                 if (event.target.classList.contains("miss")) {
                     playerTurn = false;
                     playerSquares.classList.remove("notClickable");
-                    console.log("clicked times", event.target)
                     computerClicker();
                     playerSquares.classList.add("notClickable");
                 }
@@ -671,12 +674,48 @@ function opponentClickFunction(event) {
                 if (event.target.classList.contains("miss")) {
                     player2Turn = false;
                     player1Turn = true;
+
+                    player1Points += 5;
+                    player1PointsText.textContent = `${player1Points}`
+                    checkMissles()
+
+
+                } else if (!event.target.classList.contains("onlyTile")) {
+                    player1Points += 10;
+                    player1PointsText.textContent = `${player1Points}`
+                    checkMissles()
                 }
             }
         }
 
         opponentTiles.classList.remove(...opponentTiles.classList);
         opponentTiles.classList.add("tiles");
+    }
+}
+
+function checkMissles() {
+    if (player2Points >= 0) {
+        squareMissileButton.classList.remove("cantAfford");
+    } else {
+        squareMissileButton.classList.add("cantAfford");
+    }
+
+    if (player2Points >= 0) {
+        lineMissileButton.classList.remove("cantAfford");
+    } else {
+        lineMissileButton.classList.add("cantAfford");
+    }
+
+    if (player1Points >= 0) {
+        squareMissileButton2.classList.remove("cantAfford");
+    } else {
+        squareMissileButton2.classList.add("cantAfford");
+    }
+
+    if (player1Points >= 0) {
+        lineMissileButton2.classList.remove("cantAfford");
+    } else {
+        lineMissileButton2.classList.add("cantAfford");
     }
 }
 
@@ -698,7 +737,6 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
     //                     playerSquares.classList.remove("notClickable");
     //                     computerClicker();
     //                     playerSquares.classList.add("notClickable");
-    //                     console.log("player squares changed");
     //                 }
     //             }
     //         }
@@ -886,6 +924,9 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
+
+                        // player2Points += 5;
+                        // player2PointsText.textContent = `${player2Points}`
                     } else if (
                         tile.classList[1].split("")[
                         tile.classList[1].split("").length - 1
@@ -961,7 +1002,6 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 }
 
 function createOpponentBoardOnPlayer1() {
-    console.log("a")
     playerIndividualTiles = document.querySelector(".player .tiles");
 
     playerIndividualTiles.addEventListener("click", (event) => {
@@ -970,6 +1010,15 @@ function createOpponentBoardOnPlayer1() {
                 if (event.target.classList.contains("miss")) {
                     player1Turn = false;
                     player2Turn = true;
+
+                    player2Points += 5;
+                    player2PointsText.textContent = `${player2Points}`
+                    checkMissles()
+                } else if (!event.target.classList.contains("onlyTile")) {
+                    player2Points += 10;
+                    player2PointsText.textContent = `${player2Points}`
+                    checkMissles()
+
                 }
             }
 
@@ -1034,11 +1083,9 @@ function createOpponentBoardOnPlayer1() {
 
     const dockedShips = [...document.querySelectorAll(".player .ship")];
 
-    console.log("b")
 
     tilesOp1.forEach((tile) => {
         tile.addEventListener("click", () => {
-            console.log("c")
             if (!gameStarted) {
                 return;
             }
@@ -1071,7 +1118,6 @@ function createOpponentBoardOnPlayer1() {
                         clickedShips.push(tile.classList[1]);
                     }
                 }
-                console.log("d")
 
                 if (clickedShips.length !== 0) {
                     clickedShips.forEach((ship) => {
@@ -1086,7 +1132,6 @@ function createOpponentBoardOnPlayer1() {
                             },
                             true
                         );
-                        console.log("e")
                         if (allHaveBeenClicked) {
                             let newShip;
                             shipTiles.forEach((shipTile) => {
@@ -1110,7 +1155,6 @@ function createOpponentBoardOnPlayer1() {
                                 clickedShips.indexOf(ship),
                                 1
                             );
-                            console.log("f")
                             const shipName = `${theShip[0].split("X")[0].split("_")[0]
                                 }_horizontal`;
                             const pickedShip = dockedShips.reduce((acc, subShip) => {
@@ -1350,7 +1394,6 @@ function computerClicker() {
     let chosenTileDiv;
     // if (shipsThatHit.length !== 0) {
     if (!checkIfAllHitsFinished(tilesOverlayArray)) {
-        console.log("that good shit", tilesOverlayArray, playerBoard.boardArray)
         const { myTilesOverlay, tile, surroundingTiles } = shoot(
             tilesOverlayArray,
             playerBoard.boardArray,
@@ -1363,7 +1406,6 @@ function computerClicker() {
             }
             return acc;
         }, null);
-        console.log("the chosen div is", chosenTileDiv);
         chosenTileDiv.click();
         if (
             isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
@@ -1391,7 +1433,6 @@ function computerClicker() {
         const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
         chosenTileDiv = chosenTile;
         const myRandomNumber = chosenTileDiv.classList[0];
-        console.log("....................", playerBoard)
         const { myTilesOverlay, tile, surroundingTiles } = shoot(
             tilesOverlayArray,
             playerBoard.boardArray,
@@ -1434,7 +1475,6 @@ function startComputerClicker() {
 
     while (isNaN(playerBoard.boardArray[parseInt(chosenDiv.classList[0], 10)])) {
         chosenDiv = computerClicker().chosenTileDiv;
-        console.log(chosenDiv);
     }
 }
 
@@ -1553,9 +1593,7 @@ function playGamePVP() {
     createOpponentBoardOnPlayer2(false);
     document.querySelectorAll("player .tile").forEach((tile) => {
         tile.addEventListener("click", (e) => {
-            console.log(tile);
             if (e.target.classList.contains("overlay")) {
-                console.log(e.target);
             }
         });
     });
@@ -1580,12 +1618,9 @@ opponentTiles.addEventListener("mousemove", (event) => {
 });
 
 playerIndividualTiles.forEach((tile) => {
-    console.log(tile);
 
     tile.addEventListener("click", (e) => {
-        console.log(tile);
         if (e.target.classList.contains("overlay")) {
-            console.log(e.target);
         }
     });
 });
@@ -1621,6 +1656,8 @@ playerTiles.addEventListener("click", (e) => {
 
         if (squareMissileP1Active) {
             const allTiles = getSquareTiles(tile);
+
+
 
             allTiles.forEach((chosenTile) => {
                 const tileDiv = [...player1Overlays].reduce((acc, value) => {
@@ -1704,7 +1741,9 @@ playerTiles.addEventListener("click", (e) => {
 });
 
 opponentTiles.addEventListener("click", (e) => {
+    console.log("opponent clicked")
     if (squareMissileP2Active || lineMissileP2Active) {
+        console.log("on opponent square active")
         const tile = [...player2Overlays].reduce((acc, value) => {
             const box = value.getBoundingClientRect();
 
@@ -1820,6 +1859,4 @@ opponentTiles.addEventListener("click", (e) => {
 
 // })
 
-// setInterval(() => {
-//     console.log(squareMissileP1Active)
-// }, 500)
+
