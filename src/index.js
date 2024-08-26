@@ -1387,7 +1387,7 @@ const tilesOverlayArrayP2 = [
 
 
 setInterval(() => {
-    console.log(computerPlaying)
+    console.log(playerTurn)
 },500)
 
 
