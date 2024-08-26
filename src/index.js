@@ -687,6 +687,7 @@ function player1EventListeners() {
                     return;
                 }
                 tile.classList.add("miss");
+                tile.classList.add("notClickable")
                 event.stopPropagation();
             },
             false
@@ -763,6 +764,7 @@ function opponentClickFunction(event) {
                     playerSquares.classList.remove("notClickable");
                     computerClicker();
                     playerSquares.classList.add("notClickable");
+                    event.target.classList.add("notClickable")
                 }
             }
         }
@@ -779,6 +781,7 @@ function opponentClickFunction(event) {
                     player1Points += 5;
                     player1PointsText.textContent = `${player1Points}`
                     checkMissles()
+                    event.target.classList.add("notClickable");
 
 
                 } else if (!event.target.classList.contains("onlyTile")) {
@@ -940,6 +943,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
+                        tile.classList.add("notClickable");
                     } else if (
                         tile.classList[1].split("")[
                         tile.classList[1].split("").length - 1
@@ -1025,6 +1029,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
+                        tile.classList.add("notClickable");
 
                         // player2Points += 5;
                         // player2PointsText.textContent = `${player2Points}`
@@ -1115,6 +1120,7 @@ function createOpponentBoardOnPlayer1() {
                     player2Points += 5;
                     player2PointsText.textContent = `${player2Points}`
                     checkMissles()
+                    event.target.classList.add("notClickable");
                 } else if (!event.target.classList.contains("onlyTile")) {
                     player2Points += 10;
                     player2PointsText.textContent = `${player2Points}`
@@ -1204,6 +1210,7 @@ function createOpponentBoardOnPlayer1() {
                 }
                 if (tile.classList.contains("onlyTile")) {
                     tile.classList.add("miss");
+                    tile.classList.add("notClickable");
                 } else if (
                     tile.classList[1].split("")[
                     tile.classList[1].split("").length - 1
@@ -1410,7 +1417,6 @@ function computerClicker() {
             }
             return acc;
         }, null);
-        console.log("chosenTile", chosenTileDiv);
         chosenTileDiv.click();
         if (
             isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
@@ -1432,6 +1438,7 @@ function computerClicker() {
         missDivs.forEach((div) => {
             if (div !== null) {
                 div.click();
+                div.classList.add("notClickable");
             }
         });
     } else {
@@ -1468,6 +1475,7 @@ function computerClicker() {
         missDivs.forEach((div) => {
             if (div !== null) {
                 div.click();
+                div.classList.add("notClickable");
             }
         });
     }
@@ -1579,6 +1587,7 @@ function takeOutClickedTiles(overlayedTiles) {
                     //     return acc
                     // }, 1000)
                     overlayedTiles.splice(overlayedTiles.indexOf(tile), 1);
+                    
                 }
             }
         });
@@ -1631,7 +1640,6 @@ playerIndividualTiles.forEach((tile) => {
 });
 
 playerTiles.addEventListener("click", (e) => {
-    console.log("player tile hit")
     if (squareMissileP1Active || lineMissileP1Active) {
         const tile = [...player1Overlays].reduce((acc, value) => {
             const box = value.getBoundingClientRect();
@@ -1744,9 +1752,7 @@ playerTiles.addEventListener("click", (e) => {
 });
 
 opponentTiles.addEventListener("click", (e) => {
-    console.log("opponent clicked")
     if (squareMissileP2Active || lineMissileP2Active) {
-        console.log("on opponent square active")
         const tile = [...player2Overlays].reduce((acc, value) => {
             const box = value.getBoundingClientRect();
 

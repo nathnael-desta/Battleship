@@ -942,7 +942,6 @@ export function selfCreateBoard(tiles) {
   const createdBoard = [];
   const boardArray = [];
   const myBoard = finalBoard(board);
-  console.log("myBoard", myBoard)
   for (let i = 0; i < myBoard.length; i += 1) {
     if (!Number.isNaN(parseInt(myBoard[i], 10))) {
       const tile = document.createElement("div");
@@ -963,7 +962,6 @@ export function selfCreateBoard(tiles) {
     }
   }
 
-  console.log("the board array", boardArray)
   return { createdBoard, boardArray }
 }
 
@@ -1107,6 +1105,7 @@ export function getSurroundingDivs(box, shipName, user) {
 
     if (tileDistance < 30) {
       tile.classList.add("miss");
+      tile.classList.add("notClickable");
     }
   })
 }
@@ -1326,7 +1325,6 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
 }
 
 export function checkIfAllHitsFinished(tilesOverlay) {
-  console.log("tiles overlay", tilesOverlay)
   return tilesOverlay.reduce((acc, tile) => {
     if (tile === "hit") {
       return false;
@@ -1808,7 +1806,6 @@ export function createCreatedBoard(dataArray) {
 
     const ids = getIds(ship);
 
-    console.log("dataArray", dataArray, "ids", ids);
 
     createdBoard.forEach((div, index) => {
       const divId = div.id;
