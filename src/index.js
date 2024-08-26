@@ -213,6 +213,8 @@ let computerPlaying = false;
 let player1Points = 0;
 let player2Points = 0;
 
+let pausePoints = false;
+
 export let gameStarted = false;
 
 const missileShot = false;
@@ -493,6 +495,8 @@ lineMissileButton.addEventListener("click", () => {
     squareMissileButton.classList.remove("clicked");
     squareMissileButton.classList.add("notClicked");
 
+    pausePoints = true;
+
     setTimeout(() => {
         lineMissileP1Active = !lineMissileP1Active;
         if (!lineMissileP1Active) {
@@ -515,6 +519,8 @@ squareMissileButton.addEventListener("click", () => {
         playerTiles.classList.add("tiles");
     }
     squareMissileP1Active = !squareMissileP1Active;
+
+    pausePoints = true;
 });
 
 lineMissileButton2.addEventListener("click", () => {
@@ -524,6 +530,8 @@ lineMissileButton2.addEventListener("click", () => {
     squareMissileP2Active = false;
     squareMissileButton2.classList.remove("clicked");
     squareMissileButton2.classList.add("notClicked");
+
+    pausePoints = true;
 
     setTimeout(() => {
         lineMissileP2Active = !lineMissileP2Active;
@@ -541,6 +549,8 @@ squareMissileButton2.addEventListener("click", () => {
     lineMissileP2Active = false;
     lineMissileButton2.classList.remove("clicked");
     lineMissileButton2.classList.add("notClicked");
+
+    pausePoints = true;
 
     if (!lineMissileP2Active) {
         opponentTiles.classList.remove(...opponentTiles.classList);
@@ -778,15 +788,21 @@ function opponentClickFunction(event) {
                     player2Turn = false;
                     player1Turn = true;
 
-                    player1Points += 5;
-                    player1PointsText.textContent = `${player1Points}`
+                    if (!pausePoints) {
+                        player1Points += 5;
+                        player1PointsText.textContent = `${player1Points}`
+                    }
+
                     checkMissles()
                     event.target.classList.add("notClickable");
 
 
                 } else if (!event.target.classList.contains("onlyTile")) {
-                    player1Points += 10;
-                    player1PointsText.textContent = `${player1Points}`
+                    if (!pausePoints) {
+                        player1Points += 10;
+                        player1PointsText.textContent = `${player1Points}`
+                    }
+
                     checkMissles()
                 }
             }
@@ -932,6 +948,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (squareMissileP2Active) {
                         setTimeout(() => {
                             squareMissileP2Active = false;
+                            pausePoints = false;
                         }, 0);
                     }
 
@@ -1117,13 +1134,18 @@ function createOpponentBoardOnPlayer1() {
                     player1Turn = false;
                     player2Turn = true;
 
+
+                    if (!pausePoints) { 
                     player2Points += 5;
                     player2PointsText.textContent = `${player2Points}`
+                    }
                     checkMissles()
                     event.target.classList.add("notClickable");
                 } else if (!event.target.classList.contains("onlyTile")) {
+                    if (!pausePoints) {
                     player2Points += 10;
                     player2PointsText.textContent = `${player2Points}`
+                    }
                     checkMissles()
 
                 }
@@ -1200,6 +1222,7 @@ function createOpponentBoardOnPlayer1() {
                 if (squareMissileP1Active) {
                     setTimeout(() => {
                         squareMissileP1Active = false;
+                        pausePoints = false;
                     }, 0);
                 }
 
