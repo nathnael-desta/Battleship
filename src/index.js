@@ -418,6 +418,8 @@ start.addEventListener("click", () => {
     player1Turn = true;
     playerTurn = true;
 
+    checkMissilesActive()
+
     gameStarted = true;
 
     playerButtons.classList.add("started");
@@ -487,7 +489,23 @@ reset.addEventListener("click", () => {
     createSquares(playerTiles);
 })
 
+function checkMissilesActive() {
+    if (player1Turn) {
+        squareMissileButton.classList.remove("notClickable");
+        lineMissileButton.classList.remove("notClickable");
+        squareMissileButton2.classList.add("notClickable");
+        lineMissileButton2.classList.add("notClickable");
+    } else {
+        squareMissileButton.classList.add("notClickable");
+        lineMissileButton.classList.add("notClickable");
+        squareMissileButton2.classList.remove("notClickable");
+        lineMissileButton2.classList.remove("notClickable");
+    }    
+}
+
 lineMissileButton.addEventListener("click", () => {
+    
+    
     lineMissileButton.classList.toggle("notClicked");
     lineMissileButton.classList.toggle("clicked");
 
@@ -787,6 +805,8 @@ function opponentClickFunction(event) {
                 if (event.target.classList.contains("miss")) {
                     player2Turn = false;
                     player1Turn = true;
+
+                    checkMissilesActive()
 
                     if (!pausePoints) {
                         player1Points += 5;
@@ -1133,6 +1153,8 @@ function createOpponentBoardOnPlayer1() {
                 if (event.target.classList.contains("miss")) {
                     player1Turn = false;
                     player2Turn = true;
+
+                    checkMissilesActive()
 
 
                     if (!pausePoints) { 
@@ -1727,6 +1749,9 @@ playerTiles.addEventListener("click", (e) => {
                 if (playerTile) {
                     playerTile.dispatchEvent(clickEvent);
                     player1Turn = true;
+                    player2Turn = false;
+
+                    checkMissilesActive()
                 }
             });
         }
@@ -1768,6 +1793,9 @@ playerTiles.addEventListener("click", (e) => {
                 if (playerTile) {
                     playerTile.dispatchEvent(clickEvent);
                     player1Turn = true;
+                    player2Turn = false;
+
+                    checkMissilesActive()
                 }
             });
         }
@@ -1840,6 +1868,9 @@ opponentTiles.addEventListener("click", (e) => {
                 if (playerTile) {
                     playerTile.dispatchEvent(clickEvent);
                     player2Turn = true;
+                    player1Turn = false;
+
+                    checkMissilesActive()
                 }
             });
         }
@@ -1881,6 +1912,9 @@ opponentTiles.addEventListener("click", (e) => {
                 if (playerTile) {
                     playerTile.dispatchEvent(clickEvent);
                     player2Turn = true;
+                    player1Turn = false;
+
+                    checkMissilesActive()
                 }
             });
         }
