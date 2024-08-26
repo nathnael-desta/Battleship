@@ -1275,10 +1275,10 @@ function createOpponentBoardOnPlayer1() {
     });
 }
 
-opponentCreate.addEventListener(
-    "click",
-    createOpponentBoardOnPlayer2.bind(null, true)
-);
+// opponentCreate.addEventListener(
+//     "click",
+//     createOpponentBoardOnPlayer2.bind(null, true)
+// );
 
 const shipsThatHit = [];
 
