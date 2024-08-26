@@ -1326,6 +1326,7 @@ export function getIndexOfNextLikelyTile(tilesOverlay) {
 }
 
 export function checkIfAllHitsFinished(tilesOverlay) {
+  console.log("tiles overlay", tilesOverlay)
   return tilesOverlay.reduce((acc, tile) => {
     if (tile === "hit") {
       return false;
