@@ -918,10 +918,19 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
     opponentIndividualTiles.addEventListener("mousemove", (event) => {
         if (player2Turn && squareMissileP2Active) {
+            const madeClickable = [];
+
+
+            [...opponentIndividualTiles.children].forEach(element => {
+                madeClickable.push(element)
+                element.classList.remove("notClickable")
+            })
+
             const square =
                 opponentIndividualTiles.children[
                 opponentIndividualTiles.children.length - 1
                 ];
+            square.classList.add("hoverable");
             if (square.classList.contains("squareMissile")) {
                 square.remove();
             }
@@ -954,17 +963,22 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
             squareMissile.style.left = `${9 + 17 - 59 + 41 * col}px`;
             squareMissile.style.top = `${17 - 59 + 41 * row}px`;
             opponentIndividualTiles.appendChild(squareMissile);
+            
+            madeClickable.forEach(element => element.classList.add("notclickable"))
         }
     });
 
     opponentIndividualTiles.addEventListener("mouseout", () => {
+        
         const square =
             opponentIndividualTiles.children[
             opponentIndividualTiles.children.length - 1
             ];
+        square.classList.add("hoverable");
         if (square.classList.contains("squareMissile")) {
             square.remove();
         }
+        square.classList.remove("hoverable")
     });
 
     const { createdBoard, boardArray } = opponentCreateBoard(opponentTiles);
@@ -1205,6 +1219,14 @@ function createOpponentBoardOnPlayer1() {
 
     playerIndividualTiles.addEventListener("mousemove", (event) => {
         if (player1Turn && squareMissileP1Active) {
+            const madeClickable = [];
+
+
+            [...playerIndividualTiles.children].forEach(element => {
+                madeClickable.push(element)
+                element.classList.remove("notClickable")
+            })
+
             const square =
                 playerIndividualTiles.children[
                 playerIndividualTiles.children.length - 1
@@ -1218,6 +1240,7 @@ function createOpponentBoardOnPlayer1() {
                 event.clientX,
                 event.clientY
             );
+
             if (row === -1 || col === -1) {
                 return;
             }
@@ -1241,6 +1264,9 @@ function createOpponentBoardOnPlayer1() {
             squareMissile.style.left = `${9 + 17 - 59 + 41 * col}px`;
             squareMissile.style.top = `${17 - 59 + 41 * row}px`;
             playerIndividualTiles.appendChild(squareMissile);
+
+
+            madeClickable.forEach(element => element.classList.add("notclickable"))
         }
     });
 
@@ -1466,10 +1492,6 @@ const tilesOverlayArrayP2 = [
     "99",
 ];
 
-
-setInterval(() => {
-    console.log(playerTurn)
-},500)
 
 
 function computerClicker() {

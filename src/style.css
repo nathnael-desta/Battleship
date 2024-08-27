@@ -1806,3 +1806,6 @@
         fill: #de4d86 !important;
     }
 }
+.hoverable {
+    pointer-events: all !important;
+}
