@@ -521,7 +521,10 @@ lineMissileButton.addEventListener("click", () => {
         if (!lineMissileP1Active) {
             playerTiles.classList.remove(...playerTiles.classList);
             playerTiles.classList.add("tiles");
+            lineMissileButton.classList.remove("clicked");
+            lineMissileButton.classList.add("notClicked");
         }
+
     }, 0);
 });
 
@@ -538,6 +541,11 @@ squareMissileButton.addEventListener("click", () => {
         playerTiles.classList.add("tiles");
     }
     squareMissileP1Active = !squareMissileP1Active;
+
+    if (!squareMissileP1Active) {
+        squareMissileButton.classList.remove("clicked");
+        squareMissileButton.classList.add("notClicked");
+    }
 
     pausePoints = true;
 });
@@ -557,6 +565,8 @@ lineMissileButton2.addEventListener("click", () => {
         if (!lineMissileP2Active) {
             opponentTiles.classList.remove(...opponentTiles.classList);
             opponentTiles.classList.add("tiles");
+            lineMissileButton2.classList.remove("clicked");
+            lineMissileButton2.classList.add("notClicked");
         }
     }, 0);
 });
@@ -576,6 +586,11 @@ squareMissileButton2.addEventListener("click", () => {
         opponentTiles.classList.add("tiles");
     }
     squareMissileP2Active = !squareMissileP2Active;
+
+    if (!squareMissileP2Active) {
+        squareMissileButton2.classList.remove("clicked");
+        squareMissileButton2.classList.add("notClicked");
+    }
 });
 
 // for draging ships for initial placment
@@ -969,6 +984,8 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (squareMissileP2Active) {
                         setTimeout(() => {
                             squareMissileP2Active = false;
+                            squareMissileButton2.classList.remove("clicked");
+                            squareMissileButton2.classList.add("notClicked");
                             pausePoints = false;
                         }, 0);
                     }
@@ -976,6 +993,8 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (lineMissileP2Active) {
                         setTimeout(() => {
                             lineMissileP2Active = false;
+                            lineMissileButton2.classList.remove("clicked");
+                            lineMissileButton2.classList.add("notClicked");
                         }, 0);
                     }
 
@@ -1056,6 +1075,8 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (squareMissileP2Active) {
                         setTimeout(() => {
                             squareMissileP2Active = false;
+                            squareMissileButton2.classList.remove("clicked");
+                            squareMissileButton2.classList.add("notClicked");
                             pausePoints = false;
                         }, 0);
                     }
@@ -1063,6 +1084,8 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (lineMissileP2Active) {
                         setTimeout(() => {
                             lineMissileP2Active = false;
+                            lineMissileButton2.classList.remove("clicked");
+                            lineMissileButton2.classList.add("notClicked");
                         }, 0);
                     }
 
@@ -1246,6 +1269,8 @@ function createOpponentBoardOnPlayer1() {
                 if (squareMissileP1Active) {
                     setTimeout(() => {
                         squareMissileP1Active = false;
+                        squareMissileButton.classList.remove("clicked");
+                        squareMissileButton.classList.add("notClicked");
                         pausePoints = false;
                     }, 0);
                 }
@@ -1253,6 +1278,8 @@ function createOpponentBoardOnPlayer1() {
                 if (lineMissileP1Active) {
                     setTimeout(() => {
                         lineMissileP1Active = false;
+                        lineMissileButton.classList.remove("clicked");
+                        lineMissileButton.classList.add("notClicked");
                     }, 0);
                 }
                 if (tile.classList.contains("onlyTile")) {
