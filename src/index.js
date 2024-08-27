@@ -513,6 +513,7 @@ lineMissileButton.addEventListener("click", () => {
     squareMissileButton.classList.remove("clicked");
     squareMissileButton.classList.add("notClicked");
 
+    
     pausePoints = true;
 
     setTimeout(() => {
@@ -1055,6 +1056,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (squareMissileP2Active) {
                         setTimeout(() => {
                             squareMissileP2Active = false;
+                            pausePoints = false;
                         }, 0);
                     }
 
