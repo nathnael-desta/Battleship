@@ -500,12 +500,12 @@ function checkMissilesActive() {
         lineMissileButton.classList.add("notClickable");
         squareMissileButton2.classList.remove("notClickable");
         lineMissileButton2.classList.remove("notClickable");
-    }    
+    }
 }
 
 lineMissileButton.addEventListener("click", () => {
-    
-    
+
+
     lineMissileButton.classList.toggle("notClicked");
     lineMissileButton.classList.toggle("clicked");
 
@@ -513,7 +513,7 @@ lineMissileButton.addEventListener("click", () => {
     squareMissileButton.classList.remove("clicked");
     squareMissileButton.classList.add("notClicked");
 
-    
+
     pausePoints = true;
 
     setTimeout(() => {
@@ -789,6 +789,11 @@ function player1EventListeners() {
     });
 }
 
+setInterval(() => {
+    console.log(pausePoints)
+}, 500)
+
+
 function createPlayer1Board() {
 
 
@@ -850,25 +855,25 @@ function opponentClickFunction(event) {
 }
 
 function checkMissles() {
-    if (player2Points >= 0) {
+    if (player2Points >= 49) {
         squareMissileButton.classList.remove("cantAfford");
     } else {
         squareMissileButton.classList.add("cantAfford");
     }
 
-    if (player2Points >= 0) {
+    if (player2Points >= 79) {
         lineMissileButton.classList.remove("cantAfford");
     } else {
         lineMissileButton.classList.add("cantAfford");
     }
 
-    if (player1Points >= 0) {
+    if (player1Points >= 49) {
         squareMissileButton2.classList.remove("cantAfford");
     } else {
         squareMissileButton2.classList.add("cantAfford");
     }
 
-    if (player1Points >= 0) {
+    if (player1Points >= 79) {
         lineMissileButton2.classList.remove("cantAfford");
     } else {
         lineMissileButton2.classList.add("cantAfford");
@@ -963,13 +968,13 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
             squareMissile.style.left = `${9 + 17 - 59 + 41 * col}px`;
             squareMissile.style.top = `${17 - 59 + 41 * row}px`;
             opponentIndividualTiles.appendChild(squareMissile);
-            
+
             madeClickable.forEach(element => element.classList.add("notclickable"))
         }
     });
 
     opponentIndividualTiles.addEventListener("mouseout", () => {
-        
+
         const square =
             opponentIndividualTiles.children[
             opponentIndividualTiles.children.length - 1
@@ -1196,16 +1201,16 @@ function createOpponentBoardOnPlayer1() {
                     checkMissilesActive()
 
 
-                    if (!pausePoints) { 
-                    player2Points += 5;
-                    player2PointsText.textContent = `${player2Points}`
+                    if (!pausePoints) {
+                        player2Points += 5;
+                        player2PointsText.textContent = `${player2Points}`
                     }
                     checkMissles()
                     event.target.classList.add("notClickable");
                 } else if (!event.target.classList.contains("onlyTile")) {
                     if (!pausePoints) {
-                    player2Points += 10;
-                    player2PointsText.textContent = `${player2Points}`
+                        player2Points += 10;
+                        player2PointsText.textContent = `${player2Points}`
                     }
                     checkMissles()
 
@@ -1683,7 +1688,7 @@ function takeOutClickedTiles(overlayedTiles) {
                     //     return acc
                     // }, 1000)
                     overlayedTiles.splice(overlayedTiles.indexOf(tile), 1);
-                    
+
                 }
             }
         });
@@ -1851,6 +1856,7 @@ playerTiles.addEventListener("click", (e) => {
 
                 player1Turn = true;
                 player2Turn = false;
+                pausePoints = false
             });
         }
     }
@@ -1973,6 +1979,7 @@ opponentTiles.addEventListener("click", (e) => {
 
                 player1Turn = false;
                 player2Turn = true;
+                pausePoints = false;
             });
         }
     }
