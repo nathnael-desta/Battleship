@@ -790,7 +790,7 @@ function player1EventListeners() {
 }
 
 setInterval(() => {
-    console.log(pausePoints)
+    console.log(player1Turn ? "player 1 turn" : "player 2 turn")
 }, 500)
 
 
@@ -1005,7 +1005,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             squareMissileP2Active = false;
                             squareMissileButton2.classList.remove("clicked");
                             squareMissileButton2.classList.add("notClicked");
-                            pausePoints = false;
+
                         }, 0);
                     }
 
@@ -1014,6 +1014,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             lineMissileP2Active = false;
                             lineMissileButton2.classList.remove("clicked");
                             lineMissileButton2.classList.add("notClicked");
+
                         }, 0);
                     }
 
@@ -1096,7 +1097,8 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             squareMissileP2Active = false;
                             squareMissileButton2.classList.remove("clicked");
                             squareMissileButton2.classList.add("notClicked");
-                            pausePoints = false;
+
+
                         }, 0);
                     }
 
@@ -1105,6 +1107,8 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             lineMissileP2Active = false;
                             lineMissileButton2.classList.remove("clicked");
                             lineMissileButton2.classList.add("notClicked");
+
+
                         }, 0);
                     }
 
@@ -1302,7 +1306,7 @@ function createOpponentBoardOnPlayer1() {
                         squareMissileP1Active = false;
                         squareMissileButton.classList.remove("clicked");
                         squareMissileButton.classList.add("notClicked");
-                        pausePoints = false;
+
                     }, 0);
                 }
 
@@ -1311,6 +1315,8 @@ function createOpponentBoardOnPlayer1() {
                         lineMissileP1Active = false;
                         lineMissileButton.classList.remove("clicked");
                         lineMissileButton.classList.add("notClicked");
+
+
                     }, 0);
                 }
                 if (tile.classList.contains("onlyTile")) {
@@ -1810,6 +1816,11 @@ playerTiles.addEventListener("click", (e) => {
                     checkMissilesActive()
                 }
             });
+            setTimeout(() => {
+                pausePoints = false;
+            }, 200)
+            player2Points -= 50;
+            player2PointsText.textContent = `${player2Points}`;
         }
 
         if (lineMissileP1Active) {
@@ -1856,8 +1867,13 @@ playerTiles.addEventListener("click", (e) => {
 
                 player1Turn = true;
                 player2Turn = false;
-                pausePoints = false
+
             });
+            setTimeout(() => {
+                pausePoints = false;
+            }, 200)
+            player2Points -= 80;
+            player2PointsText.textContent = `${player2Points}`;
         }
     }
 });
@@ -1933,6 +1949,11 @@ opponentTiles.addEventListener("click", (e) => {
                     checkMissilesActive()
                 }
             });
+            setTimeout(() => {
+                pausePoints = false;
+            }, 200)
+            player1Points -= 50;
+            player1PointsText.textContent = `${player1Points}`;
         }
 
         if (lineMissileP2Active) {
@@ -1979,8 +2000,13 @@ opponentTiles.addEventListener("click", (e) => {
 
                 player1Turn = false;
                 player2Turn = true;
-                pausePoints = false;
+
             });
+            setTimeout(() => {
+                pausePoints = false;
+            }, 200)
+            player1Points -= 80;
+            player1PointsText.textContent = `${player1Points}`;
         }
     }
 });
