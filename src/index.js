@@ -393,7 +393,17 @@ function tileToArray(tiles) {
 start.addEventListener("click", () => {
     eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
 
-
+    if (computerPlaying) {
+        squareMissileButton.classList.add("hidden");
+        squareMissileButton2.classList.add("hidden");
+        lineMissileButton.classList.add("hidden");
+        lineMissileButton2.classList.add("hidden");
+    } else {
+        squareMissileButton.classList.remove("hidden");
+        squareMissileButton2.classList.remove("hidden");
+        lineMissileButton.classList.remove("hidden");
+        lineMissileButton2.classList.remove("hidden");
+    }
 
     const dataArray = [];
     if (resetState) {
