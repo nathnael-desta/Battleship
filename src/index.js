@@ -398,6 +398,13 @@ start.addEventListener("click", () => {
         squareMissileButton2.classList.add("hidden");
         lineMissileButton.classList.add("hidden");
         lineMissileButton2.classList.add("hidden");
+
+        [...playerShips.children].forEach(type => {
+            [...type.children].forEach(div => {
+                div.classList.remove("draged")
+            })
+        })
+
     } else {
         squareMissileButton.classList.remove("hidden");
         squareMissileButton2.classList.remove("hidden");
