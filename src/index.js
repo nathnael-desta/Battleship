@@ -1848,6 +1848,9 @@ playerTiles.addEventListener("click", (e) => {
 
                     checkMissilesActive()
                 }
+
+                player1Turn = true;
+                player2Turn = false;
             });
         }
     }
@@ -1967,6 +1970,9 @@ opponentTiles.addEventListener("click", (e) => {
 
                     checkMissilesActive()
                 }
+
+                player1Turn = false;
+                player2Turn = true;
             });
         }
     }
