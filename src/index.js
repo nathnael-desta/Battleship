@@ -222,6 +222,8 @@ const missileShot = false;
 let pvcState = true;
 let pvpState = false;
 
+let computerShooting = false;
+
 let resetState = false;
 playerShips.classList.add("notClickable");
 keys.classList.add("hidden");
@@ -823,12 +825,14 @@ function createPlayer1Board() {
 
 function opponentClickFunction(event) {
     if (computerPlaying) {
-        if (playerTurn) {
+        if (playerTurn && !computerShooting) {
             if (event.target.classList.contains("tile")) {
                 if (event.target.classList.contains("miss")) {
                     playerTurn = false;
                     playerSquares.classList.remove("notClickable");
+                    computerShooting = true;
                     computerClicker();
+                    computerShooting = false;
                     playerSquares.classList.add("notClickable");
                     event.target.classList.add("notClickable")
                 }
@@ -1015,7 +1019,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
             if (!gameStarted) {
                 return;
             }
-            if (computerPlaying) {
+            if (computerPlaying && !computerShooting) {
                 if (playerTurn) {
                     if (squareMissileP2Active) {
                         setTimeout(() => {
@@ -1528,81 +1532,84 @@ function computerClicker() {
     }
     let chosenTileDiv;
     // if (shipsThatHit.length !== 0) {
-    if (!checkIfAllHitsFinished(tilesOverlayArray)) {
-        const { myTilesOverlay, tile, surroundingTiles } = shoot(
-            tilesOverlayArray,
-            playerBoard.boardArray,
-            0
-        );
-        tilesOverlayArray = myTilesOverlay;
-        chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
-            if (tileOv.classList[0] === `${tile}`) {
-                return tilesOverlayDivsCopy.splice(index, 1)[0];
-            }
-            return acc;
-        }, null);
-        chosenTileDiv.click();
-        if (
-            isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
-        ) {
-            computerClicker();
-        } else {
-            playerTurn = true;
-        }
-
-        const missDivs = surroundingTiles.map((num) => {
-            const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
-                if (value.classList[0] === num) {
+    setTimeout(() => {
+        if (!checkIfAllHitsFinished(tilesOverlayArray)) {
+            const { myTilesOverlay, tile, surroundingTiles } = shoot(
+                tilesOverlayArray,
+                playerBoard.boardArray,
+                0
+            );
+            tilesOverlayArray = myTilesOverlay;
+            chosenTileDiv = tilesOverlayDivsCopy.reduce((acc, tileOv, index) => {
+                if (tileOv.classList[0] === `${tile}`) {
                     return tilesOverlayDivsCopy.splice(index, 1)[0];
                 }
                 return acc;
             }, null);
-            return theDiv;
-        });
-        missDivs.forEach((div) => {
-            if (div !== null) {
-                div.click();
-                div.classList.add("notClickable");
+            chosenTileDiv.click();
+            if (
+                isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
+            ) {
+                computerClicker();
+            } else {
+                playerTurn = true;
             }
-        });
-    } else {
-        const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
-        chosenTileDiv = chosenTile;
-        const myRandomNumber = chosenTileDiv.classList[0];
-        const { myTilesOverlay, tile, surroundingTiles } = shoot(
-            tilesOverlayArray,
-            playerBoard.boardArray,
-            myRandomNumber
-        );
-        tilesOverlayArray = myTilesOverlay;
-        chosenTileDiv.click();
-        if (
-            isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
-        ) {
-            playerTurn = false;
-            computerClicker();
-        } else {
-            playerTurn = true;
-        }
-
-        // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
-
-        const missDivs = surroundingTiles.map((num) => {
-            const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
-                if (value.classList[0] === num) {
-                    return tilesOverlayDivsCopy.splice(index, 1)[0];
+    
+            const missDivs = surroundingTiles.map((num) => {
+                const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
+                    if (value.classList[0] === num) {
+                        return tilesOverlayDivsCopy.splice(index, 1)[0];
+                    }
+                    return acc;
+                }, null);
+                return theDiv;
+            });
+            missDivs.forEach((div) => {
+                if (div !== null) {
+                    div.click();
+                    div.classList.add("notClickable");
                 }
-                return acc;
-            }, null);
-            return theDiv;
-        });
-        missDivs.forEach((div) => {
-            if (div !== null) {
-                div.click();
-                div.classList.add("notClickable");
+            });
+        } else {
+            const { chosenTile } = clickRandomTiles(tilesOverlayDivsCopy);
+            chosenTileDiv = chosenTile;
+            const myRandomNumber = chosenTileDiv.classList[0];
+            const { myTilesOverlay, tile, surroundingTiles } = shoot(
+                tilesOverlayArray,
+                playerBoard.boardArray,
+                myRandomNumber
+            );
+            tilesOverlayArray = myTilesOverlay;
+            chosenTileDiv.click();
+            if (
+                isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
+            ) {
+                playerTurn = false;
+                computerClicker();
+            } else {
+                playerTurn = true;
             }
-        });
-    }
+    
+            // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
+    
+            const missDivs = surroundingTiles.map((num) => {
+                const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
+                    if (value.classList[0] === num) {
+                        return tilesOverlayDivsCopy.splice(index, 1)[0];
+                    }
+                    return acc;
+                }, null);
+                return theDiv;
+            });
+            missDivs.forEach((div) => {
+                if (div !== null) {
+                    div.click();
+                    div.classList.add("notClickable");
+                }
+            });
+        }
+    }, 300)
+    
 }
 
 function startComputerClicker() {
