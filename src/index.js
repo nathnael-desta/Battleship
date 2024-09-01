@@ -76,6 +76,8 @@ const player1PointsText = document.querySelector(".player1Points");
 const player2PointsText = document.querySelector(".player2Points");
 const turnDisplay = document.querySelector(".inside");
 const turnContainer = document.querySelector(".turn");
+const playerName = document.querySelector(".player .name span");
+const opponentName = document.querySelector(".opponent .name span");
 
 
 let tilesOverlayArray = [
@@ -181,6 +183,9 @@ let tilesOverlayArray = [
     "99",
 ];
 
+playerName.textContent = "Player";
+opponentName.textContent = "Computer";
+
 let circles;
 
 let tiles;
@@ -253,6 +258,9 @@ pvp.addEventListener("click", () => {
     button.classList.remove("clicked");
     button.classList.add("notClicked");
 
+    playerName.textContent = "Player 1";
+    opponentName.textContent = "Player 2";
+
     pvpState = true;
     pvp.classList.add("clicked");
     pvp.classList.remove("notClicked");
@@ -267,6 +275,9 @@ button.addEventListener("click", () => {
     if (!pvcState) {
         playGamePVE();
     }
+
+    playerName.textContent = "Player";
+    opponentName.textContent = "Computer";
 
     pvcState = true;
     button.classList.add("clicked");
@@ -409,7 +420,7 @@ start.addEventListener("click", () => {
     eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
     if (!computerPlaying) {
         turnContainer.classList.remove("hidden");
-    } 
+    }
 
 
     if (computerPlaying) {
@@ -1581,7 +1592,7 @@ function computerClicker() {
                 playerTurn = true;
                 turnTo("playerTurn");
             }
-    
+
             const missDivs = surroundingTiles.map((num) => {
                 const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
                     if (value.classList[0] === num) {
@@ -1618,9 +1629,9 @@ function computerClicker() {
                 playerTurn = true;
                 turnTo("playerTurn");
             }
-    
+
             // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
-    
+
             const missDivs = surroundingTiles.map((num) => {
                 const theDiv = tilesOverlayDivsCopy.reduce((acc, value, index) => {
                     if (value.classList[0] === num) {
@@ -1638,7 +1649,7 @@ function computerClicker() {
             });
         }
     }, 450)
-    
+
 }
 
 function startComputerClicker() {
