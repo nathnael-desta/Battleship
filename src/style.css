@@ -67,6 +67,7 @@
     align-items: center;
     font-family: myRegular;
     background-color: #f8f8f8;
+    position: relative;
 
     .players {
         display: flex;
@@ -1808,4 +1809,134 @@
 }
 .hoverable {
     pointer-events: all !important;
+}
+
+.turn {
+    position: absolute;
+    width: 110px;
+    height: 64px;
+    border: 4px solid #de4d86;
+    left: 50%;
+    top: 12px;
+    transform: translateX(-50%);
+    border-radius: 18px;
+}
+
+.inside {
+    width: 60px;
+    height: 56px;
+    background-color: #de4d86;
+    border-radius: 12px;
+    position: relative;
+    font-family: myBold;
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+
+}
+
+.player1::before {
+    position: absolute;
+
+    left: 48%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+
+}
+
+.player1::after {
+    position: absolute;
+    content: "P1";
+    top: 50%;
+    transform: translateY(-50%);
+    left: -35px;
+    color: #de4d86;
+}
+
+.player1 {
+    margin-left: auto;
+}
+
+
+.player2::before {
+    position: absolute;
+    left: 54%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+
+}
+
+.player2::after {
+    position: absolute;
+    content: "P2";
+    top: 50%;
+    transform: translateY(-50%);
+    right: -38px;
+    color: #de4d86;
+}
+
+
+.player1 .rightMissile {
+    width: 45px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+
+}
+
+.player2 .leftMissile {
+    width: 45px;
+    height: auto;
+    display: block;
+    
+}
+
+.displayNone {
+    display: none;
+}
+
+.playerTurn::before {
+    position: absolute;
+    content: "P";
+    left: 48%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+
+}
+
+.playerTurn::after {
+    position: absolute;
+    content: "C";
+    top: 50%;
+    transform: translateY(-50%);
+    right: -30px;
+    color: #de4d86;
+}
+
+.computerTurn {
+    margin-left: auto;
+}
+
+.computerTurn::before {
+    position: absolute;
+    content: "C";
+    left: 54%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+
+}
+
+.computerTurn::after {
+    position: absolute;
+    content: "P";
+    top: 50%;
+    transform: translateY(-50%);
+    left: -29px;
+    color: #de4d86;
 }

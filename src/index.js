@@ -74,6 +74,9 @@ const keys = document.querySelector(".keys");
 let eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
 const player1PointsText = document.querySelector(".player1Points");
 const player2PointsText = document.querySelector(".player2Points");
+const turnDisplay = document.querySelector(".inside");
+const turnContainer = document.querySelector(".turn");
+
 
 let tilesOverlayArray = [
     "00",
@@ -235,6 +238,16 @@ playGamePVE();
 // playerSquares.classList.add("notClickable");
 // opponentSquares.classList.add("notClickable");
 
+
+function turnTo(turn) {
+    turnDisplay.classList.remove("player1");
+    turnDisplay.classList.remove("player2");
+    turnDisplay.classList.remove("playerTurn");
+    turnDisplay.classList.remove("computerTurn");
+
+    turnDisplay.classList.add(turn);
+}
+
 pvp.addEventListener("click", () => {
     pvcState = false;
     button.classList.remove("clicked");
@@ -394,6 +407,10 @@ function tileToArray(tiles) {
 
 start.addEventListener("click", () => {
     eachPlayerDiv = document.querySelectorAll(".player .tiles > div");
+    if (!computerPlaying) {
+        turnContainer.classList.remove("hidden");
+    } 
+
 
     if (computerPlaying) {
         squareMissileButton.classList.add("hidden");
@@ -436,6 +453,12 @@ start.addEventListener("click", () => {
 
     player1Turn = true;
     playerTurn = true;
+    if (computerPlaying) {
+        turnTo("playerTurn");
+    } else {
+        turnTo("player2");
+    }
+
 
     checkMissilesActive()
 
@@ -829,6 +852,7 @@ function opponentClickFunction(event) {
             if (event.target.classList.contains("tile")) {
                 if (event.target.classList.contains("miss")) {
                     playerTurn = false;
+                    turnTo("computerTurn");
                     playerSquares.classList.remove("notClickable");
                     computerShooting = true;
                     computerClicker();
@@ -847,6 +871,7 @@ function opponentClickFunction(event) {
                 if (event.target.classList.contains("miss")) {
                     player2Turn = false;
                     player1Turn = true;
+                    turnTo("player2");
 
                     checkMissilesActive()
 
@@ -1222,6 +1247,7 @@ function createOpponentBoardOnPlayer1() {
                 if (event.target.classList.contains("miss")) {
                     player1Turn = false;
                     player2Turn = true;
+                    turnTo("player1");
 
                     checkMissilesActive()
 
@@ -1553,6 +1579,7 @@ function computerClicker() {
                 computerClicker();
             } else {
                 playerTurn = true;
+                turnTo("playerTurn");
             }
     
             const missDivs = surroundingTiles.map((num) => {
@@ -1585,9 +1612,11 @@ function computerClicker() {
                 isNaN(playerBoard.boardArray[parseInt(chosenTileDiv.classList[0], 10)])
             ) {
                 playerTurn = false;
+                turnTo("computerTurn");
                 computerClicker();
             } else {
                 playerTurn = true;
+                turnTo("playerTurn");
             }
     
             // tilesOverlayDivsCopy.splice(parseInt(myRandomNumber, 10), 1);
@@ -1608,12 +1637,13 @@ function computerClicker() {
                 }
             });
         }
-    }, 300)
+    }, 450)
     
 }
 
 function startComputerClicker() {
     playerTurn = true;
+    turnTo("playerTurn");
 
     let chosenDiv = computerClicker().chosenTileDiv;
 
@@ -1836,6 +1866,7 @@ playerTiles.addEventListener("click", (e) => {
                     playerTile.dispatchEvent(clickEvent);
                     player1Turn = true;
                     player2Turn = false;
+                    turnTo("player2");
 
                     checkMissilesActive()
                 }
@@ -1885,12 +1916,14 @@ playerTiles.addEventListener("click", (e) => {
                     playerTile.dispatchEvent(clickEvent);
                     player1Turn = true;
                     player2Turn = false;
+                    turnTo("player2");
 
                     checkMissilesActive()
                 }
 
                 player1Turn = true;
                 player2Turn = false;
+                turnTo("player2");
 
             });
             setTimeout(() => {
@@ -1969,6 +2002,7 @@ opponentTiles.addEventListener("click", (e) => {
                     playerTile.dispatchEvent(clickEvent);
                     player2Turn = true;
                     player1Turn = false;
+                    turnTo("player1");
 
                     checkMissilesActive()
                 }
@@ -2018,12 +2052,14 @@ opponentTiles.addEventListener("click", (e) => {
                     playerTile.dispatchEvent(clickEvent);
                     player2Turn = true;
                     player1Turn = false;
+                    turnTo("player1");
 
                     checkMissilesActive()
                 }
 
                 player1Turn = false;
                 player2Turn = true;
+                turnTo("player1");
 
             });
             setTimeout(() => {
