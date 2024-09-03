@@ -243,6 +243,94 @@ playGamePVE();
 // playerSquares.classList.add("notClickable");
 // opponentSquares.classList.add("notClickable");
 
+function playHit() {
+    let hit = new Audio('./sounds/hit.wav');
+    hit.play();
+}
+
+function playMiss() {
+    let miss = new Audio('./sounds/watershot.mp3');
+    miss.play();
+}
+
+function playSink() {
+    let sink = new Audio('./sounds/sink2.mp3');
+    sink.play();
+}
+
+function playAirStrike() {
+    let airstrike = new Audio('./sounds/airstrike.mp3');
+    airstrike.play();
+}
+
+function playBigBomb() {
+    let bigBomb = new Audio('./sounds/bigBomb.mp3');
+    bigBomb.play();
+}
+
+
+let cHit = false;
+let cMiss = false;
+let cSink = false;
+let cAirStrike = false;
+let cBigBomb = false;
+
+let pHit = false;
+let pMiss = false;
+let pSink = false;
+let pAirStrike = false;
+let pBigBomb = false;
+
+function calculateSound() {
+    if (!cSink) {
+        if (cMiss) {
+            playMiss();
+        }
+    }
+
+    if (cHit) {
+        playHit();
+    }
+
+    if (cSink) {
+        playSink();
+    }
+
+    if (!pSink) {
+        if (pMiss) {
+            playMiss();
+        }
+    }
+
+    if (pHit) {
+        playHit();
+    }
+
+    if (pSink) {
+        playSink();
+    }
+}
+
+function resetSound() {
+    cHit = false;
+    cMiss = false;
+    cSink = false;
+    cAirStrike = false;
+    cBigBomb = false;
+
+    pHit = false;
+    pMiss = false;
+    pSink = false;
+    pAirStrike = false;
+    pBigBomb = false;
+}
+
+setInterval(() => {
+    calculateSound();
+        setTimeout(() => {
+            resetSound();
+        }, 0)
+}, 50)
 
 function turnTo(turn) {
     turnDisplay.classList.remove("player1");
@@ -784,6 +872,7 @@ function player1EventListeners() {
                     return;
                 }
                 tile.classList.add("miss");
+                cMiss = true;
                 tile.classList.add("notClickable")
                 event.stopPropagation();
             },
@@ -811,6 +900,7 @@ function player1EventListeners() {
 
             const circle = [...ship.children][shift];
             circle.classList.add("crossed");
+            cHit = true;
 
             const allCrossedOut = [...ship.children].reduce((acc, child) => {
                 if (!child.classList.contains("crossed")) {
@@ -819,6 +909,7 @@ function player1EventListeners() {
                 return acc && true;
             }, true);
             if (allCrossedOut) {
+                cSink = true;
                 getSurroundingDivs(
                     ship.getBoundingClientRect(),
                     ship.classList[0],
@@ -837,14 +928,13 @@ function player1EventListeners() {
                 }, null);
             }
 
+            
+
             e.stopPropagation();
         });
     });
+    
 }
-
-setInterval(() => {
-    console.log(player1Turn ? "player 1 turn" : "player 2 turn")
-}, 500)
 
 
 function createPlayer1Board() {
@@ -866,7 +956,10 @@ function opponentClickFunction(event) {
                     turnTo("computerTurn");
                     playerSquares.classList.remove("notClickable");
                     computerShooting = true;
-                    computerClicker();
+                    setTimeout(() => {
+                        computerClicker();
+                    }, 400);
+
                     computerShooting = false;
                     playerSquares.classList.add("notClickable");
                     event.target.classList.add("notClickable")
@@ -1077,18 +1170,21 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
 
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
+                        pMiss = true;
                         tile.classList.add("notClickable");
                     } else if (
                         tile.classList[1].split("")[
                         tile.classList[1].split("").length - 1
                         ] === "-"
                     ) {
+                        pHit = true;
                         tile.classList.add("crossedTile");
                         if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
                             clickedShips.push(tile.classList[1].slice(0, -1));
                         }
                     } else {
                         tile.classList.add("crossedTile");
+                        pHit = true;
                         if (clickedShips.indexOf(tile.classList[1]) === -1) {
                             clickedShips.push(tile.classList[1]);
                         }
@@ -1110,6 +1206,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                                 true
                             );
                             if (allHaveBeenClicked) {
+                                pSink = true;
                                 let newShip;
                                 shipTiles.forEach((shipTile) => {
                                     if (shipTile.classList.contains(`${ship}`)) {
@@ -1648,7 +1745,7 @@ function computerClicker() {
                 }
             });
         }
-    }, 450)
+    }, 600)
 
 }
 
