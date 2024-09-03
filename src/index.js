@@ -281,6 +281,18 @@ let pSink = false;
 let pAirStrike = false;
 let pBigBomb = false;
 
+let p1Hit = false;
+let p1Miss = false;
+let p1Sink = false;
+let p1AirStrike = false;
+let p1BigBomb = false;
+
+let p2Hit = false;
+let p2Miss = false;
+let p2Sink = false;
+let p2AirStrike = false;
+let p2BigBomb = false;
+
 function calculateSound() {
     if (!cSink) {
         if (cMiss) {
@@ -296,6 +308,8 @@ function calculateSound() {
         playSink();
     }
 
+
+
     if (!pSink) {
         if (pMiss) {
             playMiss();
@@ -307,6 +321,37 @@ function calculateSound() {
     }
 
     if (pSink) {
+        playSink();
+    }
+
+
+
+    if (!p1Sink) {
+        if (p1Miss) {
+            playMiss();
+        }
+    }
+
+    if (p1Hit) {
+        playHit();
+    }
+
+    if (p1Sink) {
+        playSink();
+    }
+
+
+    if (!p2Sink) {
+        if (p2Miss) {
+            playMiss();
+        }
+    }
+
+    if (p2Hit) {
+        playHit();
+    }
+
+    if (p2Sink) {
         playSink();
     }
 }
@@ -323,6 +368,18 @@ function resetSound() {
     pSink = false;
     pAirStrike = false;
     pBigBomb = false;
+
+    p1Hit = false;
+    p1Miss = false;
+    p1Sink = false;
+    p1AirStrike = false;
+    p1BigBomb = false;
+
+    p2Hit = false;
+    p2Miss = false;
+    p2Sink = false;
+    p2AirStrike = false;
+    p2BigBomb = false;
 }
 
 setInterval(() => {
@@ -1269,7 +1326,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
                         tile.classList.add("notClickable");
-
+                        p2Miss = true;
                         // player2Points += 5;
                         // player2PointsText.textContent = `${player2Points}`
                     } else if (
@@ -1277,11 +1334,13 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                         tile.classList[1].split("").length - 1
                         ] === "-"
                     ) {
+                        p2Hit = true;
                         tile.classList.add("crossedTile");
                         if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
                             clickedShips.push(tile.classList[1].slice(0, -1));
                         }
                     } else {
+                        p2Hit = true;
                         tile.classList.add("crossedTile");
                         if (clickedShips.indexOf(tile.classList[1]) === -1) {
                             clickedShips.push(tile.classList[1]);
@@ -1304,6 +1363,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                                 true
                             );
                             if (allHaveBeenClicked) {
+                                p2Sink = true;
                                 let newShip;
                                 shipTiles.forEach((shipTile) => {
                                     if (shipTile.classList.contains(`${ship}`)) {
@@ -1477,16 +1537,19 @@ function createOpponentBoardOnPlayer1() {
                 if (tile.classList.contains("onlyTile")) {
                     tile.classList.add("miss");
                     tile.classList.add("notClickable");
+                    p1Miss = true;
                 } else if (
                     tile.classList[1].split("")[
                     tile.classList[1].split("").length - 1
                     ] === "-"
                 ) {
+                    p1Hit = true;
                     tile.classList.add("crossedTile");
                     if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
                         clickedShips.push(tile.classList[1].slice(0, -1));
                     }
                 } else {
+                    p1Hit = true;
                     tile.classList.add("crossedTile");
                     if (clickedShips.indexOf(tile.classList[1]) === -1) {
                         clickedShips.push(tile.classList[1]);
@@ -1507,6 +1570,7 @@ function createOpponentBoardOnPlayer1() {
                             true
                         );
                         if (allHaveBeenClicked) {
+                            p1Sink = true;
                             let newShip;
                             shipTiles.forEach((shipTile) => {
                                 if (shipTile.classList.contains(`${ship}`)) {
