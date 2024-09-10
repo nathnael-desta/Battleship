@@ -78,6 +78,8 @@ const turnDisplay = document.querySelector(".inside");
 const turnContainer = document.querySelector(".turn");
 const playerName = document.querySelector(".player .name span");
 const opponentName = document.querySelector(".opponent .name span");
+const pRotate = document.querySelector(".pRotate");
+const oRotate = document.querySelector(".oRotate");
 
 player1PointsText.addEventListener('click', () => {
     playHit()
@@ -734,7 +736,7 @@ function checkMissilesActive() {
 }
 
 lineMissileButton.addEventListener("click", () => {
-
+    pRotate.classList.remove('hidden');
 
     lineMissileButton.classList.toggle("notClicked");
     lineMissileButton.classList.toggle("clicked");
@@ -753,6 +755,7 @@ lineMissileButton.addEventListener("click", () => {
             playerTiles.classList.add("tiles");
             lineMissileButton.classList.remove("clicked");
             lineMissileButton.classList.add("notClicked");
+            pRotate.classList.add('hidden');
         }
 
     }, 0);
@@ -761,6 +764,8 @@ lineMissileButton.addEventListener("click", () => {
 squareMissileButton.addEventListener("click", () => {
     squareMissileButton.classList.toggle("notClicked");
     squareMissileButton.classList.toggle("clicked");
+
+    pRotate.classList.add('hidden');
 
     lineMissileP1Active = false;
     lineMissileButton.classList.remove("clicked");
@@ -781,6 +786,8 @@ squareMissileButton.addEventListener("click", () => {
 });
 
 lineMissileButton2.addEventListener("click", () => {
+    oRotate.classList.remove('hidden');
+
     lineMissileButton2.classList.toggle("notClicked");
     lineMissileButton2.classList.toggle("clicked");
 
@@ -797,11 +804,14 @@ lineMissileButton2.addEventListener("click", () => {
             opponentTiles.classList.add("tiles");
             lineMissileButton2.classList.remove("clicked");
             lineMissileButton2.classList.add("notClicked");
+            oRotate.classList.add('hidden');
         }
     }, 0);
 });
 
 squareMissileButton2.addEventListener("click", () => {
+    oRotate.classList.add('hidden');
+
     squareMissileButton2.classList.toggle("notClicked");
     squareMissileButton2.classList.toggle("clicked");
 
@@ -1253,6 +1263,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             lineMissileP2Active = false;
                             lineMissileButton2.classList.remove("clicked");
                             lineMissileButton2.classList.add("notClicked");
+                            oRotate.classList.add('hidden');
 
                         }, 0);
                     }
@@ -1350,6 +1361,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             lineMissileP2Active = false;
                             lineMissileButton2.classList.remove("clicked");
                             lineMissileButton2.classList.add("notClicked");
+                            oRotate.classList.add('hidden');
 
 
                         }, 0);
@@ -1566,6 +1578,7 @@ function createOpponentBoardOnPlayer1() {
                         lineMissileP1Active = false;
                         lineMissileButton.classList.remove("clicked");
                         lineMissileButton.classList.add("notClicked");
+                        pRotate.classList.add('hidden');
 
 
                     }, 0);

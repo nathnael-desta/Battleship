@@ -1940,3 +1940,20 @@
     left: -29px;
     color: #de4d86;
 }
+
+.pRotate {
+    color: white;
+    font-family: mySemiBold;
+    font-size: 25px;
+    bottom: 60px;
+    position: absolute;
+}
+
+.oRotate {
+    color: white;
+    font-family: mySemiBold;
+    font-size: 25px;
+    bottom: 60px;
+    position: absolute;
+}
+
