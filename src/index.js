@@ -2353,6 +2353,7 @@ opponentTiles.addEventListener("click", (e) => {
         }
     }
 });
+// check
 
 // .opponentTiles.addEventListener("click", (e) => {
 
