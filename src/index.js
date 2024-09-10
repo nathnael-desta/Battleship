@@ -79,6 +79,11 @@ const turnContainer = document.querySelector(".turn");
 const playerName = document.querySelector(".player .name span");
 const opponentName = document.querySelector(".opponent .name span");
 
+player1PointsText.addEventListener('click', () => {
+    playHit()
+    playMiss()
+})
+
 
 let tilesOverlayArray = [
     "00",
@@ -325,35 +330,55 @@ function calculateSound() {
     }
 
 
+    if (!p1AirStrike && !p1BigBomb) {
+        if (!p1Sink) {
+            if (p1Miss) {
+                playMiss();
+            }
+        }
 
-    if (!p1Sink) {
-        if (p1Miss) {
-            playMiss();
+        if (p1Hit) {
+            playHit();
+        }
+
+        if (p1Sink) {
+            playSink();
         }
     }
 
-    if (p1Hit) {
-        playHit();
+    if (p1AirStrike) {
+        playAirStrike();
     }
 
-    if (p1Sink) {
-        playSink();
+    if (p1BigBomb) {
+        playBigBomb();
     }
 
+    if (!p2AirStrike || !p2BigBomb) {
+        if (!p2Sink) {
+            if (p2Miss) {
+                playMiss();
+            }
+        }
 
-    if (!p2Sink) {
-        if (p2Miss) {
-            playMiss();
+        if (p2Hit) {
+            playHit();
+        }
+
+        if (p2Sink) {
+            playSink();
         }
     }
 
-    if (p2Hit) {
-        playHit();
+    if (p2AirStrike) {
+        playAirStrike();
     }
 
-    if (p2Sink) {
-        playSink();
+    if (p2BigBomb) {
+        playBigBomb();
     }
+
+
 }
 
 function resetSound() {
@@ -384,10 +409,10 @@ function resetSound() {
 
 setInterval(() => {
     calculateSound();
-        setTimeout(() => {
-            resetSound();
-        }, 0)
-}, 50)
+    setTimeout(() => {
+        resetSound();
+    }, 0)
+}, 100)
 
 function turnTo(turn) {
     turnDisplay.classList.remove("player1");
@@ -985,12 +1010,12 @@ function player1EventListeners() {
                 }, null);
             }
 
-            
+
 
             e.stopPropagation();
         });
     });
-    
+
 }
 
 
@@ -2043,6 +2068,7 @@ playerTiles.addEventListener("click", (e) => {
                     checkMissilesActive()
                 }
             });
+            p1BigBomb = true;
             setTimeout(() => {
                 pausePoints = false;
             }, 200)
@@ -2098,6 +2124,7 @@ playerTiles.addEventListener("click", (e) => {
                 turnTo("player2");
 
             });
+            p1AirStrike = true;
             setTimeout(() => {
                 pausePoints = false;
             }, 200)
@@ -2179,6 +2206,7 @@ opponentTiles.addEventListener("click", (e) => {
                     checkMissilesActive()
                 }
             });
+            p2BigBomb = true;
             setTimeout(() => {
                 pausePoints = false;
             }, 200)
@@ -2234,6 +2262,7 @@ opponentTiles.addEventListener("click", (e) => {
                 turnTo("player1");
 
             });
+            p2AirStrike = true;
             setTimeout(() => {
                 pausePoints = false;
             }, 200)
