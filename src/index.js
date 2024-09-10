@@ -80,6 +80,52 @@ const playerName = document.querySelector(".player .name span");
 const opponentName = document.querySelector(".opponent .name span");
 const pRotate = document.querySelector(".pRotate");
 const oRotate = document.querySelector(".oRotate");
+const reloadButton = document.querySelector(".text-container svg");
+const gameEnd = document.querySelector(".gameEnd");
+const main = document.querySelector(".main");
+const playerCircles = document.querySelectorAll(".player .circle");
+const opponentCircles = document.querySelectorAll(".opponent .circle ");
+const endText = document.querySelector(".end-text");
+
+setInterval(() =>{
+    const allPlayerShipsHit = [...playerCircles].reduce((acc, circle) => {
+
+        if (!circle.classList.contains("crossed")) {
+            return false;
+        }
+        return acc;
+    }, true)
+
+    const allOpponentShipsHit = [...opponentCircles].reduce((acc, circle) => {
+
+        if (!circle.classList.contains("crossed")) {
+            return false;
+        }
+        return acc;
+    }, true)
+
+    if (allPlayerShipsHit) {
+        main.classList.add("notClickable");
+        gameEnd.classList.remove("hidden");
+
+        if (pvcState) {
+            endText.innerHTML = "Computer Wins";
+        } else {
+            endText.innerHTML = "Player 2 Wins";
+        }
+    }
+
+    if (allOpponentShipsHit) {
+        main.classList.add("notClickable");
+        gameEnd.classList.remove("hidden");
+
+        if (computerPlaying) {
+            endText.innerHTML = "Player Wins";
+        } else {
+            endText.innerHTML = "Player 1 Wins";
+        }
+    }
+}, 500)
 
 player1PointsText.addEventListener('click', () => {
     playHit()
@@ -422,6 +468,10 @@ function sounds() {
         resetSound();
     }, 0);
 }
+
+reloadButton.addEventListener('click', () => {
+    location.reload();
+})
 
 function turnTo(turn) {
     turnDisplay.classList.remove("player1");
@@ -1057,7 +1107,7 @@ function opponentClickFunction(event) {
                     computerShooting = true;
                     setTimeout(() => {
                         computerClicker();
-                    }, 400);
+                    }, 350);
 
                     computerShooting = false;
                     playerSquares.classList.add("notClickable");
@@ -1862,7 +1912,7 @@ function computerClicker() {
                 }
             });
         }
-    }, 600)
+    }, 350)
 
 }
 

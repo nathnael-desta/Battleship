@@ -59,6 +59,10 @@
     box-sizing: border-box;
 }
 
+body {
+    position: relative;
+}
+
 .main {
     min-height: 100vh;
     min-width: 100vw;
@@ -1957,3 +1961,48 @@
     position: absolute;
 }
 
+.gameEnd {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-container {
+    width: 300px;
+    height: 175px;
+    background-color: white;
+    border-radius: 15px;
+    outline: #de4d86 5px solid;
+    box-shadow: 0 4px 5px 3px rgb(0 0 0 / 25%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+
+}
+
+.text-container svg {
+    width: 45px;
+    height: auto;
+    cursor: pointer;
+
+    path {
+        fill: #de4d86;
+    }
+    
+}
+
+.end-text {
+    color: #de4d86;
+    font-family: myExtraBold;
+    font-size: 30px;
+
+}
