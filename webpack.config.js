@@ -38,6 +38,10 @@ module.exports = {
         test: /\.xml$/i,
         use: ['xml-loader'],
       },
+      {
+        test: /\.(mp3|wav|ogg)$/i,   // Test for audio file extensions
+        type: 'asset/resource',     // Handle audio files as assets
+      },
     ],
   },
   plugins: [
