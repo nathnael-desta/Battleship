@@ -324,6 +324,7 @@ function playAirStrike() {
 
 function playBigBomb() {
     let bigBomb = new Audio(mybigBomb);
+    bigBomb.volume = 0.5;
     bigBomb.play();
 }
 
