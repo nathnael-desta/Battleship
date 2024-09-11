@@ -33,6 +33,12 @@ import {
     createBoardArray
 } from "./board";
 
+import myhit from './Assets/sounds/hit.wav'
+import mymiss from './Assets/sounds/watershot.wav'
+import mysink from './Assets/sounds/sink.wav'
+import myairstrike from './Assets/sounds/airstrike.mp3'
+import mybigBomb from './Assets/sounds/bigBomb.mp3'
+
 import("./style.css");
 
 const playerTiles = document.querySelector(".player .tiles");
@@ -87,7 +93,7 @@ const playerCircles = document.querySelectorAll(".player .circle");
 const opponentCircles = document.querySelectorAll(".opponent .circle ");
 const endText = document.querySelector(".end-text");
 
-setInterval(() =>{
+setInterval(() => {
     const allPlayerShipsHit = [...playerCircles].reduce((acc, circle) => {
 
         if (!circle.classList.contains("crossed")) {
@@ -297,27 +303,28 @@ playGamePVE();
 // opponentSquares.classList.add("notClickable");
 
 function playHit() {
-    let hit = new Audio('./sounds/hit.wav');
+    let hit = new Audio(myhit);
     hit.play();
 }
 
 function playMiss() {
-    let miss = new Audio('./sounds/watershot.mp3');
+    let miss = new Audio(mymiss);
     miss.play();
 }
 
 function playSink() {
-    let sink = new Audio('./sounds/sink2.mp3');
+    let sink = new Audio(mysink);
     sink.play();
 }
 
 function playAirStrike() {
-    let airstrike = new Audio('./sounds/airstrike.mp3');
+    let airstrike = new Audio(myairstrike);
     airstrike.play();
 }
 
 function playBigBomb() {
-    let bigBomb = new Audio('./sounds/bigBomb.mp3');
+    let bigBomb = new Audio(mybigBomb);
+    bigBomb.volume = 0.5;
     bigBomb.play();
 }
 
