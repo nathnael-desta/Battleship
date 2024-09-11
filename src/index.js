@@ -35,7 +35,7 @@ import {
 
 import myhit from './Assets/sounds/hit.wav'
 import mymiss from './Assets/sounds/watershot.wav'
-import mysink from './Assets/sounds/sink.wav'
+import mysink from './Assets/sounds/sink2.mp3'
 import myairstrike from './Assets/sounds/airstrike.mp3'
 import mybigBomb from './Assets/sounds/bigBomb.mp3'
 
@@ -301,31 +301,63 @@ createSquares(opponentTiles);
 playGamePVE();
 // playerSquares.classList.add("notClickable");
 // opponentSquares.classList.add("notClickable");
+let soundTime = true;
 
 function playHit() {
     let hit = new Audio(myhit);
-    hit.play();
+    if (soundTime) {
+        hit.play();
+        soundTime = false;
+    }
+    setTimeout(() => {
+        soundTime = true;
+    }, 25)
 }
 
 function playMiss() {
     let miss = new Audio(mymiss);
-    miss.play();
+    if (soundTime) {
+        miss.play();
+        soundTime = false;
+    }
+    setTimeout(() => {
+        soundTime = true;
+    }, 25)
+
 }
 
 function playSink() {
     let sink = new Audio(mysink);
-    sink.play();
+    if (soundTime) {
+        sink.play();
+        soundTime = false;
+    }
+    setTimeout(() => {
+        soundTime = true;
+    }, 25)
 }
 
 function playAirStrike() {
     let airstrike = new Audio(myairstrike);
-    airstrike.play();
+    if (soundTime) {
+        airstrike.play();
+        soundTime = false;
+    }
+    setTimeout(() => {
+        soundTime = true;
+    }, 25)
 }
 
 function playBigBomb() {
     let bigBomb = new Audio(mybigBomb);
     bigBomb.volume = 0.5;
-    bigBomb.play();
+    if (soundTime) {
+        bigBomb.play();
+        soundTime = false;
+    }
+    setTimeout(() => {
+        soundTime = true;
+    }, 25)
 }
 
 
@@ -358,11 +390,12 @@ function calculateSound() {
         if (cMiss) {
             playMiss();
         }
+        if (cHit) {
+            playHit();
+        }
     }
 
-    if (cHit) {
-        playHit();
-    }
+
 
     if (cSink) {
         playSink();
@@ -374,11 +407,12 @@ function calculateSound() {
         if (pMiss) {
             playMiss();
         }
+        if (pHit) {
+            playHit();
+        }
     }
 
-    if (pHit) {
-        playHit();
-    }
+
 
     if (pSink) {
         playSink();
@@ -390,11 +424,13 @@ function calculateSound() {
             if (p1Miss) {
                 playMiss();
             }
+
+            if (p1Hit) {
+                playHit();
+            }
         }
 
-        if (p1Hit) {
-            playHit();
-        }
+
 
         if (p1Sink) {
             playSink();
@@ -414,11 +450,13 @@ function calculateSound() {
             if (p2Miss) {
                 playMiss();
             }
+
+            if (p2Hit) {
+                playHit();
+            }
         }
 
-        if (p2Hit) {
-            playHit();
-        }
+
 
         if (p2Sink) {
             playSink();
@@ -1029,6 +1067,7 @@ function player1EventListeners() {
                 }
                 tile.classList.add("miss");
                 cMiss = true;
+                sounds()
                 tile.classList.add("notClickable")
                 event.stopPropagation();
             },
@@ -1057,6 +1096,7 @@ function player1EventListeners() {
             const circle = [...ship.children][shift];
             circle.classList.add("crossed");
             cHit = true;
+            
 
             const allCrossedOut = [...ship.children].reduce((acc, child) => {
                 if (!child.classList.contains("crossed")) {
@@ -1066,6 +1106,7 @@ function player1EventListeners() {
             }, true);
             if (allCrossedOut) {
                 cSink = true;
+                sounds()
                 getSurroundingDivs(
                     ship.getBoundingClientRect(),
                     ship.classList[0],
@@ -1083,6 +1124,7 @@ function player1EventListeners() {
                     return acc || null;
                 }, null);
             }
+            sounds()
 
 
 
@@ -1328,6 +1370,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     if (tile.classList.contains("onlyTile")) {
                         tile.classList.add("miss");
                         pMiss = true;
+                        sounds()
                         tile.classList.add("notClickable");
                     } else if (
                         tile.classList[1].split("")[
@@ -1335,6 +1378,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                         ] === "-"
                     ) {
                         pHit = true;
+
                         tile.classList.add("crossedTile");
                         if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
                             clickedShips.push(tile.classList[1].slice(0, -1));
@@ -1342,6 +1386,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                     } else {
                         tile.classList.add("crossedTile");
                         pHit = true;
+                        
                         if (clickedShips.indexOf(tile.classList[1]) === -1) {
                             clickedShips.push(tile.classList[1]);
                         }
@@ -1364,6 +1409,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             );
                             if (allHaveBeenClicked) {
                                 pSink = true;
+                                sounds()
                                 let newShip;
                                 shipTiles.forEach((shipTile) => {
                                     if (shipTile.classList.contains(`${ship}`)) {
@@ -1400,6 +1446,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             }
                         });
                     }
+                    sounds()
                 }
             } else if (!computerPlaying) {
                 if (player2Turn) {
@@ -1444,7 +1491,6 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                         }
                     } else {
                         p2Hit = true;
-                        sounds()
                         tile.classList.add("crossedTile");
                         if (clickedShips.indexOf(tile.classList[1]) === -1) {
                             clickedShips.push(tile.classList[1]);
@@ -1505,6 +1551,7 @@ function createOpponentBoardOnPlayer2(withComputerClicker) {
                             }
                         });
                     }
+                    sounds()
                 }
             }
         });
@@ -1651,7 +1698,7 @@ function createOpponentBoardOnPlayer1() {
                     ] === "-"
                 ) {
                     p1Hit = true;
-                    sounds()
+
                     tile.classList.add("crossedTile");
                     if (clickedShips.indexOf(tile.classList[1].slice(0, -1)) === -1) {
                         clickedShips.push(tile.classList[1].slice(0, -1));
@@ -1717,6 +1764,7 @@ function createOpponentBoardOnPlayer1() {
                         }
                     });
                 }
+                sounds()
             }
         });
     });
